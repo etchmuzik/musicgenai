@@ -100,6 +100,14 @@
       "dest": "/website/gamification.html"
     },
     {
+      "src": "/music-studio",
+      "dest": "/website/music-studio.html"
+    },
+    {
+      "src": "/studio",
+      "dest": "/website/music-studio.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/website/$1"
     },
