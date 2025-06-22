@@ -1500,7 +1500,7 @@
     </footer>
 
     <script type="module">
-        import { authManager } from './js/firebase-config.js';
+        import { authManager } from './js/firebase-config-safe.js';
 
         // Check authentication state
         authManager.onAuthStateChange((user) => {
