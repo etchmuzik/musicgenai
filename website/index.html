@@ -152,6 +152,13 @@
             font-weight: 600;
         }
 
+        /* Auth Buttons */
+        .auth-buttons {
+            display: flex;
+            gap: var(--space-md);
+            align-items: center;
+        }
+
         .cta-button {
             padding: var(--space-sm) var(--space-lg);
             background: var(--gradient-primary);
@@ -171,6 +178,130 @@
         .cta-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .outline-button {
+            padding: var(--space-sm) var(--space-lg);
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--glass-border);
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .outline-button:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* User Menu */
+        .user-menu {
+            position: relative;
+            display: none;
+        }
+
+        .user-menu.active {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .user-avatar:hover {
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: var(--space-sm);
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--space-sm);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-glass);
+        }
+
+        .user-menu:hover .user-dropdown,
+        .user-dropdown:hover {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-header {
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .dropdown-name {
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+        }
+
+        .dropdown-email {
+            font-size: var(--font-size-xs);
+            color: var(--text-secondary);
+        }
+
+        .dropdown-link {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+            font-size: var(--font-size-sm);
+        }
+
+        .dropdown-link:hover {
+            background: var(--glass);
+        }
+
+        .dropdown-link i {
+            width: 16px;
+            text-align: center;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--glass-border);
+            margin: var(--space-sm) 0;
+        }
+
+        .subscription-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--gradient-primary);
+            color: white;
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            border-radius: var(--radius-full);
+            margin-left: var(--space-sm);
         }
 
         /* Mobile Menu */
@@ -369,6 +500,58 @@
             background: var(--glass-strong);
             border-color: var(--primary);
             transform: translateY(-3px);
+        }
+
+        /* User Welcome Section (shown when authenticated) */
+        .user-welcome {
+            display: none;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-2xl);
+            text-align: left;
+        }
+
+        .user-welcome.active {
+            display: block;
+        }
+
+        .welcome-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+        }
+
+        .welcome-title {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .quick-stat {
+            text-align: center;
+            padding: var(--space-md);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+        }
+
+        .quick-stat-value {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .quick-stat-label {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
         }
 
         /* Feature Platforms Section */
@@ -791,6 +974,14 @@
                 flex-direction: column;
                 text-align: center;
             }
+
+            .user-welcome {
+                padding: var(--space-lg);
+            }
+
+            .quick-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         /* Animations */
@@ -839,16 +1030,64 @@
         <div class="nav-container">
             <a href="/" class="logo">MusicGen AI</a>
             <div class="nav-links">
-                <a href="/app" class="nav-link">Studio</a>
+                <a href="/music-studio" class="nav-link">Music Studio</a>
                 <a href="/ai-studio" class="nav-link featured">AI Studio</a>
                 <a href="/audio-editor" class="nav-link">Audio Editor</a>
                 <a href="/gamification" class="nav-link">Gamification</a>
                 <a href="/pricing" class="nav-link">Pricing</a>
                 <a href="/about" class="nav-link">About</a>
-                <a href="/app" class="cta-button">
-                    <i class="fas fa-play"></i>
-                    Start Creating
-                </a>
+                
+                <!-- Auth buttons (shown when not logged in) -->
+                <div class="auth-buttons" data-auth="false">
+                    <a href="/auth" class="outline-button">Sign In</a>
+                    <a href="/auth" class="cta-button">
+                        <i class="fas fa-rocket"></i>
+                        Start Free
+                    </a>
+                </div>
+                
+                <!-- User menu (shown when logged in) -->
+                <div class="user-menu" data-auth="true">
+                    <a href="/user-dashboard" class="cta-button">
+                        <i class="fas fa-th"></i>
+                        Dashboard
+                    </a>
+                    <img src="" alt="User Avatar" class="user-avatar" data-user="photo">
+                    <div class="user-dropdown">
+                        <div class="dropdown-header">
+                            <div class="dropdown-name" data-user="name">User</div>
+                            <div class="dropdown-email" data-user="email">email@example.com</div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="/user-dashboard" class="dropdown-link">
+                            <i class="fas fa-chart-line"></i>
+                            Dashboard
+                        </a>
+                        <a href="/profile" class="dropdown-link">
+                            <i class="fas fa-user"></i>
+                            Profile
+                        </a>
+                        <a href="/library" class="dropdown-link">
+                            <i class="fas fa-music"></i>
+                            My Library
+                        </a>
+                        <a href="/settings" class="dropdown-link">
+                            <i class="fas fa-cog"></i>
+                            Settings
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="/pricing" class="dropdown-link">
+                            <i class="fas fa-crown"></i>
+                            Upgrade
+                            <span class="subscription-badge" data-user="subscription">Free</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-link" onclick="signOut()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Sign Out
+                        </a>
+                    </div>
+                </div>
             </div>
             <button class="mobile-menu-toggle" id="mobile-toggle">
                 <i class="fas fa-bars"></i>
@@ -858,18 +1097,53 @@
 
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobile-menu">
-        <a href="/app" class="nav-link">Studio</a>
+        <a href="/music-studio" class="nav-link">Music Studio</a>
         <a href="/ai-studio" class="nav-link">AI Studio</a>
         <a href="/audio-editor" class="nav-link">Audio Editor</a>
         <a href="/gamification" class="nav-link">Gamification</a>
         <a href="/pricing" class="nav-link">Pricing</a>
         <a href="/about" class="nav-link">About</a>
-        <a href="/app" class="cta-button">Start Creating</a>
+        <div data-auth="false">
+            <a href="/auth" class="cta-button">Sign In / Start Free</a>
+        </div>
+        <div data-auth="true" style="display: none;">
+            <a href="/user-dashboard" class="cta-button">Dashboard</a>
+            <a href="#" class="outline-button" onclick="signOut()">Sign Out</a>
+        </div>
     </div>
 
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-container">
+            <!-- User Welcome (shown when authenticated) -->
+            <div class="user-welcome" data-auth="true">
+                <div class="welcome-header">
+                    <h2 class="welcome-title">Welcome back, <span data-user="name">User</span>! 👋</h2>
+                    <a href="/user-dashboard" class="outline-button">
+                        <i class="fas fa-chart-line"></i>
+                        View Full Dashboard
+                    </a>
+                </div>
+                <div class="quick-stats">
+                    <div class="quick-stat">
+                        <div class="quick-stat-value" data-user-stat="tracks">0</div>
+                        <div class="quick-stat-label">Tracks Created</div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="quick-stat-value" data-user-stat="minutes">0</div>
+                        <div class="quick-stat-label">Minutes Generated</div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="quick-stat-value" data-user-stat="achievements">0</div>
+                        <div class="quick-stat-label">Achievements</div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="quick-stat-value" data-user-stat="streak">0</div>
+                        <div class="quick-stat-label">Day Streak</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="hero-badges fade-in-up">
                 <div class="hero-badge ai">
                     <i class="fas fa-robot"></i>
@@ -911,14 +1185,26 @@
             </div>
             
             <div class="hero-actions fade-in-up delay-4">
-                <a href="/app" class="primary-button">
-                    <i class="fas fa-rocket"></i>
-                    Start Creating Free
-                </a>
-                <a href="/ai-studio" class="secondary-button">
-                    <i class="fas fa-magic"></i>
-                    Explore AI Studio
-                </a>
+                <div data-auth="false">
+                    <a href="/auth" class="primary-button">
+                        <i class="fas fa-rocket"></i>
+                        Start Creating Free
+                    </a>
+                    <a href="/ai-studio" class="secondary-button">
+                        <i class="fas fa-magic"></i>
+                        Explore AI Studio
+                    </a>
+                </div>
+                <div data-auth="true" style="display: none;">
+                    <a href="/music-studio" class="primary-button">
+                        <i class="fas fa-music"></i>
+                        Create New Track
+                    </a>
+                    <a href="/library" class="secondary-button">
+                        <i class="fas fa-folder-open"></i>
+                        My Library
+                    </a>
+                </div>
             </div>
         </div>
     </section>
@@ -942,17 +1228,17 @@
                         </div>
                         <div>
                             <h3 class="platform-title">Music Studio</h3>
-                            <p class="platform-subtitle">Core music generation</p>
+                            <p class="platform-subtitle">Advanced music generation</p>
                         </div>
                     </div>
                     <ul class="platform-features">
-                        <li><i class="fas fa-check"></i> AI music generation from text</li>
-                        <li><i class="fas fa-check"></i> Multiple genres and styles</li>
-                        <li><i class="fas fa-check"></i> Real-time preview and editing</li>
-                        <li><i class="fas fa-check"></i> High-quality audio export</li>
-                        <li><i class="fas fa-check"></i> Cloud sync and library</li>
+                        <li><i class="fas fa-check"></i> 50+ genres and subgenres</li>
+                        <li><i class="fas fa-check"></i> Lyrics-to-music generation</li>
+                        <li><i class="fas fa-check"></i> Remix and extend features</li>
+                        <li><i class="fas fa-check"></i> Smart playlist management</li>
+                        <li><i class="fas fa-check"></i> Real-time generation progress</li>
                     </ul>
-                    <a href="/app" class="platform-cta">
+                    <a href="/music-studio" class="platform-cta">
                         Open Studio <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
@@ -1130,14 +1416,26 @@
                 Start with our free tier and upgrade as you grow.
             </p>
             <div class="cta-buttons">
-                <a href="/app" class="primary-button">
-                    <i class="fas fa-rocket"></i>
-                    Start Creating Free
-                </a>
-                <a href="/pricing" class="secondary-button">
-                    <i class="fas fa-tag"></i>
-                    View Pricing
-                </a>
+                <div data-auth="false">
+                    <a href="/auth" class="primary-button">
+                        <i class="fas fa-rocket"></i>
+                        Start Creating Free
+                    </a>
+                    <a href="/pricing" class="secondary-button">
+                        <i class="fas fa-tag"></i>
+                        View Pricing
+                    </a>
+                </div>
+                <div data-auth="true" style="display: none;">
+                    <a href="/music-studio" class="primary-button">
+                        <i class="fas fa-music"></i>
+                        Create New Track
+                    </a>
+                    <a href="/pricing" class="secondary-button">
+                        <i class="fas fa-crown"></i>
+                        Upgrade Plan
+                    </a>
+                </div>
             </div>
         </div>
     </section>
@@ -1156,7 +1454,7 @@
                 <div class="footer-section">
                     <h4>Platform</h4>
                     <ul class="footer-links">
-                        <li><a href="/app">Music Studio</a></li>
+                        <li><a href="/music-studio">Music Studio</a></li>
                         <li><a href="/ai-studio">AI Studio</a></li>
                         <li><a href="/audio-editor">Audio Editor</a></li>
                         <li><a href="/gamification">Gamification Hub</a></li>
@@ -1167,11 +1465,11 @@
                 <div class="footer-section">
                     <h4>Features</h4>
                     <ul class="footer-links">
-                        <li><a href="/app">AI Music Generation</a></li>
+                        <li><a href="/music-studio">AI Music Generation</a></li>
                         <li><a href="/ai-studio">Voice to Music</a></li>
                         <li><a href="/audio-editor">Stem Separation</a></li>
                         <li><a href="/gamification">Achievements</a></li>
-                        <li><a href="/app">Collaboration</a></li>
+                        <li><a href="/library">Music Library</a></li>
                     </ul>
                 </div>
                 
@@ -1201,7 +1499,57 @@
         </div>
     </footer>
 
-    <script>
+    <script type="module">
+        import { authManager } from './js/firebase-config.js';
+
+        // Check authentication state
+        authManager.onAuthStateChange((user) => {
+            if (user) {
+                // User is signed in
+                document.querySelectorAll('[data-auth="true"]').forEach(el => {
+                    el.style.display = el.classList.contains('user-menu') || el.classList.contains('user-welcome') ? 'block' : 'block';
+                });
+                document.querySelectorAll('[data-auth="false"]').forEach(el => {
+                    el.style.display = 'none';
+                });
+                
+                // Update user stats (mock data for now - will be fetched from Firebase)
+                updateUserStats();
+            } else {
+                // User is not signed in
+                document.querySelectorAll('[data-auth="true"]').forEach(el => {
+                    el.style.display = 'none';
+                });
+                document.querySelectorAll('[data-auth="false"]').forEach(el => {
+                    el.style.display = 'block';
+                });
+            }
+        });
+
+        // Sign out function
+        window.signOut = async function() {
+            const result = await authManager.signOut();
+            if (result.success) {
+                window.location.href = '/';
+            }
+        };
+
+        // Update user stats
+        async function updateUserStats() {
+            // In production, these would be fetched from Firebase
+            const stats = {
+                tracks: localStorage.getItem('generatedTracks') ? JSON.parse(localStorage.getItem('generatedTracks')).length : 0,
+                minutes: Math.floor(Math.random() * 500), // Mock data
+                achievements: Math.floor(Math.random() * 20), // Mock data
+                streak: Math.floor(Math.random() * 30) // Mock data
+            };
+            
+            document.querySelector('[data-user-stat="tracks"]').textContent = stats.tracks;
+            document.querySelector('[data-user-stat="minutes"]').textContent = stats.minutes;
+            document.querySelector('[data-user-stat="achievements"]').textContent = stats.achievements;
+            document.querySelector('[data-user-stat="streak"]').textContent = stats.streak;
+        }
+
         // Navbar scroll effect
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');
@@ -1308,24 +1656,6 @@
         document.querySelectorAll('.hero-stat, .social-stat').forEach(stat => {
             statObserver.observe(stat);
         });
-
-        // Performance optimization: Lazy load images when needed
-        if ('IntersectionObserver' in window) {
-            const imageObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src;
-                        img.classList.remove('lazy');
-                        imageObserver.unobserve(img);
-                    }
-                });
-            });
-
-            document.querySelectorAll('img[data-src]').forEach(img => {
-                imageObserver.observe(img);
-            });
-        }
     </script>
 </body>
 </html>

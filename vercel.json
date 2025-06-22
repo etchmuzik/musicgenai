@@ -41,7 +41,11 @@
     },
     {
       "src": "/dashboard",
-      "dest": "/website/dashboard.html"
+      "dest": "/website/user-dashboard.html"
+    },
+    {
+      "src": "/user-dashboard",
+      "dest": "/website/user-dashboard.html"
     },
     {
       "src": "/library",
