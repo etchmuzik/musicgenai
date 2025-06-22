@@ -8,8 +8,94 @@
   ],
   "routes": [
     {
+      "src": "/music-studio",
+      "dest": "/website/music-studio.html"
+    },
+    {
+      "src": "/ai-studio", 
+      "dest": "/website/ai-studio.html"
+    },
+    {
+      "src": "/audio-editor",
+      "dest": "/website/audio-editor.html"
+    },
+    {
+      "src": "/gamification",
+      "dest": "/website/gamification.html"
+    },
+    {
+      "src": "/pricing",
+      "dest": "/website/pricing.html"
+    },
+    {
+      "src": "/about",
+      "dest": "/website/about.html"
+    },
+    {
+      "src": "/auth",
+      "dest": "/website/auth.html"
+    },
+    {
+      "src": "/user-dashboard",
+      "dest": "/website/user-dashboard.html"
+    },
+    {
+      "src": "/dashboard",
+      "dest": "/website/user-dashboard.html"
+    },
+    {
+      "src": "/library",
+      "dest": "/website/library.html"
+    },
+    {
+      "src": "/profile",
+      "dest": "/website/profile.html"
+    },
+    {
+      "src": "/settings",
+      "dest": "/website/settings.html"
+    },
+    {
+      "src": "/stem-separation",
+      "dest": "/website/stem-separation.html"
+    },
+    {
+      "src": "/help",
+      "dest": "/website/help.html"
+    },
+    {
+      "src": "/support",
+      "dest": "/website/help.html"
+    },
+    {
+      "src": "/privacy",
+      "dest": "/website/privacy.html"
+    },
+    {
+      "src": "/terms",
+      "dest": "/website/terms.html"
+    },
+    {
+      "src": "/app",
+      "dest": "/website/app-super-enhanced.html"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "/website/js/$1"
+    },
+    {
+      "src": "/css/(.*)",
+      "dest": "/website/css/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/website/index.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/website/$1"
     }
-  ]
+  ],
+  "trailingSlash": false,
+  "cleanUrls": true
 }
