@@ -3,35 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MusicGen AI - Create Music with Artificial Intelligence</title>
-    <meta name="description" content="Transform your ideas into professional music with AI. Generate, remix, and create stunning tracks in seconds.">
+    <title>MusicGen AI - The Complete AI Music Creation Platform</title>
+    <meta name="description" content="Create professional music with AI. Features advanced AI generation, audio processing, gamification, and social collaboration. Join 50,000+ creators worldwide.">
     <link rel="icon" type="image/png" href="/favicon.png">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            /* Colors - Dark Theme */
-            --primary: #ffffff;
-            --secondary: #1a1a1a;
-            --accent: #ffffff;
+            /* Modern Color Palette */
+            --primary: #00d4ff;
+            --secondary: #7c3aed;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            
+            /* Dark Theme */
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #2a2a2a;
             --text-primary: #ffffff;
             --text-secondary: #a1a1aa;
             --text-muted: #6b7280;
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #1a1a1a;
-            --bg-glass: rgba(255, 255, 255, 0.05);
-            --bg-glass-strong: rgba(255, 255, 255, 0.1);
-            --border-glass: rgba(255, 255, 255, 0.1);
+            
+            /* Glass Effects */
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-strong: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.2);
             --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.3);
             
-            /* Gradients - Dark Theme */
-            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-accent: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%);
-            --gradient-glass: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, var(--primary), var(--secondary));
+            --gradient-accent: linear-gradient(135deg, var(--accent), #d97706);
+            --gradient-success: linear-gradient(135deg, var(--success), #059669);
             
             /* Spacing */
             --space-xs: 0.25rem;
@@ -41,6 +50,7 @@
             --space-xl: 2rem;
             --space-2xl: 3rem;
             --space-3xl: 4rem;
+            --space-4xl: 6rem;
             
             /* Typography */
             --font-size-xs: 0.75rem;
@@ -54,13 +64,13 @@
             --font-size-5xl: 3rem;
             --font-size-6xl: 3.75rem;
             
-            /* Borders */
-            --border-radius-sm: 0.375rem;
-            --border-radius-md: 0.5rem;
-            --border-radius-lg: 0.75rem;
-            --border-radius-xl: 1rem;
-            --border-radius-2xl: 1.5rem;
-            --border-radius-full: 9999px;
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            --radius-full: 9999px;
         }
         
         * {
@@ -79,23 +89,6 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Glassmorphism utilities */
-        .glass {
-            background: var(--bg-glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-glass);
-            box-shadow: var(--shadow-glass);
-        }
-
-        .glass-strong {
-            background: var(--bg-glass-strong);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid var(--border-glass);
-            box-shadow: var(--shadow-glass);
-        }
-        
         /* Navigation */
         .nav {
             position: fixed;
@@ -108,15 +101,14 @@
         }
 
         .nav.scrolled {
-            background: rgba(10, 10, 10, 0.8);
+            background: rgba(10, 10, 10, 0.95);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid var(--glass-border);
             padding: var(--space-md) 0;
         }
 
         .nav-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 var(--space-xl);
             display: flex;
@@ -127,7 +119,9 @@
         .logo {
             font-size: var(--font-size-xl);
             font-weight: 800;
-            color: var(--text-primary);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             text-decoration: none;
             letter-spacing: -0.025em;
         }
@@ -148,30 +142,22 @@
         }
 
         .nav-link:hover {
-            color: var(--text-primary);
+            color: var(--primary);
         }
 
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--text-primary);
-            transition: width 0.2s ease;
-        }
-
-        .nav-link:hover::after {
-            width: 100%;
+        .nav-link.featured {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
         }
 
         .cta-button {
             padding: var(--space-sm) var(--space-lg);
-            background: var(--bg-primary);
-            color: var(--accent);
-            border: 1px solid var(--border-glass);
-            border-radius: var(--border-radius-full);
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-full);
             font-weight: 600;
             font-size: var(--font-size-sm);
             cursor: pointer;
@@ -184,17 +170,52 @@
 
         .cta-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
-            background: var(--accent);
-            color: var(--bg-primary);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
         }
-        
+
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: var(--font-size-xl);
+            cursor: pointer;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 10, 10, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: var(--space-xl);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        .mobile-menu .nav-link {
+            font-size: var(--font-size-xl);
+            color: var(--text-primary);
+        }
+
         /* Hero Section */
         .hero {
             min-height: 100vh;
             display: flex;
             align-items: center;
-            padding: var(--space-3xl) 0;
+            padding: var(--space-4xl) 0;
             position: relative;
             overflow: hidden;
         }
@@ -206,14 +227,15 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: radial-gradient(circle at 30% 40%, rgba(102, 126, 234, 0.1), transparent),
-                        radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.1), transparent),
-                        radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05), transparent);
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(0, 212, 255, 0.1), transparent),
+                radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.1), transparent),
+                radial-gradient(circle at 40% 40%, rgba(245, 158, 11, 0.05), transparent);
             pointer-events: none;
         }
 
         .hero-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 var(--space-xl);
             text-align: center;
@@ -221,20 +243,32 @@
             z-index: 1;
         }
 
+        .hero-badges {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+            flex-wrap: wrap;
+        }
+
         .hero-badge {
             display: inline-flex;
             align-items: center;
             gap: var(--space-sm);
             padding: var(--space-sm) var(--space-lg);
-            background: var(--bg-glass-strong);
+            background: var(--glass);
             backdrop-filter: blur(20px);
-            border: 1px solid var(--border-glass);
-            border-radius: var(--border-radius-full);
-            font-size: var(--font-size-sm);
-            font-weight: 500;
-            color: var(--text-secondary);
-            margin-bottom: var(--space-xl);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
+
+        .hero-badge.ai { color: var(--primary); border-color: rgba(0, 212, 255, 0.3); }
+        .hero-badge.gamification { color: var(--accent); border-color: rgba(245, 158, 11, 0.3); }
+        .hero-badge.social { color: var(--success); border-color: rgba(16, 185, 129, 0.3); }
 
         .hero-title {
             font-size: clamp(var(--font-size-4xl), 8vw, var(--font-size-6xl));
@@ -244,14 +278,44 @@
             letter-spacing: -0.05em;
         }
 
+        .hero-gradient-text {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
         .hero-subtitle {
             font-size: var(--font-size-xl);
             color: var(--text-secondary);
             margin-bottom: var(--space-2xl);
-            max-width: 600px;
+            max-width: 700px;
             margin-left: auto;
             margin-right: auto;
             font-weight: 300;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-2xl);
+            margin-bottom: var(--space-2xl);
+            flex-wrap: wrap;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-number {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+        }
+
+        .hero-stat-label {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
         }
 
         .hero-actions {
@@ -260,15 +324,15 @@
             justify-content: center;
             align-items: center;
             flex-wrap: wrap;
-            margin-bottom: var(--space-3xl);
+            margin-bottom: var(--space-4xl);
         }
 
         .primary-button {
             padding: var(--space-lg) var(--space-2xl);
-            background: var(--accent);
-            color: var(--bg-primary);
+            background: var(--gradient-primary);
+            color: white;
             border: none;
-            border-radius: var(--border-radius-xl);
+            border-radius: var(--radius-xl);
             font-weight: 600;
             font-size: var(--font-size-lg);
             cursor: pointer;
@@ -281,15 +345,15 @@
 
         .primary-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 20px 40px rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.3);
         }
 
         .secondary-button {
             padding: var(--space-lg) var(--space-2xl);
-            background: transparent;
+            background: var(--glass);
             color: var(--text-primary);
-            border: 2px solid var(--border-glass);
-            border-radius: var(--border-radius-xl);
+            border: 2px solid var(--glass-border);
+            border-radius: var(--radius-xl);
             font-weight: 600;
             font-size: var(--font-size-lg);
             cursor: pointer;
@@ -298,125 +362,315 @@
             display: inline-flex;
             align-items: center;
             gap: var(--space-sm);
+            backdrop-filter: blur(20px);
         }
 
         .secondary-button:hover {
-            background: var(--bg-glass-strong);
-            border-color: var(--accent);
+            background: var(--glass-strong);
+            border-color: var(--primary);
             transform: translateY(-3px);
         }
 
-        /* Demo Section */
-        .demo-preview {
-            max-width: 900px;
+        /* Feature Platforms Section */
+        .platforms {
+            padding: var(--space-4xl) 0;
+            background: var(--bg-secondary);
+        }
+
+        .platforms-container {
+            max-width: 1400px;
             margin: 0 auto;
-            position: relative;
+            padding: 0 var(--space-xl);
         }
 
-        .demo-card {
-            background: var(--bg-glass-strong);
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--space-2xl);
+        }
+
+        .platform-card {
+            background: var(--glass);
             backdrop-filter: blur(30px);
-            border: 1px solid var(--border-glass);
-            border-radius: var(--border-radius-2xl);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
             padding: var(--space-2xl);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .demo-header {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            margin-bottom: var(--space-xl);
+        .platform-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
         }
 
-        .demo-dots {
-            display: flex;
-            gap: var(--space-xs);
-        }
-
-        .demo-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--text-muted);
-        }
-
-        .demo-dot:first-child { background: #ff5f57; }
-        .demo-dot:nth-child(2) { background: #ffbd2e; }
-        .demo-dot:nth-child(3) { background: #28ca42; }
-
-        .demo-content {
-            text-align: left;
-        }
-
-        .demo-prompt {
-            background: var(--bg-secondary);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: var(--border-radius-lg);
-            padding: var(--space-lg);
-            margin-bottom: var(--space-lg);
-            font-family: 'Inter', sans-serif;
-            resize: none;
-            width: 100%;
-            min-height: 80px;
-        }
-
-        .demo-button {
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius-lg);
-            padding: var(--space-lg) var(--space-xl);
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: var(--space-lg);
-        }
-
-        .demo-result {
-            background: var(--bg-secondary);
-            border-radius: var(--border-radius-lg);
-            padding: var(--space-lg);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .demo-track {
+        .platform-header {
             display: flex;
             align-items: center;
             gap: var(--space-lg);
+            margin-bottom: var(--space-lg);
         }
 
-        .demo-artwork {
+        .platform-icon {
             width: 60px;
             height: 60px;
-            background: var(--gradient-primary);
-            border-radius: var(--border-radius-md);
+            border-radius: var(--radius-xl);
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: var(--font-size-2xl);
             color: white;
-            font-size: var(--font-size-xl);
         }
 
-        .demo-info h4 {
-            font-weight: 600;
+        .platform-icon.studio { background: var(--gradient-primary); }
+        .platform-icon.ai { background: var(--gradient-accent); }
+        .platform-icon.audio { background: var(--gradient-success); }
+        .platform-icon.gamification { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
+
+        .platform-title {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
             margin-bottom: var(--space-xs);
         }
 
-        .demo-info p {
+        .platform-subtitle {
             color: var(--text-secondary);
             font-size: var(--font-size-sm);
+        }
+
+        .platform-features {
+            list-style: none;
+            margin-bottom: var(--space-lg);
+        }
+
+        .platform-features li {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-sm);
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        .platform-features i {
+            color: var(--success);
+            width: 16px;
+        }
+
+        .platform-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-lg);
+            background: var(--glass-strong);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .platform-cta:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        /* Features Section */
+        .features {
+            padding: var(--space-4xl) 0;
+        }
+
+        .features-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--space-4xl);
+        }
+
+        .section-badge {
+            display: inline-block;
+            padding: var(--space-sm) var(--space-lg);
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: var(--space-lg);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .section-title {
+            font-size: var(--font-size-4xl);
+            font-weight: 700;
+            margin-bottom: var(--space-lg);
+            letter-spacing: -0.025em;
+        }
+
+        .section-subtitle {
+            font-size: var(--font-size-xl);
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-xl);
+        }
+
+        .feature-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto var(--space-lg);
+            background: var(--gradient-primary);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-3xl);
+            color: white;
+        }
+
+        .feature-title {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            margin-bottom: var(--space-sm);
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Social Proof Section */
+        .social-proof {
+            padding: var(--space-4xl) 0;
+            background: var(--bg-secondary);
+        }
+
+        .social-proof-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl);
+            text-align: center;
+        }
+
+        .social-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-2xl);
+            margin-bottom: var(--space-4xl);
+        }
+
+        .social-stat {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+        }
+
+        .social-stat-number {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+            margin-bottom: var(--space-sm);
+        }
+
+        .social-stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: var(--space-4xl) 0;
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-primary);
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .cta-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-title {
+            font-size: var(--font-size-4xl);
+            font-weight: 700;
+            margin-bottom: var(--space-lg);
+        }
+
+        .cta-subtitle {
+            font-size: var(--font-size-xl);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2xl);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: var(--space-lg);
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         /* Footer */
         .footer {
             background: var(--bg-primary);
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-            padding: var(--space-3xl) 0 var(--space-xl);
+            border-top: 1px solid var(--glass-border);
+            padding: var(--space-4xl) 0 var(--space-xl);
         }
 
         .footer-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 var(--space-xl);
         }
@@ -429,24 +683,28 @@
         }
 
         .footer-brand {
-            max-width: 300px;
+            max-width: 350px;
         }
 
         .footer-logo {
             font-size: var(--font-size-xl);
             font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: var(--space-lg);
-            color: var(--text-primary);
         }
 
         .footer-description {
             color: var(--text-secondary);
             margin-bottom: var(--space-lg);
+            line-height: 1.6;
         }
 
         .footer-section h4 {
             font-weight: 600;
             margin-bottom: var(--space-lg);
+            color: var(--text-primary);
         }
 
         .footer-links {
@@ -461,111 +719,55 @@
             color: var(--text-secondary);
             text-decoration: none;
             transition: color 0.2s ease;
+            font-size: var(--font-size-sm);
         }
 
         .footer-links a:hover {
-            color: var(--text-primary);
+            color: var(--primary);
         }
 
         .footer-bottom {
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            border-top: 1px solid var(--glass-border);
             padding-top: var(--space-xl);
-            text-align: center;
-            color: var(--text-secondary);
-        }
-        
-        /* Features Section */
-        .features {
-            padding: var(--space-3xl) 0;
-            background: var(--bg-secondary);
-        }
-
-        .features-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 var(--space-xl);
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: var(--space-3xl);
-        }
-
-        .section-badge {
-            display: inline-block;
-            padding: var(--space-sm) var(--space-lg);
-            background: var(--bg-glass-strong);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-glass);
-            border-radius: var(--border-radius-full);
-            font-size: var(--font-size-sm);
-            font-weight: 500;
-            color: var(--text-secondary);
-            margin-bottom: var(--space-lg);
-        }
-
-        .section-title {
-            font-size: var(--font-size-4xl);
-            font-weight: 700;
-            margin-bottom: var(--space-lg);
-            letter-spacing: -0.025em;
-        }
-
-        .section-subtitle {
-            font-size: var(--font-size-xl);
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--space-xl);
-        }
-
-        .feature-card {
-            background: var(--bg-primary);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: var(--border-radius-2xl);
-            padding: var(--space-2xl);
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--gradient-primary);
-            border-radius: var(--border-radius-xl);
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            margin-bottom: var(--space-lg);
-            font-size: var(--font-size-2xl);
-            color: white;
+            flex-wrap: wrap;
+            gap: var(--space-lg);
         }
 
-        .feature-title {
-            font-size: var(--font-size-xl);
-            font-weight: 600;
-            margin-bottom: var(--space-sm);
-        }
-
-        .feature-description {
+        .footer-copyright {
             color: var(--text-secondary);
-            line-height: 1.6;
+            font-size: var(--font-size-sm);
         }
-        
-        
-        /* Responsive */
+
+        .footer-social {
+            display: flex;
+            gap: var(--space-lg);
+        }
+
+        .footer-social a {
+            color: var(--text-secondary);
+            font-size: var(--font-size-lg);
+            transition: color 0.2s ease;
+        }
+
+        .footer-social a:hover {
+            color: var(--primary);
+        }
+
+        /* Responsive Design */
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .hero-title {
+                font-size: var(--font-size-4xl);
             }
 
             .hero-actions {
@@ -573,21 +775,46 @@
                 align-items: stretch;
             }
 
-            .primary-button,
-            .secondary-button {
-                justify-content: center;
-            }
-
-            .demo-card {
-                padding: var(--space-lg);
+            .platforms-grid {
+                grid-template-columns: 1fr;
             }
 
             .features-grid {
                 grid-template-columns: 1fr;
             }
+
+            .social-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
         }
 
-        /* Custom scrollbar */
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -598,11 +825,11 @@
 
         ::-webkit-scrollbar-thumb {
             background: var(--text-muted);
-            border-radius: var(--border-radius-full);
+            border-radius: var(--radius-full);
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-secondary);
+            background: var(--primary);
         }
     </style>
 </head>
@@ -612,91 +839,201 @@
         <div class="nav-container">
             <a href="/" class="logo">MusicGen AI</a>
             <div class="nav-links">
-                <a href="#features" class="nav-link">Features</a>
-                <a href="pricing.html" class="nav-link">Pricing</a>
-                <a href="about.html" class="nav-link">About</a>
-                <a href="help.html" class="nav-link">Help</a>
-                <a href="app-enhanced.html" class="cta-button">
+                <a href="/app" class="nav-link">Studio</a>
+                <a href="/ai-studio" class="nav-link featured">AI Studio</a>
+                <a href="/audio-editor" class="nav-link">Audio Editor</a>
+                <a href="/gamification" class="nav-link">Gamification</a>
+                <a href="/pricing" class="nav-link">Pricing</a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/app" class="cta-button">
+                    <i class="fas fa-play"></i>
                     Start Creating
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
                 </a>
             </div>
+            <button class="mobile-menu-toggle" id="mobile-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
     </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <a href="/app" class="nav-link">Studio</a>
+        <a href="/ai-studio" class="nav-link">AI Studio</a>
+        <a href="/audio-editor" class="nav-link">Audio Editor</a>
+        <a href="/gamification" class="nav-link">Gamification</a>
+        <a href="/pricing" class="nav-link">Pricing</a>
+        <a href="/about" class="nav-link">About</a>
+        <a href="/app" class="cta-button">Start Creating</a>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-container">
-            <div class="hero-badge">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>
-                </svg>
-                Powered by Advanced AI
+            <div class="hero-badges fade-in-up">
+                <div class="hero-badge ai">
+                    <i class="fas fa-robot"></i>
+                    Advanced AI
+                </div>
+                <div class="hero-badge gamification">
+                    <i class="fas fa-trophy"></i>
+                    Gamification
+                </div>
+                <div class="hero-badge social">
+                    <i class="fas fa-users"></i>
+                    Social Platform
+                </div>
             </div>
             
-            <h1 class="hero-title">
-                Create Music with<br>
-                <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Artificial Intelligence</span>
+            <h1 class="hero-title fade-in-up delay-1">
+                The Complete <span class="hero-gradient-text">AI Music Platform</span><br>
+                for Modern Creators
             </h1>
             
-            <p class="hero-subtitle">
-                Transform your ideas into professional music tracks in seconds. No instruments, no experience needed—just your imagination.
+            <p class="hero-subtitle fade-in-up delay-2">
+                Create professional music with advanced AI, master your tracks with professional tools, 
+                compete in challenges, and collaborate with a global community of creators.
             </p>
-            
-            <div class="hero-actions">
-                <a href="app-enhanced.html" class="primary-button">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polygon points="5,3 19,12 5,21"/>
-                    </svg>
-                    Start Creating Free
-                </a>
-                <a href="#demo" class="secondary-button">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"/>
-                        <polygon points="10,8 16,12 10,16"/>
-                    </svg>
-                    Watch Demo
-                </a>
+
+            <div class="hero-stats fade-in-up delay-3">
+                <div class="hero-stat">
+                    <span class="hero-stat-number">50K+</span>
+                    <span class="hero-stat-label">Active Creators</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number">2M+</span>
+                    <span class="hero-stat-label">Tracks Generated</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number">95%</span>
+                    <span class="hero-stat-label">User Satisfaction</span>
+                </div>
             </div>
             
-            <!-- Demo Preview -->
-            <div class="demo-preview" id="demo">
-                <div class="demo-card">
-                    <div class="demo-header">
-                        <div class="demo-dots">
-                            <div class="demo-dot"></div>
-                            <div class="demo-dot"></div>
-                            <div class="demo-dot"></div>
+            <div class="hero-actions fade-in-up delay-4">
+                <a href="/app" class="primary-button">
+                    <i class="fas fa-rocket"></i>
+                    Start Creating Free
+                </a>
+                <a href="/ai-studio" class="secondary-button">
+                    <i class="fas fa-magic"></i>
+                    Explore AI Studio
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature Platforms Section -->
+    <section class="platforms">
+        <div class="platforms-container">
+            <div class="section-header">
+                <div class="section-badge">Complete Platform</div>
+                <h2 class="section-title">Four Powerful Tools, One Platform</h2>
+                <p class="section-subtitle">
+                    Everything you need for professional music creation, collaboration, and growth
+                </p>
+            </div>
+            
+            <div class="platforms-grid">
+                <div class="platform-card">
+                    <div class="platform-header">
+                        <div class="platform-icon studio">
+                            <i class="fas fa-music"></i>
+                        </div>
+                        <div>
+                            <h3 class="platform-title">Music Studio</h3>
+                            <p class="platform-subtitle">Core music generation</p>
                         </div>
                     </div>
-                    <div class="demo-content">
-                        <textarea class="demo-prompt" placeholder="Describe your music..." readonly>Upbeat electronic dance music with Arabic vibes and heavy bass</textarea>
-                        <button class="demo-button">Generate Music ✨</button>
-                        <div class="demo-result">
-                            <div class="demo-track">
-                                <div class="demo-artwork">🎵</div>
-                                <div class="demo-info">
-                                    <h4>Desert Echoes</h4>
-                                    <p>Electronic • 2:11 • Arabic vibes</p>
-                                </div>
-                            </div>
+                    <ul class="platform-features">
+                        <li><i class="fas fa-check"></i> AI music generation from text</li>
+                        <li><i class="fas fa-check"></i> Multiple genres and styles</li>
+                        <li><i class="fas fa-check"></i> Real-time preview and editing</li>
+                        <li><i class="fas fa-check"></i> High-quality audio export</li>
+                        <li><i class="fas fa-check"></i> Cloud sync and library</li>
+                    </ul>
+                    <a href="/app" class="platform-cta">
+                        Open Studio <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="platform-card">
+                    <div class="platform-header">
+                        <div class="platform-icon ai">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div>
+                            <h3 class="platform-title">AI Studio</h3>
+                            <p class="platform-subtitle">Advanced AI features</p>
                         </div>
                     </div>
+                    <ul class="platform-features">
+                        <li><i class="fas fa-check"></i> Voice-to-music generation</li>
+                        <li><i class="fas fa-check"></i> Music style transfer</li>
+                        <li><i class="fas fa-check"></i> AI auto-mastering</li>
+                        <li><i class="fas fa-check"></i> Lyrics generation + music</li>
+                        <li><i class="fas fa-check"></i> Music analysis & insights</li>
+                    </ul>
+                    <a href="/ai-studio" class="platform-cta">
+                        Open AI Studio <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="platform-card">
+                    <div class="platform-header">
+                        <div class="platform-icon audio">
+                            <i class="fas fa-waveform-lines"></i>
+                        </div>
+                        <div>
+                            <h3 class="platform-title">Audio Editor</h3>
+                            <p class="platform-subtitle">Professional audio tools</p>
+                        </div>
+                    </div>
+                    <ul class="platform-features">
+                        <li><i class="fas fa-check"></i> Real-time audio editing</li>
+                        <li><i class="fas fa-check"></i> Stem separation & isolation</li>
+                        <li><i class="fas fa-check"></i> Waveform visualization</li>
+                        <li><i class="fas fa-check"></i> Professional effects suite</li>
+                        <li><i class="fas fa-check"></i> Multi-format export</li>
+                    </ul>
+                    <a href="/audio-editor" class="platform-cta">
+                        Open Editor <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="platform-card">
+                    <div class="platform-header">
+                        <div class="platform-icon gamification">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <div>
+                            <h3 class="platform-title">Gamification Hub</h3>
+                            <p class="platform-subtitle">Compete & grow</p>
+                        </div>
+                    </div>
+                    <ul class="platform-features">
+                        <li><i class="fas fa-check"></i> 35+ achievements to unlock</li>
+                        <li><i class="fas fa-check"></i> Daily & weekly challenges</li>
+                        <li><i class="fas fa-check"></i> Global leaderboards</li>
+                        <li><i class="fas fa-check"></i> Streak tracking & rewards</li>
+                        <li><i class="fas fa-check"></i> Social sharing & collaboration</li>
+                    </ul>
+                    <a href="/gamification" class="platform-cta">
+                        View Hub <i class="fas fa-arrow-right"></i>
+                    </a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Features Section -->
-    <section class="features" id="features">
+    <section class="features">
         <div class="features-container">
             <div class="section-header">
-                <div class="section-badge">Features</div>
-                <h2 class="section-title">Everything you need to create</h2>
+                <div class="section-badge">Why Choose Us</div>
+                <h2 class="section-title">Industry-Leading Capabilities</h2>
                 <p class="section-subtitle">
-                    Professional-grade music creation tools powered by cutting-edge artificial intelligence
+                    Powered by cutting-edge AI technology and designed for creators of all levels
                 </p>
             </div>
             
@@ -705,23 +1042,39 @@
                     <div class="feature-icon">🎵</div>
                     <h3 class="feature-title">AI Music Generation</h3>
                     <p class="feature-description">
-                        Generate professional music tracks from simple text descriptions. Our AI understands genres, moods, and musical styles.
+                        State-of-the-art AI models create professional-quality music from simple text descriptions. Generate in any genre or style instantly.
                     </p>
                 </div>
                 
                 <div class="feature-card">
-                    <div class="feature-icon">🎨</div>
-                    <h3 class="feature-title">Smart Remixing</h3>
+                    <div class="feature-icon">🧠</div>
+                    <h3 class="feature-title">Advanced AI Features</h3>
                     <p class="feature-description">
-                        Transform existing tracks with AI-powered remixing. Create variations, extend compositions, and explore new styles.
+                        Voice-to-music conversion, style transfer, auto-mastering, and lyrics generation powered by cutting-edge artificial intelligence.
                     </p>
                 </div>
                 
                 <div class="feature-card">
-                    <div class="feature-icon">🎧</div>
-                    <h3 class="feature-title">Professional Quality</h3>
+                    <div class="feature-icon">🎚️</div>
+                    <h3 class="feature-title">Professional Tools</h3>
                     <p class="feature-description">
-                        High-quality audio output ready for streaming, podcasts, videos, and commercial use. No amateur sound here.
+                        Real-time audio editing, stem separation, waveform visualization, and professional effects suite for broadcast-quality results.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h3 class="feature-title">Gamified Experience</h3>
+                    <p class="feature-description">
+                        35+ achievements, daily challenges, leaderboards, and reward systems that make music creation engaging and motivating.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3 class="feature-title">Global Community</h3>
+                    <p class="feature-description">
+                        Connect with creators worldwide, share your music, collaborate on projects, and discover amazing tracks from the community.
                     </p>
                 </div>
                 
@@ -729,29 +1082,65 @@
                     <div class="feature-icon">⚡</div>
                     <h3 class="feature-title">Lightning Fast</h3>
                     <p class="feature-description">
-                        Generate complete tracks in under 60 seconds. From idea to finished song faster than ever before.
-                    </p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">🎪</div>
-                    <h3 class="feature-title">Multiple Genres</h3>
-                    <p class="feature-description">
-                        Create music in any genre—electronic, hip-hop, classical, jazz, rock, ambient, and everything in between.
-                    </p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">💎</div>
-                    <h3 class="feature-title">Commercial License</h3>
-                    <p class="feature-description">
-                        Full commercial rights to your generated music. Use in videos, streams, podcasts, and sell your creations.
+                        Generate complete tracks in under 60 seconds. From concept to finished song faster than any other platform available.
                     </p>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Social Proof Section -->
+    <section class="social-proof">
+        <div class="social-proof-container">
+            <div class="section-header">
+                <div class="section-badge">Trusted Globally</div>
+                <h2 class="section-title">Join the Music Revolution</h2>
+                <p class="section-subtitle">
+                    Creators worldwide are using MusicGen AI to bring their musical visions to life
+                </p>
+            </div>
+            
+            <div class="social-stats">
+                <div class="social-stat">
+                    <span class="social-stat-number">50,000+</span>
+                    <span class="social-stat-label">Active Creators</span>
+                </div>
+                <div class="social-stat">
+                    <span class="social-stat-number">2.1M+</span>
+                    <span class="social-stat-label">Tracks Generated</span>
+                </div>
+                <div class="social-stat">
+                    <span class="social-stat-number">180+</span>
+                    <span class="social-stat-label">Countries</span>
+                </div>
+                <div class="social-stat">
+                    <span class="social-stat-number">98%</span>
+                    <span class="social-stat-label">Uptime</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-container">
+            <h2 class="cta-title">Ready to Create Amazing Music?</h2>
+            <p class="cta-subtitle">
+                Join thousands of creators using AI to bring their musical ideas to life. 
+                Start with our free tier and upgrade as you grow.
+            </p>
+            <div class="cta-buttons">
+                <a href="/app" class="primary-button">
+                    <i class="fas fa-rocket"></i>
+                    Start Creating Free
+                </a>
+                <a href="/pricing" class="secondary-button">
+                    <i class="fas fa-tag"></i>
+                    View Pricing
+                </a>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer class="footer">
@@ -760,43 +1149,54 @@
                 <div class="footer-brand">
                     <div class="footer-logo">MusicGen AI</div>
                     <p class="footer-description">
-                        Create professional music with artificial intelligence. Transform your ideas into reality.
+                        The complete AI music platform for modern creators. Generate, edit, compete, and collaborate with advanced AI tools and a global community.
                     </p>
                 </div>
                 
                 <div class="footer-section">
-                    <h4>Product</h4>
+                    <h4>Platform</h4>
                     <ul class="footer-links">
-                        <li><a href="app-enhanced.html">Create Music</a></li>
-                        <li><a href="pricing.html">Pricing</a></li>
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="/app">Music Studio</a></li>
+                        <li><a href="/ai-studio">AI Studio</a></li>
+                        <li><a href="/audio-editor">Audio Editor</a></li>
+                        <li><a href="/gamification">Gamification Hub</a></li>
+                        <li><a href="/pricing">Pricing</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Features</h4>
+                    <ul class="footer-links">
+                        <li><a href="/app">AI Music Generation</a></li>
+                        <li><a href="/ai-studio">Voice to Music</a></li>
+                        <li><a href="/audio-editor">Stem Separation</a></li>
+                        <li><a href="/gamification">Achievements</a></li>
+                        <li><a href="/app">Collaboration</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-section">
                     <h4>Resources</h4>
                     <ul class="footer-links">
-                        <li><a href="help.html">Help Center</a></li>
-                        <li><a href="library.html">Music Library</a></li>
-                        <li><a href="settings.html">Settings</a></li>
-                        <li><a href="help.html">Support</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Company</h4>
-                    <ul class="footer-links">
-                        <li><a href="about.html">About</a></li>
-                        <li><a href="help.html">Contact</a></li>
-                        <li><a href="privacy.html">Privacy</a></li>
-                        <li><a href="terms.html">Terms</a></li>
+                        <li><a href="/help">Help Center</a></li>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/support">Support</a></li>
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                        <li><a href="/terms">Terms of Service</a></li>
                     </ul>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2024 MusicGen AI. All rights reserved.</p>
+                <div class="footer-copyright">
+                    &copy; 2024 MusicGen AI. All rights reserved.
+                </div>
+                <div class="footer-social">
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                </div>
             </div>
         </div>
     </footer>
@@ -810,6 +1210,27 @@
             } else {
                 navbar.classList.remove('scrolled');
             }
+        });
+
+        // Mobile menu toggle
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            const icon = mobileToggle.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.mobile-menu .nav-link, .mobile-menu .cta-button').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                const icon = mobileToggle.querySelector('i');
+                icon.classList.add('fa-bars');
+                icon.classList.remove('fa-times');
+            });
         });
 
         // Smooth scrolling for anchor links
@@ -826,20 +1247,85 @@
             });
         });
 
-        // Demo interaction
-        const demoButton = document.querySelector('.demo-button');
-        const demoResult = document.querySelector('.demo-result');
-        
-        demoButton.addEventListener('click', () => {
-            demoButton.textContent = 'Generating...';
-            demoButton.disabled = true;
-            
-            setTimeout(() => {
-                demoResult.style.opacity = '1';
-                demoButton.textContent = 'Generate Music ✨';
-                demoButton.disabled = false;
-            }, 2000);
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('.platform-card, .feature-card, .social-stat').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
         });
+
+        // Counter animation for stats
+        function animateCounter(element, target, duration) {
+            let start = 0;
+            const increment = target / (duration / 16);
+            
+            function update() {
+                start += increment;
+                if (start < target) {
+                    element.textContent = Math.floor(start).toLocaleString();
+                    requestAnimationFrame(update);
+                } else {
+                    element.textContent = target.toLocaleString();
+                }
+            }
+            
+            update();
+        }
+
+        // Animate counters when they come into view
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const number = entry.target.querySelector('.hero-stat-number, .social-stat-number');
+                    if (number && !number.dataset.animated) {
+                        number.dataset.animated = 'true';
+                        const text = number.textContent;
+                        const value = parseInt(text.replace(/\D/g, ''));
+                        if (value) {
+                            animateCounter(number, value, 2000);
+                        }
+                    }
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.hero-stat, .social-stat').forEach(stat => {
+            statObserver.observe(stat);
+        });
+
+        // Performance optimization: Lazy load images when needed
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.classList.remove('lazy');
+                        imageObserver.unobserve(img);
+                    }
+                });
+            });
+
+            document.querySelectorAll('img[data-src]').forEach(img => {
+                imageObserver.observe(img);
+            });
+        }
     </script>
 </body>
 </html>
