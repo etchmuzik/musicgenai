@@ -92,6 +92,14 @@
       "dest": "/website/ai-studio.html"
     },
     {
+      "src": "/gamification",
+      "dest": "/website/gamification.html"
+    },
+    {
+      "src": "/rewards",
+      "dest": "/website/gamification.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/website/$1"
     },
