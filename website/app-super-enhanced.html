@@ -84,6 +84,38 @@
             color: var(--primary);
         }
 
+        .user-menu {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            cursor: pointer;
+        }
+
+        .credits-badge {
+            background: var(--gradient);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .auth-required {
+            display: none;
+        }
+
+        .auth-required.show {
+            display: block;
+        }
+
         /* Main Layout */
         .main-container {
             max-width: 1600px;
@@ -583,10 +615,23 @@
             <a href="index.html" class="logo">MusicGen AI Pro</a>
             <div class="nav-links">
                 <a href="index.html">Home</a>
+                <a href="library.html" class="auth-required">Library</a>
+                <a href="profile.html" class="auth-required">Profile</a>
                 <a href="pricing.html">Pricing</a>
                 <a href="about.html">About</a>
                 <a href="help.html">Help</a>
-                <a href="dashboard.html">Dashboard</a>
+                
+                <!-- User Menu (Authenticated) -->
+                <div class="user-menu auth-required">
+                    <div class="credits-badge">
+                        <i class="fas fa-coins"></i>
+                        <span id="userCredits">10</span>
+                    </div>
+                    <img src="" alt="User" class="user-avatar" data-user="photo">
+                </div>
+                
+                <!-- Sign In Button (Not Authenticated) -->
+                <a href="auth.html" class="auth-required" data-auth="false" style="display: block;">Sign In</a>
             </div>
         </nav>
     </header>
@@ -1373,6 +1418,212 @@ Nothing's quite the way it seems..."></textarea>
                 playlists = JSON.parse(saved);
             }
         }
+
+        // Authentication integration
+        let currentUser = null;
+        let userCredits = 10;
+
+        // Import Firebase Auth after DOM loaded
+        async function initAuth() {
+            try {
+                const { authManager } = await import('./js/firebase-config.js');
+                
+                authManager.onAuthStateChange(async (user) => {
+                    currentUser = user;
+                    
+                    if (user) {
+                        // User is signed in
+                        document.querySelectorAll('.auth-required').forEach(el => {
+                            if (el.dataset.auth === 'false') {
+                                el.style.display = 'none';
+                            } else {
+                                el.classList.add('show');
+                                el.style.display = 'block';
+                            }
+                        });
+                        
+                        // Load user data and update UI
+                        const userData = await authManager.getUserData();
+                        if (userData) {
+                            userCredits = userData.credits || 0;
+                            document.getElementById('userCredits').textContent = userCredits;
+                            
+                            // Update user avatar
+                            const avatarEl = document.querySelector('[data-user="photo"]');
+                            if (user.photoURL) {
+                                avatarEl.src = user.photoURL;
+                            } else {
+                                avatarEl.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || 'User')}&background=00d4ff&color=fff`;
+                            }
+                        }
+                        
+                        // Load user's cloud tracks
+                        loadCloudTracks();
+                        
+                    } else {
+                        // User is not signed in
+                        document.querySelectorAll('.auth-required').forEach(el => {
+                            if (el.dataset.auth === 'false') {
+                                el.style.display = 'block';
+                            } else {
+                                el.classList.remove('show');
+                                el.style.display = 'none';
+                            }
+                        });
+                    }
+                });
+                
+                // Listen for track updates from Firebase
+                window.addEventListener('tracksUpdated', (event) => {
+                    const cloudTracks = event.detail;
+                    tracks = [...cloudTracks, ...tracks];
+                    displayTracks(tracks.slice(-10).reverse());
+                    populateRemixSelects();
+                });
+                
+            } catch (error) {
+                console.error('Failed to initialize authentication:', error);
+            }
+        }
+
+        // Enhanced track saving with cloud sync
+        async function saveTrackToCloud(track) {
+            if (!currentUser) return;
+            
+            try {
+                const { db } = await import('./js/firebase-config.js');
+                const { collection, addDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                
+                await addDoc(collection(db, 'users', currentUser.uid, 'tracks'), {
+                    ...track,
+                    userId: currentUser.uid,
+                    createdAt: new Date().toISOString(),
+                    syncedAt: new Date().toISOString()
+                });
+                
+                // Update user stats
+                await updateUserStats('generation');
+                
+            } catch (error) {
+                console.error('Failed to save track to cloud:', error);
+            }
+        }
+
+        // Load user's cloud tracks
+        async function loadCloudTracks() {
+            if (!currentUser) return;
+            
+            try {
+                const { db } = await import('./js/firebase-config.js');
+                const { collection, query, orderBy, limit, getDocs } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                
+                const tracksQuery = query(
+                    collection(db, 'users', currentUser.uid, 'tracks'),
+                    orderBy('createdAt', 'desc'),
+                    limit(20)
+                );
+                
+                const querySnapshot = await getDocs(tracksQuery);
+                const cloudTracks = querySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                
+                // Merge with local tracks
+                tracks = [...cloudTracks, ...tracks];
+                displayTracks(tracks.slice(-10).reverse());
+                populateRemixSelects();
+                
+            } catch (error) {
+                console.error('Failed to load cloud tracks:', error);
+            }
+        }
+
+        // Update user statistics
+        async function updateUserStats(action) {
+            if (!currentUser) return;
+            
+            try {
+                const { authManager } = await import('./js/firebase-config.js');
+                const userData = await authManager.getUserData();
+                
+                if (userData) {
+                    const updates = {
+                        stats: {
+                            ...userData.stats,
+                            totalGenerations: (userData.stats?.totalGenerations || 0) + 1,
+                            lastGeneration: new Date().toISOString()
+                        }
+                    };
+                    
+                    if (action === 'generation') {
+                        updates.generationCount = (userData.generationCount || 0) + 1;
+                        updates.credits = Math.max(0, (userData.credits || 0) - 1);
+                        userCredits = updates.credits;
+                        document.getElementById('userCredits').textContent = userCredits;
+                    }
+                    
+                    await authManager.updateUserProfile(updates);
+                }
+            } catch (error) {
+                console.error('Failed to update user stats:', error);
+            }
+        }
+
+        // Check credits before generation
+        function canGenerate() {
+            if (!currentUser) {
+                // Allow limited generations for non-authenticated users
+                const localGenerations = parseInt(localStorage.getItem('localGenerations') || '0');
+                if (localGenerations >= 3) {
+                    showAuthPrompt();
+                    return false;
+                }
+                localStorage.setItem('localGenerations', (localGenerations + 1).toString());
+                return true;
+            }
+            
+            if (userCredits <= 0) {
+                showUpgradePrompt();
+                return false;
+            }
+            
+            return true;
+        }
+
+        function showAuthPrompt() {
+            if (confirm('You\'ve reached the limit for anonymous users. Sign up for free to get 10 credits and save your music!')) {
+                window.location.href = 'auth.html';
+            }
+        }
+
+        function showUpgradePrompt() {
+            if (confirm('You\'ve run out of credits! Upgrade to Pro for unlimited generations.')) {
+                window.location.href = 'pricing.html';
+            }
+        }
+
+        // Enhanced generateMusic function with authentication
+        const originalGenerateMusic = generateMusic;
+        generateMusic = async function() {
+            if (!canGenerate()) return;
+            
+            // Call original function
+            const result = await originalGenerateMusic();
+            
+            // If generation was successful and user is authenticated, save to cloud
+            if (result && currentUser) {
+                const latestTrack = tracks[tracks.length - 1];
+                if (latestTrack) {
+                    await saveTrackToCloud(latestTrack);
+                }
+            }
+            
+            return result;
+        };
+
+        // Initialize authentication when page loads
+        document.addEventListener('DOMContentLoaded', initAuth);
     </script>
 </body>
 </html>

@@ -52,6 +52,26 @@
       "dest": "/website/settings.html"
     },
     {
+      "src": "/auth",
+      "dest": "/website/auth.html"
+    },
+    {
+      "src": "/signin",
+      "dest": "/website/auth.html"
+    },
+    {
+      "src": "/signup",
+      "dest": "/website/auth.html"
+    },
+    {
+      "src": "/profile",
+      "dest": "/website/profile.html"
+    },
+    {
+      "src": "/recommendations",
+      "dest": "/website/recommendations.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/website/$1"
     },
