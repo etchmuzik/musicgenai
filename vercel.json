@@ -1,0 +1,65 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "website/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/lander",
+      "dest": "/website/index.html"
+    },
+    {
+      "src": "/app",
+      "dest": "/website/app-enhanced.html"
+    },
+    {
+      "src": "/privacy",
+      "dest": "/website/privacy.html"
+    },
+    {
+      "src": "/terms",
+      "dest": "/website/terms.html"
+    },
+    {
+      "src": "/support",
+      "dest": "/website/help.html"
+    },
+    {
+      "src": "/pricing",
+      "dest": "/website/pricing.html"
+    },
+    {
+      "src": "/about",
+      "dest": "/website/about.html"
+    },
+    {
+      "src": "/help",
+      "dest": "/website/help.html"
+    },
+    {
+      "src": "/dashboard",
+      "dest": "/website/dashboard.html"
+    },
+    {
+      "src": "/library",
+      "dest": "/website/library.html"
+    },
+    {
+      "src": "/settings",
+      "dest": "/website/settings.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/website/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/website/index.html"
+    }
+  ],
+  "trailingSlash": false,
+  "cleanUrls": true
+}
