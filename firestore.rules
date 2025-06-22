@@ -1,0 +1,55 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can only access their own user document
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // User tracks subcollection
+      match /tracks/{trackId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow create: if request.auth != null 
+          && request.auth.uid == userId 
+          && request.resource.data.userId == userId
+          && request.resource.data.createdAt is timestamp;
+      }
+      
+      // User playlists subcollection
+      match /playlists/{playlistId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow create: if request.auth != null 
+          && request.auth.uid == userId 
+          && request.resource.data.userId == userId
+          && request.resource.data.createdAt is timestamp;
+      }
+      
+      // User activity subcollection (for analytics)
+      match /activity/{activityId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow create: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+    
+    // Public tracks (for sharing)
+    match /public_tracks/{trackId} {
+      allow read: if true; // Anyone can read public tracks
+      allow write: if request.auth != null 
+        && request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null 
+        && request.auth.uid == request.resource.data.userId;
+    }
+    
+    // Admin only collections
+    match /admin/{document=**} {
+      allow read, write: if request.auth != null 
+        && request.auth.token.admin == true;
+    }
+    
+    // Analytics (admin read, user create)
+    match /analytics/{document=**} {
+      allow read: if request.auth != null 
+        && request.auth.token.admin == true;
+      allow create: if request.auth != null;
+    }
+  }
+}

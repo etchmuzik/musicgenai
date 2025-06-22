@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamification Hub - MusicGen AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --secondary: #7c3aed;
+            --accent: #f59e0b;
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1a1;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        /* Main Layout */
+        .main-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 6rem 2rem 2rem;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* User Profile Card */
+        .user-profile {
+            background: linear-gradient(135deg, var(--glass), rgba(124, 58, 237, 0.1));
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            backdrop-filter: blur(20px);
+        }
+
+        .user-profile-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .user-info h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-level {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Achievements Section */
+        .achievements-section {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-icon {
+            font-size: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .achievement-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
+        .achievement-card.unlocked {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
+            border-color: var(--success);
+        }
+
+        .achievement-card.locked {
+            opacity: 0.6;
+        }
+
+        .achievement-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .achievement-icon {
+            font-size: 2rem;
+        }
+
+        .achievement-rarity {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .achievement-rarity.common { background: rgba(156, 163, 175, 0.2); }
+        .achievement-rarity.uncommon { background: rgba(34, 197, 94, 0.2); }
+        .achievement-rarity.rare { background: rgba(59, 130, 246, 0.2); }
+        .achievement-rarity.epic { background: rgba(147, 51, 234, 0.2); }
+        .achievement-rarity.legendary { background: rgba(245, 158, 11, 0.2); }
+
+        .achievement-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .achievement-points {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Challenges Section */
+        .challenges-section {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .challenge-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .challenge-tab {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .challenge-tab.active {
+            background: var(--primary);
+            color: var(--bg-primary);
+        }
+
+        .challenge-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .challenge-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .challenge-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .challenge-badge {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+
+        .challenge-info {
+            flex: 1;
+        }
+
+        .challenge-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .challenge-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .challenge-reward {
+            text-align: right;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .challenge-progress {
+            margin-top: 1rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Leaderboards */
+        .leaderboards-section {
+            grid-column: 1 / -1;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .leaderboard-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .leaderboard-tab {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .leaderboard-tab.active {
+            background: var(--primary);
+            color: var(--bg-primary);
+        }
+
+        .leaderboard-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .leaderboard-item.current-user {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(124, 58, 237, 0.1));
+            border-color: var(--primary);
+        }
+
+        .leaderboard-rank {
+            font-size: 1.2rem;
+            font-weight: 700;
+            min-width: 3rem;
+            text-align: center;
+        }
+
+        .leaderboard-rank.top3 {
+            color: var(--accent);
+        }
+
+        .leaderboard-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .leaderboard-info {
+            flex: 1;
+        }
+
+        .leaderboard-name {
+            font-weight: 600;
+        }
+
+        .leaderboard-value {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .leaderboard-score {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Achievement Notification */
+        .achievement-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            min-width: 400px;
+            transition: transform 0.3s ease;
+        }
+
+        .achievement-notification.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .achievement-notification .achievement-icon {
+            font-size: 3rem;
+        }
+
+        .achievement-notification .achievement-content {
+            flex: 1;
+        }
+
+        .achievement-notification .achievement-title {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-notification .achievement-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-notification .achievement-description {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-notification .achievement-points {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .achievements-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .user-profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .challenge-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .challenge-reward {
+                text-align: left;
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <a href="/" class="logo">MusicGen AI</a>
+            <div class="nav-links">
+                <a href="/app">Studio</a>
+                <a href="/ai-studio">AI Studio</a>
+                <a href="/gamification" class="active">Gamification</a>
+                <a href="/library">Library</a>
+                <a href="/profile">Profile</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">🎮 Gamification Hub</h1>
+            <p class="page-subtitle">Level up your music creation journey with achievements, challenges, and leaderboards</p>
+        </div>
+
+        <!-- User Profile -->
+        <div class="user-profile">
+            <div class="user-profile-header">
+                <div class="user-avatar">U</div>
+                <div class="user-info">
+                    <h2 id="user-name">Music Creator</h2>
+                    <div class="user-level">Level <span id="user-level">1</span> • <span id="user-points">0</span> points</div>
+                </div>
+            </div>
+            
+            <div class="stats-grid" id="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-value" id="tracks-created">0</span>
+                    <span class="stat-label">Tracks Created</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="current-streak">0</span>
+                    <span class="stat-label">Current Streak</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="achievements-count">0</span>
+                    <span class="stat-label">Achievements</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="challenges-completed">0</span>
+                    <span class="stat-label">Challenges</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Achievements Section -->
+            <div class="achievements-section">
+                <div class="section-header">
+                    <i class="fas fa-trophy section-icon"></i>
+                    <h2 class="section-title">Achievements</h2>
+                </div>
+                <div class="achievements-grid" id="achievements-grid">
+                    <!-- Achievements will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Challenges Section -->
+            <div class="challenges-section">
+                <div class="section-header">
+                    <i class="fas fa-target section-icon"></i>
+                    <h2 class="section-title">Challenges</h2>
+                </div>
+                
+                <div class="challenge-tabs">
+                    <div class="challenge-tab active" data-tab="daily">Daily</div>
+                    <div class="challenge-tab" data-tab="weekly">Weekly</div>
+                    <div class="challenge-tab" data-tab="special">Special</div>
+                </div>
+
+                <div class="challenge-list" id="challenge-list">
+                    <!-- Challenges will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboards -->
+        <div class="leaderboards-section">
+            <div class="section-header">
+                <i class="fas fa-crown section-icon"></i>
+                <h2 class="section-title">Leaderboards</h2>
+            </div>
+            
+            <div class="leaderboard-tabs">
+                <div class="leaderboard-tab active" data-leaderboard="total_points">Total Points</div>
+                <div class="leaderboard-tab" data-leaderboard="tracks_created">Tracks Created</div>
+                <div class="leaderboard-tab" data-leaderboard="current_streak">Current Streak</div>
+                <div class="leaderboard-tab" data-leaderboard="achievements_unlocked">Achievements</div>
+            </div>
+
+            <div class="leaderboard-list" id="leaderboard-list">
+                <!-- Leaderboard will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module">
+        import { GamificationEngine } from './js/gamification-engine.js';
+
+        class GamificationUI {
+            constructor() {
+                this.gamification = new GamificationEngine();
+                this.currentChallengeTab = 'daily';
+                this.currentLeaderboardTab = 'total_points';
+                
+                this.init();
+            }
+
+            async init() {
+                // Wait for gamification engine to initialize
+                this.gamification.on('initialized', () => {
+                    this.setupEventListeners();
+                    this.updateUI();
+                });
+
+                // Listen for achievements
+                this.gamification.on('achievementUnlocked', (achievement) => {
+                    this.updateUI();
+                });
+
+                // Listen for level ups
+                this.gamification.on('levelUp', (data) => {
+                    this.showLevelUpNotification(data);
+                    this.updateUI();
+                });
+
+                // Listen for challenge completions
+                this.gamification.on('challengeCompleted', (data) => {
+                    this.showChallengeCompletionNotification(data);
+                    this.updateUI();
+                });
+
+                // Update leaderboards periodically
+                setInterval(() => {
+                    this.gamification.updateLeaderboards();
+                    this.updateLeaderboards();
+                }, 30000);
+            }
+
+            setupEventListeners() {
+                // Challenge tabs
+                document.querySelectorAll('.challenge-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        document.querySelectorAll('.challenge-tab').forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        this.currentChallengeTab = tab.dataset.tab;
+                        this.updateChallenges();
+                    });
+                });
+
+                // Leaderboard tabs
+                document.querySelectorAll('.leaderboard-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        document.querySelectorAll('.leaderboard-tab').forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        this.currentLeaderboardTab = tab.dataset.leaderboard;
+                        this.updateLeaderboards();
+                    });
+                });
+
+                // Demo buttons for testing
+                this.addDemoButtons();
+            }
+
+            updateUI() {
+                this.updateUserProfile();
+                this.updateAchievements();
+                this.updateChallenges();
+                this.updateLeaderboards();
+            }
+
+            updateUserProfile() {
+                const stats = this.gamification.getUserStats();
+                
+                document.getElementById('user-level').textContent = stats.level;
+                document.getElementById('user-points').textContent = stats.totalPoints.toLocaleString();
+                document.getElementById('tracks-created').textContent = stats.tracksCreated;
+                document.getElementById('current-streak').textContent = stats.currentStreak;
+                document.getElementById('achievements-count').textContent = stats.achievementsUnlocked;
+                document.getElementById('challenges-completed').textContent = stats.challengesCompleted;
+            }
+
+            updateAchievements() {
+                const achievements = this.gamification.getAchievements();
+                const allAchievements = Object.values(this.gamification.achievementDefinitions).flat();
+                const achievementsGrid = document.getElementById('achievements-grid');
+                
+                achievementsGrid.innerHTML = '';
+                
+                // Show sample of achievements (mix of unlocked and locked)
+                const sampleAchievements = [
+                    ...Object.values(this.gamification.achievementDefinitions.creation),
+                    ...Object.values(this.gamification.achievementDefinitions.quality).slice(0, 2),
+                    ...Object.values(this.gamification.achievementDefinitions.exploration).slice(0, 2),
+                    ...Object.values(this.gamification.achievementDefinitions.streaks).slice(0, 2)
+                ];
+
+                sampleAchievements.forEach(achievement => {
+                    const isUnlocked = achievements.some(a => a.id === achievement.id);
+                    const achievementEl = this.createAchievementElement(achievement, isUnlocked);
+                    achievementsGrid.appendChild(achievementEl);
+                });
+            }
+
+            createAchievementElement(achievement, isUnlocked) {
+                const div = document.createElement('div');
+                div.className = `achievement-card ${isUnlocked ? 'unlocked' : 'locked'}`;
+                
+                div.innerHTML = `
+                    <div class="achievement-rarity ${achievement.rarity}">${achievement.rarity}</div>
+                    <div class="achievement-header">
+                        <div class="achievement-icon">${achievement.icon}</div>
+                        <div>
+                            <div class="achievement-title">${achievement.title}</div>
+                        </div>
+                    </div>
+                    <div class="achievement-description">${achievement.description}</div>
+                    <div class="achievement-points">+${achievement.points} points</div>
+                `;
+                
+                return div;
+            }
+
+            updateChallenges() {
+                const challenges = this.gamification.getChallenges();
+                const challengeList = document.getElementById('challenge-list');
+                
+                challengeList.innerHTML = '';
+                
+                const filteredChallenges = challenges.filter(challenge => 
+                    challenge.type === this.currentChallengeTab || 
+                    (this.currentChallengeTab === 'special' && challenge.type === 'contest')
+                );
+                
+                if (filteredChallenges.length === 0) {
+                    // Show sample challenges for demo
+                    this.showSampleChallenges();
+                } else {
+                    filteredChallenges.forEach(challenge => {
+                        const challengeEl = this.createChallengeElement(challenge);
+                        challengeList.appendChild(challengeEl);
+                    });
+                }
+            }
+
+            showSampleChallenges() {
+                const challengeList = document.getElementById('challenge-list');
+                const sampleChallenges = [
+                    {
+                        title: 'Daily Creator',
+                        description: 'Create any music track today',
+                        badge: '📅',
+                        reward: { points: 25 },
+                        progress: 0,
+                        target: 1
+                    },
+                    {
+                        title: 'Genre Explorer',
+                        description: 'Create a pop track today',
+                        badge: '🎯',
+                        reward: { points: 35 },
+                        progress: 0,
+                        target: 1
+                    }
+                ];
+
+                sampleChallenges.forEach(challenge => {
+                    const div = document.createElement('div');
+                    div.className = 'challenge-card';
+                    
+                    div.innerHTML = `
+                        <div class="challenge-header">
+                            <div style="display: flex; align-items: center;">
+                                <div class="challenge-badge">${challenge.badge}</div>
+                                <div class="challenge-info">
+                                    <div class="challenge-title">${challenge.title}</div>
+                                    <div class="challenge-description">${challenge.description}</div>
+                                </div>
+                            </div>
+                            <div class="challenge-reward">+${challenge.reward.points} points</div>
+                        </div>
+                        <div class="challenge-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${(challenge.progress / challenge.target) * 100}%"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span>Progress: ${challenge.progress}/${challenge.target}</span>
+                                <span>${Math.round((challenge.progress / challenge.target) * 100)}%</span>
+                            </div>
+                        </div>
+                    `;
+                    
+                    challengeList.appendChild(div);
+                });
+            }
+
+            createChallengeElement(challenge) {
+                const div = document.createElement('div');
+                div.className = 'challenge-card';
+                
+                const progress = this.gamification.getChallengeProgress(challenge.id) || { progress: 0 };
+                const progressPercent = Math.round(progress.progress * 100);
+                
+                div.innerHTML = `
+                    <div class="challenge-header">
+                        <div style="display: flex; align-items: center;">
+                            <div class="challenge-badge">${challenge.reward.badge}</div>
+                            <div class="challenge-info">
+                                <div class="challenge-title">${challenge.title}</div>
+                                <div class="challenge-description">${challenge.description}</div>
+                            </div>
+                        </div>
+                        <div class="challenge-reward">+${challenge.reward.points} points</div>
+                    </div>
+                    <div class="challenge-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progressPercent}%"></div>
+                        </div>
+                        <div class="progress-text">
+                            <span>Progress: ${progressPercent}%</span>
+                            <span>${progress.completed ? 'Completed!' : 'In Progress'}</span>
+                        </div>
+                    </div>
+                `;
+                
+                return div;
+            }
+
+            updateLeaderboards() {
+                this.gamification.updateLeaderboards();
+                const leaderboard = this.gamification.getLeaderboard(this.currentLeaderboardTab);
+                const leaderboardList = document.getElementById('leaderboard-list');
+                
+                leaderboardList.innerHTML = '';
+                
+                leaderboard.slice(0, 10).forEach((user, index) => {
+                    const div = document.createElement('div');
+                    div.className = `leaderboard-item ${user.isCurrentUser ? 'current-user' : ''}`;
+                    
+                    const rank = index + 1;
+                    const value = this.formatLeaderboardValue(user, this.currentLeaderboardTab);
+                    
+                    div.innerHTML = `
+                        <div class="leaderboard-rank ${rank <= 3 ? 'top3' : ''}">#${rank}</div>
+                        <div class="leaderboard-avatar">${user.username[0]}</div>
+                        <div class="leaderboard-info">
+                            <div class="leaderboard-name">${user.username}</div>
+                            <div class="leaderboard-value">${this.getLeaderboardLabel(this.currentLeaderboardTab)}</div>
+                        </div>
+                        <div class="leaderboard-score">${value}</div>
+                    `;
+                    
+                    leaderboardList.appendChild(div);
+                });
+            }
+
+            formatLeaderboardValue(user, type) {
+                const value = user[type.replace('_', '')];
+                return typeof value === 'number' ? value.toLocaleString() : value;
+            }
+
+            getLeaderboardLabel(type) {
+                const labels = {
+                    'total_points': 'Total Points',
+                    'tracks_created': 'Tracks Created',
+                    'current_streak': 'Current Streak',
+                    'achievements_unlocked': 'Achievements'
+                };
+                return labels[type] || type;
+            }
+
+            showLevelUpNotification(data) {
+                const notification = document.createElement('div');
+                notification.className = 'achievement-notification';
+                notification.style.background = 'linear-gradient(135deg, var(--primary), var(--secondary))';
+                
+                notification.innerHTML = `
+                    <div class="achievement-icon">🎉</div>
+                    <div class="achievement-content">
+                        <div class="achievement-title">Level Up!</div>
+                        <div class="achievement-name">Level ${data.newLevel}</div>
+                        <div class="achievement-description">You've reached level ${data.newLevel}!</div>
+                        <div class="achievement-points">${data.totalPoints} total points</div>
+                    </div>
+                `;
+                
+                this.showNotification(notification);
+            }
+
+            showChallengeCompletionNotification(data) {
+                const notification = document.createElement('div');
+                notification.className = 'achievement-notification';
+                notification.style.background = 'linear-gradient(135deg, var(--accent), #d97706)';
+                
+                notification.innerHTML = `
+                    <div class="achievement-icon">${data.reward.badge}</div>
+                    <div class="achievement-content">
+                        <div class="achievement-title">Challenge Complete!</div>
+                        <div class="achievement-name">${data.challenge.title}</div>
+                        <div class="achievement-description">${data.challenge.description}</div>
+                        <div class="achievement-points">+${data.reward.points} points</div>
+                    </div>
+                `;
+                
+                this.showNotification(notification);
+            }
+
+            showNotification(notification) {
+                document.body.appendChild(notification);
+                
+                setTimeout(() => notification.classList.add('show'), 100);
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => document.body.removeChild(notification), 300);
+                }, 5000);
+            }
+
+            // Demo functions for testing
+            addDemoButtons() {
+                const demoContainer = document.createElement('div');
+                demoContainer.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px;';
+                
+                const buttons = [
+                    { text: 'Create Track', action: () => this.simulateTrackCreation() },
+                    { text: 'Rate Track', action: () => this.simulateTrackRating() },
+                    { text: 'Share Track', action: () => this.simulateTrackSharing() },
+                    { text: 'Use AI Feature', action: () => this.simulateAIFeatureUse() }
+                ];
+                
+                buttons.forEach(({ text, action }) => {
+                    const button = document.createElement('button');
+                    button.textContent = text;
+                    button.style.cssText = 'padding: 8px 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px;';
+                    button.addEventListener('click', action);
+                    demoContainer.appendChild(button);
+                });
+                
+                document.body.appendChild(demoContainer);
+            }
+
+            simulateTrackCreation() {
+                const genres = ['pop', 'rock', 'jazz', 'electronic', 'classical'];
+                const randomGenre = genres[Math.floor(Math.random() * genres.length)];
+                this.gamification.trackAction('track_created', { genre: randomGenre });
+            }
+
+            simulateTrackRating() {
+                const rating = Math.floor(Math.random() * 5) + 1;
+                this.gamification.trackAction('track_rated', { rating });
+            }
+
+            simulateTrackSharing() {
+                this.gamification.trackAction('track_shared');
+            }
+
+            simulateAIFeatureUse() {
+                const features = ['voice_to_music', 'style_transfer', 'auto_mastering', 'lyrics_generation'];
+                const randomFeature = features[Math.floor(Math.random() * features.length)];
+                this.gamification.trackAction('ai_feature_used', { feature: randomFeature });
+            }
+        }
+
+        // Initialize the gamification UI
+        const gamificationUI = new GamificationUI();
+    </script>
+</body>
+</html>

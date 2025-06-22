@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MusicGen AI - Create Music with AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --secondary: #7c3aed;
+            --accent: #f59e0b;
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1a1;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 6rem 2rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+            min-height: 100vh;
+        }
+
+        /* Generation Panel */
+        .generation-panel {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.875rem;
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .genre-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .genre-tag {
+            padding: 0.5rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .genre-tag:hover, .genre-tag.active {
+            background: var(--primary);
+            color: var(--bg-primary);
+            border-color: var(--primary);
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-loading {
+            display: none;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: fit-content;
+            position: sticky;
+            top: 6rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .playlist-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .control-btn {
+            flex: 1;
+            padding: 0.5rem;
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .control-btn:hover {
+            background: var(--primary);
+            color: var(--bg-primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Results Area */
+        .results-area {
+            margin-top: 2rem;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .results-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .results-count {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .music-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .music-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .music-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-artwork {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: var(--gradient);
+        }
+
+        .card-info {
+            flex: 1;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-prompt {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+
+        .card-tag {
+            padding: 0.2rem 0.5rem;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        .card-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .audio-player {
+            width: 100%;
+            margin: 0.5rem 0;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.5rem;
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: var(--bg-primary);
+        }
+
+        .duration {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        /* Loading States */
+        .loading-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(0, 212, 255, 0.3);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-progress {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .loading-bar {
+            height: 100%;
+            background: var(--gradient);
+            width: 0%;
+            animation: progress 30s linear;
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* Global Audio Player */
+        .global-player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            z-index: 999;
+            display: none;
+        }
+
+        .global-player.active {
+            display: block;
+        }
+
+        .global-player-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .current-track-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .current-track-artwork {
+            width: 50px;
+            height: 50px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+
+        .current-track-details h4 {
+            font-size: 0.9rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .current-track-details p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .global-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .global-play-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border: none;
+            border-radius: 50%;
+            color: var(--bg-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: 6rem 1rem 2rem;
+            }
+            
+            .sidebar {
+                position: static;
+                order: -1;
+            }
+
+            .nav {
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .global-player-content {
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <a href="/" class="logo">MusicGen AI</a>
+            <div class="nav-links">
+                <a href="#app">Create</a>
+                <a href="#library">Library</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#help">Help</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Main Generation Panel -->
+        <main class="generation-panel">
+            <h1 class="panel-title">🎵 Create Your Music</h1>
+            
+            <form id="musicForm">
+                <div class="form-group">
+                    <label class="form-label" for="prompt">
+                        <i class="fas fa-magic"></i> Describe Your Music
+                    </label>
+                    <textarea 
+                        id="prompt" 
+                        class="form-textarea" 
+                        placeholder="Describe the music you want to create... (e.g., 'upbeat electronic dance music with Arabic vibes')"
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-tags"></i> Quick Genres
+                    </label>
+                    <div class="genre-tags">
+                        <span class="genre-tag" data-genre="electronic">Electronic</span>
+                        <span class="genre-tag" data-genre="hip-hop">Hip Hop</span>
+                        <span class="genre-tag" data-genre="ambient">Ambient</span>
+                        <span class="genre-tag" data-genre="rock">Rock</span>
+                        <span class="genre-tag" data-genre="jazz">Jazz</span>
+                        <span class="genre-tag" data-genre="classical">Classical</span>
+                        <span class="genre-tag" data-genre="lo-fi">Lo-Fi</span>
+                        <span class="genre-tag" data-genre="techno">Techno</span>
+                        <span class="genre-tag" data-genre="arabic">Arabic</span>
+                        <span class="genre-tag" data-genre="trap">Trap</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="duration">
+                        <i class="fas fa-clock"></i> Duration
+                    </label>
+                    <select id="duration" class="form-select">
+                        <option value="short">Short (~30s)</option>
+                        <option value="medium" selected>Medium (~2min)</option>
+                        <option value="long">Long (~4min)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="generate-btn" id="generateBtn">
+                    <span class="btn-text">
+                        <i class="fas fa-play"></i> Generate Music
+                    </span>
+                    <div class="btn-loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                </button>
+            </form>
+
+            <!-- Results Area -->
+            <div class="results-area">
+                <div class="results-header">
+                    <h2 class="results-title">Generated Music</h2>
+                    <span class="results-count" id="resultsCount">0 tracks</span>
+                </div>
+                <div class="music-grid" id="musicGrid">
+                    <!-- Music cards will be added here -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h3 class="sidebar-title">
+                <i class="fas fa-list"></i> Playlist Controls
+            </h3>
+            
+            <div class="playlist-controls">
+                <button class="control-btn" id="playAllBtn">
+                    <i class="fas fa-play"></i> Play All
+                </button>
+                <button class="control-btn" id="shuffleBtn">
+                    <i class="fas fa-random"></i> Shuffle
+                </button>
+                <button class="control-btn" id="clearBtn">
+                    <i class="fas fa-trash"></i> Clear
+                </button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalTracks">0</div>
+                    <div class="stat-label">Tracks</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalDuration">0:00</div>
+                    <div class="stat-label">Duration</div>
+                </div>
+            </div>
+
+            <h4 class="sidebar-title">
+                <i class="fas fa-cog"></i> Quick Actions
+            </h4>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <button class="control-btn" id="downloadAllBtn">
+                    <i class="fas fa-download"></i> Download All
+                </button>
+                <button class="control-btn" id="sharePlaylistBtn">
+                    <i class="fas fa-share"></i> Share Playlist
+                </button>
+                <button class="control-btn" id="exportBtn">
+                    <i class="fas fa-file-export"></i> Export JSON
+                </button>
+                <button class="control-btn" id="generateArtworkBtn">
+                    <i class="fas fa-image"></i> Generate Artwork
+                </button>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Global Audio Player -->
+    <div class="global-player" id="globalPlayer">
+        <div class="global-player-content">
+            <div class="current-track-info">
+                <img src="" alt="Current Track" class="current-track-artwork" id="currentTrackArtwork">
+                <div class="current-track-details">
+                    <h4 id="currentTrackTitle">No track playing</h4>
+                    <p id="currentTrackArtist">Select a track to play</p>
+                </div>
+            </div>
+            
+            <div class="global-controls">
+                <button class="global-play-btn" id="globalPlayBtn">
+                    <i class="fas fa-play"></i>
+                </button>
+                <div class="progress-bar" id="globalProgressBar">
+                    <div class="progress-bar-fill" id="globalProgressFill"></div>
+                </div>
+                <span id="globalTimeDisplay">0:00 / 0:00</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class AdvancedMusicGenApp {
+            constructor() {
+                this.tracks = [];
+                this.currentlyPlaying = null;
+                this.currentAudio = null;
+                this.playlist = [];
+                this.currentPlaylistIndex = -1;
+                this.isShuffled = false;
+                this.apiKey = 'd3a513bec58ea7c7e60eebf377fbbfb806f2304f12e1ef208cd701139658c088';
+                this.initializeApp();
+            }
+
+            initializeApp() {
+                this.bindEvents();
+                this.loadStoredTracks();
+                this.updateStats();
+                this.initializeGlobalPlayer();
+            }
+
+            bindEvents() {
+                // Form submission
+                document.getElementById('musicForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.generateMusic();
+                });
+
+                // Genre tags
+                document.querySelectorAll('.genre-tag').forEach(tag => {
+                    tag.addEventListener('click', () => {
+                        tag.classList.toggle('active');
+                        this.updatePromptWithGenre();
+                    });
+                });
+
+                // Playlist controls
+                document.getElementById('playAllBtn').addEventListener('click', () => this.playAll());
+                document.getElementById('shuffleBtn').addEventListener('click', () => this.shuffle());
+                document.getElementById('clearBtn').addEventListener('click', () => this.clearPlaylist());
+                document.getElementById('downloadAllBtn').addEventListener('click', () => this.downloadAll());
+                document.getElementById('sharePlaylistBtn').addEventListener('click', () => this.sharePlaylist());
+                document.getElementById('exportBtn').addEventListener('click', () => this.exportPlaylist());
+                document.getElementById('generateArtworkBtn').addEventListener('click', () => this.generateArtworkForAll());
+
+                // Global player controls
+                document.getElementById('globalPlayBtn').addEventListener('click', () => this.toggleGlobalPlay());
+                document.getElementById('globalProgressBar').addEventListener('click', (e) => this.seekTo(e));
+            }
+
+            updatePromptWithGenre() {
+                const activeTags = Array.from(document.querySelectorAll('.genre-tag.active'))
+                    .map(tag => tag.dataset.genre);
+                
+                const prompt = document.getElementById('prompt');
+                let currentPrompt = prompt.value;
+                
+                if (activeTags.length > 0) {
+                    const genreText = activeTags.join(' and ');
+                    if (!currentPrompt.toLowerCase().includes(genreText.toLowerCase())) {
+                        prompt.value = currentPrompt ? `${currentPrompt} with ${genreText} vibes` : `${genreText} music`;
+                    }
+                }
+            }
+
+            async generateMusic() {
+                const prompt = document.getElementById('prompt').value;
+                const duration = document.getElementById('duration').value;
+                
+                if (!prompt.trim()) {
+                    alert('Please describe the music you want to create!');
+                    return;
+                }
+
+                this.setLoadingState(true);
+                this.showLoadingCard();
+
+                try {
+                    // Step 1: Create task
+                    const createResponse = await fetch('https://api.piapi.ai/api/v1/task', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-api-key': this.apiKey
+                        },
+                        body: JSON.stringify({
+                            model: "music-u",
+                            task_type: "generate_music",
+                            input: {
+                                gpt_description_prompt: prompt,
+                                negative_tags: "",
+                                lyrics_type: "instrumental",
+                                seed: -1
+                            }
+                        })
+                    });
+
+                    const createData = await createResponse.json();
+                    if (!createResponse.ok || !createData.data?.task_id) {
+                        throw new Error('Failed to create task');
+                    }
+
+                    const taskId = createData.data.task_id;
+                    
+                    // Step 2: Poll for completion
+                    const result = await this.pollForCompletion(taskId);
+                    
+                    if (result.data?.output?.songs) {
+                        result.data.output.songs.forEach(song => {
+                            this.addTrackToPlaylist({
+                                id: song.id,
+                                title: song.title,
+                                prompt: prompt,
+                                duration: song.duration,
+                                audioUrl: song.song_path,
+                                artworkUrl: song.image_path,
+                                tags: song.tags,
+                                createdAt: new Date().toISOString(),
+                                genre: this.extractGenreFromTags(song.tags),
+                                mood: this.extractMoodFromPrompt(prompt)
+                            });
+                        });
+                    }
+
+                } catch (error) {
+                    console.error('Generation error:', error);
+                    alert('Failed to generate music. Please try again.');
+                } finally {
+                    this.setLoadingState(false);
+                    this.hideLoadingCard();
+                }
+            }
+
+            async pollForCompletion(taskId) {
+                let attempts = 0;
+                const maxAttempts = 20;
+
+                while (attempts < maxAttempts) {
+                    attempts++;
+                    
+                    await new Promise(resolve => setTimeout(resolve, 30000));
+                    
+                    const response = await fetch(`https://api.piapi.ai/api/v1/task/${taskId}`, {
+                        headers: { 'x-api-key': this.apiKey }
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.data?.status === 'completed') {
+                        return result;
+                    } else if (result.data?.status === 'failed') {
+                        throw new Error('Task failed');
+                    }
+                    
+                    this.updateLoadingProgress(attempts, maxAttempts);
+                }
+                
+                throw new Error('Generation timeout');
+            }
+
+            extractGenreFromTags(tags) {
+                const genreKeywords = ['electronic', 'hip-hop', 'rock', 'jazz', 'classical', 'ambient', 'techno', 'house', 'trap'];
+                for (const tag of tags) {
+                    for (const genre of genreKeywords) {
+                        if (tag.toLowerCase().includes(genre)) {
+                            return genre;
+                        }
+                    }
+                }
+                return 'Electronic';
+            }
+
+            extractMoodFromPrompt(prompt) {
+                const moodKeywords = {
+                    'energetic': ['upbeat', 'energetic', 'high-energy', 'intense'],
+                    'chill': ['chill', 'relaxed', 'calm', 'mellow'],
+                    'dark': ['dark', 'mysterious', 'brooding', 'sinister'],
+                    'uplifting': ['uplifting', 'positive', 'happy', 'joyful'],
+                    'melancholic': ['sad', 'melancholic', 'emotional', 'nostalgic']
+                };
+
+                for (const [mood, keywords] of Object.entries(moodKeywords)) {
+                    for (const keyword of keywords) {
+                        if (prompt.toLowerCase().includes(keyword)) {
+                            return mood;
+                        }
+                    }
+                }
+                return 'energetic';
+            }
+
+            addTrackToPlaylist(track) {
+                this.tracks.push(track);
+                this.playlist.push(track);
+                this.renderTrack(track);
+                this.updateStats();
+                this.saveToStorage();
+            }
+
+            renderTrack(track) {
+                const musicGrid = document.getElementById('musicGrid');
+                
+                const card = document.createElement('div');
+                card.className = 'music-card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <img src="${track.artworkUrl}" alt="Artwork" class="card-artwork" 
+                             onerror="this.style.background='linear-gradient(135deg, #00d4ff, #7c3aed)'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.innerHTML='🎵'">
+                        <div class="card-info">
+                            <h3 class="card-title">${track.title}</h3>
+                            <p class="card-prompt">"${track.prompt}"</p>
+                            <div class="card-tags">
+                                ${track.tags.map(tag => `<span class="card-tag">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <audio controls class="audio-player" preload="metadata">
+                        <source src="${track.audioUrl}" type="audio/mpeg">
+                    </audio>
+                    
+                    <div class="card-controls">
+                        <span class="duration">${this.formatDuration(track.duration)}</span>
+                        <div class="card-actions">
+                            <button class="action-btn" onclick="app.playTrackInGlobal('${track.id}')">
+                                <i class="fas fa-play"></i> Play
+                            </button>
+                            <button class="action-btn" onclick="app.remixTrack('${track.id}')">
+                                <i class="fas fa-sync"></i> Remix
+                            </button>
+                            <button class="action-btn" onclick="app.extendTrack('${track.id}')">
+                                <i class="fas fa-plus"></i> Extend
+                            </button>
+                            <button class="action-btn" onclick="app.generateArtwork('${track.id}')">
+                                <i class="fas fa-image"></i> Art
+                            </button>
+                            <button class="action-btn" onclick="app.downloadTrack('${track.id}')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button class="action-btn" onclick="app.removeTrack('${track.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                musicGrid.appendChild(card);
+            }
+
+            initializeGlobalPlayer() {
+                const globalPlayer = document.getElementById('globalPlayer');
+                
+                // Audio events
+                document.addEventListener('audioEnded', () => {
+                    this.playNextInPlaylist();
+                });
+            }
+
+            playTrackInGlobal(trackId) {
+                const track = this.tracks.find(t => t.id === trackId);
+                if (!track) return;
+
+                // Stop current audio
+                if (this.currentAudio) {
+                    this.currentAudio.pause();
+                }
+
+                // Create new audio
+                this.currentAudio = new Audio(track.audioUrl);
+                this.currentlyPlaying = track;
+
+                // Update global player UI
+                this.updateGlobalPlayerUI(track);
+                
+                // Show global player
+                document.getElementById('globalPlayer').classList.add('active');
+                
+                // Play
+                this.currentAudio.play();
+                document.getElementById('globalPlayBtn').innerHTML = '<i class="fas fa-pause"></i>';
+
+                // Add audio event listeners
+                this.currentAudio.addEventListener('timeupdate', () => {
+                    this.updateGlobalProgress();
+                });
+
+                this.currentAudio.addEventListener('ended', () => {
+                    this.playNextInPlaylist();
+                });
+
+                // Update playlist index
+                this.currentPlaylistIndex = this.playlist.findIndex(t => t.id === trackId);
+            }
+
+            updateGlobalPlayerUI(track) {
+                document.getElementById('currentTrackTitle').textContent = track.title;
+                document.getElementById('currentTrackArtist').textContent = `${track.genre} • ${track.mood}`;
+                document.getElementById('currentTrackArtwork').src = track.artworkUrl;
+            }
+
+            toggleGlobalPlay() {
+                if (!this.currentAudio) return;
+
+                if (this.currentAudio.paused) {
+                    this.currentAudio.play();
+                    document.getElementById('globalPlayBtn').innerHTML = '<i class="fas fa-pause"></i>';
+                } else {
+                    this.currentAudio.pause();
+                    document.getElementById('globalPlayBtn').innerHTML = '<i class="fas fa-play"></i>';
+                }
+            }
+
+            updateGlobalProgress() {
+                if (!this.currentAudio) return;
+
+                const progress = (this.currentAudio.currentTime / this.currentAudio.duration) * 100;
+                document.getElementById('globalProgressFill').style.width = progress + '%';
+                
+                const current = this.formatDuration(this.currentAudio.currentTime);
+                const total = this.formatDuration(this.currentAudio.duration);
+                document.getElementById('globalTimeDisplay').textContent = `${current} / ${total}`;
+            }
+
+            seekTo(e) {
+                if (!this.currentAudio) return;
+                
+                const progressBar = e.currentTarget;
+                const rect = progressBar.getBoundingClientRect();
+                const percent = (e.clientX - rect.left) / rect.width;
+                this.currentAudio.currentTime = percent * this.currentAudio.duration;
+            }
+
+            playAll() {
+                if (this.playlist.length === 0) return;
+                this.currentPlaylistIndex = 0;
+                this.playTrackInGlobal(this.playlist[0].id);
+            }
+
+            playNextInPlaylist() {
+                if (this.currentPlaylistIndex < this.playlist.length - 1) {
+                    this.currentPlaylistIndex++;
+                    this.playTrackInGlobal(this.playlist[this.currentPlaylistIndex].id);
+                } else {
+                    // Playlist ended
+                    document.getElementById('globalPlayBtn').innerHTML = '<i class="fas fa-play"></i>';
+                }
+            }
+
+            shuffle() {
+                this.isShuffled = !this.isShuffled;
+                
+                if (this.isShuffled) {
+                    // Create shuffled copy
+                    this.playlist = [...this.tracks].sort(() => Math.random() - 0.5);
+                    document.getElementById('shuffleBtn').style.background = 'var(--primary)';
+                    document.getElementById('shuffleBtn').style.color = 'var(--bg-primary)';
+                } else {
+                    // Restore original order
+                    this.playlist = [...this.tracks];
+                    document.getElementById('shuffleBtn').style.background = 'var(--bg-tertiary)';
+                    document.getElementById('shuffleBtn').style.color = 'var(--text-primary)';
+                }
+
+                // Shuffle visual order too
+                const musicGrid = document.getElementById('musicGrid');
+                const cards = Array.from(musicGrid.children);
+                cards.sort(() => Math.random() - 0.5);
+                cards.forEach(card => musicGrid.appendChild(card));
+            }
+
+            async generateArtwork(trackId) {
+                const track = this.tracks.find(t => t.id === trackId);
+                if (!track) return;
+
+                try {
+                    // Using PiAPI for artwork generation (this would need the actual API)
+                    alert(`Generating artwork for "${track.title}"... (Feature in development)`);
+                    
+                    // Placeholder for actual PiAPI artwork generation
+                    // const artworkResponse = await fetch('https://api.piapi.ai/api/v1/task', {
+                    //     method: 'POST',
+                    //     headers: {
+                    //         'Content-Type': 'application/json',
+                    //         'x-api-key': this.apiKey
+                    //     },
+                    //     body: JSON.stringify({
+                    //         model: "flux-dev",
+                    //         task_type: "generate_image",
+                    //         input: {
+                    //             prompt: `Album artwork for ${track.prompt}, ${track.genre} style, professional music cover art`
+                    //         }
+                    //     })
+                    // });
+                    
+                } catch (error) {
+                    console.error('Artwork generation error:', error);
+                    alert('Failed to generate artwork. Please try again.');
+                }
+            }
+
+            async generateArtworkForAll() {
+                if (this.tracks.length === 0) {
+                    alert('No tracks to generate artwork for!');
+                    return;
+                }
+
+                for (const track of this.tracks) {
+                    await this.generateArtwork(track.id);
+                    await new Promise(resolve => setTimeout(resolve, 2000)); // Rate limiting
+                }
+            }
+
+            clearPlaylist() {
+                if (confirm('Clear all tracks from the playlist?')) {
+                    this.tracks = [];
+                    this.playlist = [];
+                    document.getElementById('musicGrid').innerHTML = '';
+                    this.updateStats();
+                    this.saveToStorage();
+                    
+                    // Stop current playback
+                    if (this.currentAudio) {
+                        this.currentAudio.pause();
+                        this.currentAudio = null;
+                    }
+                    document.getElementById('globalPlayer').classList.remove('active');
+                }
+            }
+
+            downloadAll() {
+                this.tracks.forEach(track => {
+                    const a = document.createElement('a');
+                    a.href = track.audioUrl;
+                    a.download = `${track.title}.mp3`;
+                    a.click();
+                });
+            }
+
+            sharePlaylist() {
+                const playlistData = {
+                    name: 'My AI Generated Playlist',
+                    tracks: this.tracks,
+                    created: new Date().toISOString()
+                };
+                
+                const dataStr = JSON.stringify(playlistData, null, 2);
+                navigator.clipboard.writeText(dataStr).then(() => {
+                    alert('Playlist data copied to clipboard!');
+                });
+            }
+
+            exportPlaylist() {
+                const dataStr = JSON.stringify(this.tracks, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(dataBlob);
+                a.download = 'musicgen-playlist.json';
+                a.click();
+            }
+
+            async remixTrack(trackId) {
+                const track = this.tracks.find(t => t.id === trackId);
+                if (track) {
+                    document.getElementById('prompt').value = `Remix of: ${track.prompt} - add more ${track.genre} elements`;
+                    this.generateMusic();
+                }
+            }
+
+            async extendTrack(trackId) {
+                const track = this.tracks.find(t => t.id === trackId);
+                if (track) {
+                    document.getElementById('prompt').value = `Extended version of: ${track.prompt} - make it longer and more dynamic`;
+                    this.generateMusic();
+                }
+            }
+
+            downloadTrack(trackId) {
+                const track = this.tracks.find(t => t.id === trackId);
+                if (track) {
+                    const a = document.createElement('a');
+                    a.href = track.audioUrl;
+                    a.download = `${track.title}.mp3`;
+                    a.click();
+                }
+            }
+
+            removeTrack(trackId) {
+                this.tracks = this.tracks.filter(t => t.id !== trackId);
+                this.playlist = this.playlist.filter(t => t.id !== trackId);
+                this.renderPlaylist();
+                this.updateStats();
+                this.saveToStorage();
+            }
+
+            showLoadingCard() {
+                const musicGrid = document.getElementById('musicGrid');
+                const loadingCard = document.createElement('div');
+                loadingCard.className = 'loading-card';
+                loadingCard.id = 'loadingCard';
+                loadingCard.innerHTML = `
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">Generating your music...</div>
+                    <div class="loading-text" id="loadingStatus">Creating task...</div>
+                    <div class="loading-progress">
+                        <div class="loading-bar" id="loadingBar"></div>
+                    </div>
+                `;
+                musicGrid.appendChild(loadingCard);
+            }
+
+            hideLoadingCard() {
+                const loadingCard = document.getElementById('loadingCard');
+                if (loadingCard) {
+                    loadingCard.remove();
+                }
+            }
+
+            updateLoadingProgress(current, max) {
+                const status = document.getElementById('loadingStatus');
+                if (status) {
+                    status.textContent = `Processing... (${current}/${max})`;
+                }
+            }
+
+            setLoadingState(loading) {
+                const btn = document.getElementById('generateBtn');
+                const btnText = btn.querySelector('.btn-text');
+                const btnLoading = btn.querySelector('.btn-loading');
+                
+                if (loading) {
+                    btn.disabled = true;
+                    btnText.style.display = 'none';
+                    btnLoading.style.display = 'block';
+                } else {
+                    btn.disabled = false;
+                    btnText.style.display = 'block';
+                    btnLoading.style.display = 'none';
+                }
+            }
+
+            formatDuration(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+
+            updateStats() {
+                document.getElementById('totalTracks').textContent = this.tracks.length;
+                document.getElementById('resultsCount').textContent = `${this.tracks.length} tracks`;
+                
+                const totalSeconds = this.tracks.reduce((sum, track) => sum + track.duration, 0);
+                document.getElementById('totalDuration').textContent = this.formatDuration(totalSeconds);
+            }
+
+            renderPlaylist() {
+                const musicGrid = document.getElementById('musicGrid');
+                musicGrid.innerHTML = '';
+                this.tracks.forEach(track => this.renderTrack(track));
+            }
+
+            saveToStorage() {
+                localStorage.setItem('musicgen_tracks', JSON.stringify(this.tracks));
+            }
+
+            loadStoredTracks() {
+                const stored = localStorage.getItem('musicgen_tracks');
+                if (stored) {
+                    this.tracks = JSON.parse(stored);
+                    this.playlist = [...this.tracks];
+                    this.renderPlaylist();
+                }
+            }
+        }
+
+        // Initialize the app
+        const app = new AdvancedMusicGenApp();
+    </script>
+</body>
+</html>

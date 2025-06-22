@@ -1,0 +1,123 @@
+{
+  "name": "Basic Music Gen",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "generate-music-ai"
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        300,
+        200
+      ],
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "https://api.piapi.ai/api/v1/task",
+        "jsonParameters": true,
+        "bodyParametersJson": "{\n  \"model\": \"music-u\",\n  \"task_type\": \"generate_music\",\n  \"input\": {\n    \"gpt_description_prompt\": \"{{$json.prompt}}\",\n    \"negative_tags\": \"\",\n    \"lyrics_type\": \"instrumental\",\n    \"seed\": -1\n  }\n}",
+        "headerParametersJson": "{\n  \"x-api-key\": \"d3a513bec58ea7c7e60eebf377fbbfb806f2304f12e1ef208cd701139658c088\"\n}"
+      },
+      "name": "Create Music",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        500,
+        200
+      ],
+      "id": "b2c3d4e5-f6g7-8901-bcde-f23456789012"
+    },
+    {
+      "parameters": {
+        "amount": 30,
+        "unit": "seconds"
+      },
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        700,
+        200
+      ],
+      "id": "c3d4e5f6-g7h8-9012-cdef-345678901234"
+    },
+    {
+      "parameters": {
+        "url": "https://api.piapi.ai/api/v1/task/{{$node[\"Create Music\"].json.data.task_id}}",
+        "headerParametersJson": "{\n  \"x-api-key\": \"d3a513bec58ea7c7e60eebf377fbbfb806f2304f12e1ef208cd701139658c088\"\n}"
+      },
+      "name": "Get Result",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        900,
+        200
+      ],
+      "id": "d4e5f6g7-h8i9-0123-defg-456789012345"
+    },
+    {
+      "parameters": {},
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        200
+      ],
+      "id": "e5f6g7h8-i9j0-1234-efgh-567890123456"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Create Music",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Music": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Result": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "id": "1"
+}

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - MusicGen AI</title>
+    <meta name="description" content="Learn about MusicGen AI's mission to democratize music creation through artificial intelligence.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #ffffff;
+            --secondary: #f8f9fa;
+            --accent: #000000;
+            --text-primary: #000000;
+            --text-secondary: #6c757d;
+            --text-muted: #adb5bd;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            --space-3xl: 4rem;
+            --font-size-sm: 0.875rem;
+            --font-size-md: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            --font-size-4xl: 2.25rem;
+            --font-size-5xl: 3rem;
+            --border-radius-xl: 1rem;
+            --border-radius-2xl: 1.5rem;
+            --border-radius-full: 9999px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: var(--space-lg) 0;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: var(--font-size-xl);
+            font-weight: 800;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: var(--space-2xl);
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--text-primary);
+        }
+
+        .cta-button {
+            padding: var(--space-sm) var(--space-lg);
+            background: var(--accent);
+            color: var(--primary);
+            border: none;
+            border-radius: var(--border-radius-full);
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Main Content */
+        .main {
+            padding-top: 6rem;
+            min-height: 100vh;
+        }
+
+        .hero-section {
+            padding: var(--space-3xl) 0;
+            text-align: center;
+            background: radial-gradient(circle at 50% 50%, rgba(102, 126, 234, 0.1), transparent);
+        }
+
+        .hero-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl);
+        }
+
+        .hero-title {
+            font-size: var(--font-size-5xl);
+            font-weight: 800;
+            margin-bottom: var(--space-lg);
+            letter-spacing: -0.025em;
+        }
+
+        .hero-subtitle {
+            font-size: var(--font-size-xl);
+            color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        /* Content Sections */
+        .content-section {
+            padding: var(--space-3xl) 0;
+        }
+
+        .content-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl);
+        }
+
+        .section-title {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            margin-bottom: var(--space-xl);
+            text-align: center;
+        }
+
+        .text-block {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--space-xl);
+            color: var(--text-secondary);
+        }
+
+        .highlight {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Stats Grid */
+        .stats-section {
+            padding: var(--space-3xl) 0;
+            background: var(--bg-secondary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-2xl);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: var(--font-size-4xl);
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: var(--space-sm);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Team Section */
+        .team-section {
+            padding: var(--space-3xl) 0;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-2xl);
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl);
+        }
+
+        .team-member {
+            text-align: center;
+            padding: var(--space-xl);
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius-2xl);
+            transition: transform 0.3s ease;
+        }
+
+        .team-member:hover {
+            transform: translateY(-5px);
+        }
+
+        .member-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            margin: 0 auto var(--space-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-2xl);
+            color: white;
+            font-weight: bold;
+        }
+
+        .member-name {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            margin-bottom: var(--space-sm);
+        }
+
+        .member-role {
+            color: var(--text-secondary);
+            margin-bottom: var(--space-md);
+        }
+
+        .member-bio {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+        }
+
+        /* Values Section */
+        .values-section {
+            padding: var(--space-3xl) 0;
+            background: var(--bg-secondary);
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-2xl);
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl);
+        }
+
+        .value-item {
+            text-align: center;
+            padding: var(--space-xl);
+        }
+
+        .value-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: var(--border-radius-xl);
+            margin: 0 auto var(--space-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-2xl);
+            color: white;
+        }
+
+        .value-title {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            margin-bottom: var(--space-sm);
+        }
+
+        .value-description {
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-primary);
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            padding: var(--space-2xl) 0;
+            text-align: center;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-xl);
+            margin-bottom: var(--space-lg);
+        }
+
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--text-primary);
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: var(--font-size-4xl);
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .team-grid,
+            .values-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-links {
+                flex-wrap: wrap;
+                gap: var(--space-lg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="index.html" class="logo">MusicGen AI</a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="pricing.html" class="nav-link">Pricing</a>
+                <a href="about.html" class="nav-link active">About</a>
+                <a href="help.html" class="nav-link">Help</a>
+                <a href="app-enhanced.html" class="cta-button">Start Creating</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-container">
+                <h1 class="hero-title">Democratizing Music Creation</h1>
+                <p class="hero-subtitle">
+                    We believe everyone has a song inside them. MusicGen AI makes professional music creation accessible to anyone, regardless of musical training or experience.
+                </p>
+            </div>
+        </section>
+
+        <!-- Mission Section -->
+        <section class="content-section">
+            <div class="content-container">
+                <h2 class="section-title">Our Mission</h2>
+                <p class="text-block">
+                    Music is the <span class="highlight">universal language</span> that connects us all. Yet for too long, creating professional-quality music has been limited to those with extensive training, expensive equipment, and years of practice.
+                </p>
+                <p class="text-block">
+                    At MusicGen AI, we're changing that. Our advanced artificial intelligence technology empowers <span class="highlight">anyone</span> to transform their musical ideas into reality. Whether you're a content creator needing background music, a songwriter with lyrics but no melody, or simply someone who loves music, we're here to help you create.
+                </p>
+                <p class="text-block">
+                    We're not replacing musicians—we're <span class="highlight">amplifying human creativity</span> and making music creation more inclusive, accessible, and fun for everyone.
+                </p>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">1M+</div>
+                    <div class="stat-label">Tracks Generated</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">150K+</div>
+                    <div class="stat-label">Active Creators</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Music Genres</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">99.9%</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Story Section -->
+        <section class="content-section">
+            <div class="content-container">
+                <h2 class="section-title">Our Story</h2>
+                <p class="text-block">
+                    Founded in 2024, MusicGen AI started when our team of <span class="highlight">AI researchers and musicians</span> realized the transformative potential of artificial intelligence in music creation. We saw how AI could break down the barriers that prevent people from expressing themselves musically.
+                </p>
+                <p class="text-block">
+                    After two years of research and development, we've created an AI system that understands music theory, genre conventions, and emotional expression. Our technology doesn't just generate random sounds—it creates <span class="highlight">meaningful, coherent music</span> that resonates with listeners.
+                </p>
+                <p class="text-block">
+                    Today, MusicGen AI is used by content creators, indie artists, filmmakers, podcasters, and music enthusiasts around the world. We're proud to be part of their creative journey.
+                </p>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section class="team-section">
+            <div class="content-container">
+                <h2 class="section-title">Meet the Team</h2>
+            </div>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-avatar">AM</div>
+                    <div class="member-name">Alex Morgan</div>
+                    <div class="member-role">CEO & Co-Founder</div>
+                    <div class="member-bio">Former Spotify AI researcher with a passion for democratizing music creation.</div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">SL</div>
+                    <div class="member-name">Sarah Liu</div>
+                    <div class="member-role">CTO & Co-Founder</div>
+                    <div class="member-bio">Machine learning expert who led AI music research at Google.</div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">MJ</div>
+                    <div class="member-name">Marcus Johnson</div>
+                    <div class="member-role">Head of Music</div>
+                    <div class="member-bio">Grammy-nominated producer ensuring our AI creates authentic, high-quality music.</div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">EP</div>
+                    <div class="member-name">Emma Parker</div>
+                    <div class="member-role">Head of Design</div>
+                    <div class="member-bio">Former Apple designer crafting intuitive experiences for creative workflows.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Values Section -->
+        <section class="values-section">
+            <div class="content-container">
+                <h2 class="section-title">Our Values</h2>
+            </div>
+            <div class="values-grid">
+                <div class="value-item">
+                    <div class="value-icon">🎨</div>
+                    <div class="value-title">Creativity First</div>
+                    <div class="value-description">We build tools that amplify human creativity, not replace it. Every feature is designed to inspire and empower.</div>
+                </div>
+                <div class="value-item">
+                    <div class="value-icon">🌍</div>
+                    <div class="value-title">Accessibility</div>
+                    <div class="value-description">Music creation should be accessible to everyone, regardless of background, training, or economic status.</div>
+                </div>
+                <div class="value-item">
+                    <div class="value-icon">🔬</div>
+                    <div class="value-title">Innovation</div>
+                    <div class="value-description">We push the boundaries of what's possible with AI while maintaining the soul and emotion that makes music special.</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="/privacy" class="footer-link">Privacy Policy</a>
+                <a href="/terms" class="footer-link">Terms of Service</a>
+                <a href="help.html" class="footer-link">Help Center</a>
+                <a href="/contact" class="footer-link">Contact</a>
+            </div>
+            <p class="footer-text">&copy; 2024 MusicGen AI. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

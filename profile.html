@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - MusicGen AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --secondary: #7c3aed;
+            --accent: #f59e0b;
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1a1;
+            --success: #10b981;
+            --error: #ef4444;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 6rem 2rem 2rem;
+            min-height: 100vh;
+        }
+
+        .profile-header {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid var(--primary);
+            object-fit: cover;
+        }
+
+        .profile-info h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .profile-info p {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .profile-section {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            color: var(--text-primary);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--glass);
+        }
+
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .genre-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .genre-tag {
+            padding: 0.25rem 0.75rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .genre-tag.selected {
+            background: var(--gradient);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .subscription-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 16px;
+            padding: 2rem;
+            color: white;
+            text-align: center;
+        }
+
+        .subscription-plan {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .credits-remaining {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 1rem 0;
+        }
+
+        .credits-label {
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .recent-activity {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .activity-content h4 {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-content p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .message.success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-stats {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <nav class="nav">
+            <a href="index.html" class="logo">MusicGen AI</a>
+            <div class="nav-links">
+                <a href="app-super-enhanced.html">Studio</a>
+                <a href="library.html">Library</a>
+                <a href="profile.html" class="active">Profile</a>
+                <a href="#" onclick="signOut()" class="btn btn-secondary">Sign Out</a>
+            </div>
+        </nav>
+    </div>
+
+    <div class="container">
+        <div class="profile-header">
+            <img src="" alt="Profile" class="profile-avatar" data-user="photo">
+            <div class="profile-info">
+                <h1 data-user="name">Loading...</h1>
+                <p data-user="email">Loading...</p>
+                <p><i class="fas fa-calendar"></i> Member since <span id="memberSince">Loading...</span></p>
+                <div class="profile-stats">
+                    <div class="stat">
+                        <div class="stat-number" id="totalGenerations">0</div>
+                        <div class="stat-label">Tracks Created</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" id="totalPlaytime">0h</div>
+                        <div class="stat-label">Music Generated</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" id="favoriteCount">0</div>
+                        <div class="stat-label">Favorites</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-grid">
+            <!-- Profile Settings -->
+            <div class="profile-section">
+                <h2 class="section-title">
+                    <i class="fas fa-user-cog"></i>
+                    Profile Settings
+                </h2>
+                
+                <div class="message" id="profileMessage"></div>
+
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label class="form-label">Display Name</label>
+                        <input type="text" class="form-input" id="displayName" placeholder="Your display name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Bio</label>
+                        <textarea class="form-input" id="bio" rows="3" placeholder="Tell us about yourself..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                </form>
+            </div>
+
+            <!-- Subscription & Credits -->
+            <div class="profile-section">
+                <h2 class="section-title">
+                    <i class="fas fa-crown"></i>
+                    Subscription
+                </h2>
+                
+                <div class="subscription-card">
+                    <div class="subscription-plan" id="subscriptionPlan">Free Plan</div>
+                    <div class="credits-remaining" id="creditsRemaining">10</div>
+                    <div class="credits-label">Credits Remaining</div>
+                    <a href="pricing.html" class="btn btn-secondary">Upgrade Plan</a>
+                </div>
+            </div>
+
+            <!-- Music Preferences -->
+            <div class="profile-section">
+                <h2 class="section-title">
+                    <i class="fas fa-music"></i>
+                    Music Preferences
+                </h2>
+                
+                <div class="form-group">
+                    <label class="form-label">Favorite Genres</label>
+                    <div class="genre-tags" id="genrePreferences">
+                        <div class="genre-tag" data-genre="electronic">Electronic</div>
+                        <div class="genre-tag" data-genre="hip-hop">Hip Hop</div>
+                        <div class="genre-tag" data-genre="rock">Rock</div>
+                        <div class="genre-tag" data-genre="pop">Pop</div>
+                        <div class="genre-tag" data-genre="jazz">Jazz</div>
+                        <div class="genre-tag" data-genre="classical">Classical</div>
+                        <div class="genre-tag" data-genre="ambient">Ambient</div>
+                        <div class="genre-tag" data-genre="folk">Folk</div>
+                        <div class="genre-tag" data-genre="reggae">Reggae</div>
+                        <div class="genre-tag" data-genre="country">Country</div>
+                        <div class="genre-tag" data-genre="latin">Latin</div>
+                        <div class="genre-tag" data-genre="arabic">Arabic</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        <input type="checkbox" id="notificationsEnabled"> 
+                        Enable email notifications
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        <input type="checkbox" id="autoSaveEnabled"> 
+                        Auto-save generated tracks
+                    </label>
+                </div>
+                
+                <button onclick="savePreferences()" class="btn btn-primary">Save Preferences</button>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="profile-section">
+                <h2 class="section-title">
+                    <i class="fas fa-history"></i>
+                    Recent Activity
+                </h2>
+                
+                <div class="recent-activity" id="recentActivity">
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-music"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>Generated "Sunset Vibes"</h4>
+                            <p>2 hours ago</p>
+                        </div>
+                    </div>
+                    <!-- More activity items will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="profile-section" style="margin-top: 2rem; border-color: var(--error);">
+            <h2 class="section-title" style="color: var(--error);">
+                <i class="fas fa-exclamation-triangle"></i>
+                Danger Zone
+            </h2>
+            
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                These actions are permanent and cannot be undone.
+            </p>
+            
+            <button onclick="deleteAccount()" class="btn btn-danger">
+                Delete Account
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { authManager } from './js/firebase-config.js';
+
+        let currentUserData = null;
+
+        // Check authentication
+        authManager.onAuthStateChange(async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            // Load user data
+            currentUserData = await authManager.getUserData();
+            if (currentUserData) {
+                populateProfile(user, currentUserData);
+            }
+        });
+
+        function populateProfile(user, userData) {
+            // Basic info
+            document.querySelector('[data-user="name"]').textContent = user.displayName || 'User';
+            document.querySelector('[data-user="email"]').textContent = user.email;
+            
+            const photoElement = document.querySelector('[data-user="photo"]');
+            if (user.photoURL) {
+                photoElement.src = user.photoURL;
+            } else {
+                photoElement.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || 'User')}&background=00d4ff&color=fff`;
+            }
+
+            // Member since
+            const memberSince = new Date(userData.createdAt).toLocaleDateString();
+            document.getElementById('memberSince').textContent = memberSince;
+
+            // Stats
+            document.getElementById('totalGenerations').textContent = userData.stats?.totalGenerations || 0;
+            document.getElementById('totalPlaytime').textContent = Math.floor((userData.stats?.totalPlaytime || 0) / 3600) + 'h';
+            document.getElementById('favoriteCount').textContent = userData.favorites?.length || 0;
+
+            // Subscription
+            document.getElementById('subscriptionPlan').textContent = userData.subscription === 'free' ? 'Free Plan' : 'Pro Plan';
+            document.getElementById('creditsRemaining').textContent = userData.credits || 0;
+
+            // Form fields
+            document.getElementById('displayName').value = user.displayName || '';
+            document.getElementById('bio').value = userData.bio || '';
+            
+            // Preferences
+            if (userData.preferences) {
+                document.getElementById('notificationsEnabled').checked = userData.preferences.notifications;
+                document.getElementById('autoSaveEnabled').checked = userData.preferences.autoSave;
+                
+                // Genre preferences
+                if (userData.preferences.preferredGenres) {
+                    userData.preferences.preferredGenres.forEach(genre => {
+                        const tag = document.querySelector(`[data-genre="${genre}"]`);
+                        if (tag) tag.classList.add('selected');
+                    });
+                }
+            }
+        }
+
+        // Profile form submission
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const displayName = document.getElementById('displayName').value;
+            const bio = document.getElementById('bio').value;
+            
+            const result = await authManager.updateUserProfile({
+                displayName,
+                bio
+            });
+            
+            if (result.success) {
+                showMessage('profileMessage', 'Profile updated successfully!', 'success');
+            } else {
+                showMessage('profileMessage', result.error, 'error');
+            }
+        });
+
+        // Genre tag selection
+        document.querySelectorAll('.genre-tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                tag.classList.toggle('selected');
+            });
+        });
+
+        // Save preferences
+        window.savePreferences = async function() {
+            const selectedGenres = Array.from(document.querySelectorAll('.genre-tag.selected'))
+                .map(tag => tag.dataset.genre);
+            
+            const preferences = {
+                preferredGenres: selectedGenres,
+                notifications: document.getElementById('notificationsEnabled').checked,
+                autoSave: document.getElementById('autoSaveEnabled').checked
+            };
+            
+            const result = await authManager.updateUserProfile({ preferences });
+            
+            if (result.success) {
+                showMessage('profileMessage', 'Preferences saved successfully!', 'success');
+            } else {
+                showMessage('profileMessage', result.error, 'error');
+            }
+        };
+
+        // Sign out
+        window.signOut = async function() {
+            const result = await authManager.signOut();
+            if (result.success) {
+                window.location.href = 'index.html';
+            }
+        };
+
+        // Delete account
+        window.deleteAccount = function() {
+            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                if (confirm('This will permanently delete all your music, playlists, and account data. Continue?')) {
+                    // Implement account deletion
+                    alert('Account deletion feature will be implemented soon.');
+                }
+            }
+        };
+
+        function showMessage(elementId, message, type) {
+            const messageEl = document.getElementById(elementId);
+            messageEl.textContent = message;
+            messageEl.className = `message ${type}`;
+            messageEl.style.display = 'block';
+            
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

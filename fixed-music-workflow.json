@@ -1,0 +1,337 @@
+{
+  "meta": {
+    "instanceId": "local"
+  },
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generate-music-ai",
+        "options": {}
+      },
+      "id": "webhook-1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ],
+      "webhookId": "generate-music-ai"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.prompt}}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      },
+      "id": "validate-1",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "https://api.piapi.ai/api/v1/task",
+        "jsonParameters": true,
+        "bodyParametersJson": "={\n  \"model\": \"music-u\",\n  \"task_type\": \"generate_music\",\n  \"input\": {\n    \"gpt_description_prompt\": \"{{$json.prompt}}\",\n    \"negative_tags\": \"\",\n    \"lyrics_type\": \"instrumental\",\n    \"seed\": -1\n  }\n}",
+        "headerParametersJson": "={\n  \"x-api-key\": \"{{$vars.PIAPI_API_KEY}}\"\n}"
+      },
+      "id": "music-task-1",
+      "name": "Create Music Task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        680,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "https://api.piapi.ai/api/v1/task",
+        "jsonParameters": true,
+        "bodyParametersJson": "={\n  \"model\": \"flux\",\n  \"task_type\": \"text2img\",\n  \"input\": {\n    \"prompt\": \"{{$json.artworkPrompt || ($json.genre + ' music album cover artwork')}}\",\n    \"width\": 512,\n    \"height\": 512\n  }\n}",
+        "headerParametersJson": "={\n  \"x-api-key\": \"{{$vars.PIAPI_API_KEY}}\"\n}"
+      },
+      "id": "artwork-task-1",
+      "name": "Create Artwork Task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        680,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 15,
+        "unit": "seconds"
+      },
+      "id": "wait-1",
+      "name": "Wait 15s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        900,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.piapi.ai/api/v1/task/{{$node[\"Create Music Task\"].json.data.task_id}}",
+        "headerParametersJson": "={\n  \"x-api-key\": \"{{$vars.PIAPI_API_KEY}}\"\n}"
+      },
+      "id": "poll-music-1",
+      "name": "Poll Music Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.piapi.ai/api/v1/task/{{$node[\"Create Artwork Task\"].json.data.task_id}}",
+        "headerParametersJson": "={\n  \"x-api-key\": \"{{$vars.PIAPI_API_KEY}}\"\n}"
+      },
+      "id": "poll-artwork-1",
+      "name": "Poll Artwork Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$node[\"Poll Music Status\"].json.data.status}}",
+              "value2": "completed"
+            },
+            {
+              "value1": "={{$node[\"Poll Artwork Status\"].json.data.status}}",
+              "value2": "completed"
+            }
+          ]
+        },
+        "combineOperation": "all"
+      },
+      "id": "check-complete-1",
+      "name": "Both Complete?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 5,
+        "unit": "seconds"
+      },
+      "id": "wait-poll-1",
+      "name": "Wait 5s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"audio_url\": \"{{$node[\"Poll Music Status\"].json.data.output}}\",\n  \"image_url\": \"{{$node[\"Poll Artwork Status\"].json.data.output}}\",\n  \"extended_audio_url\": null,\n  \"prompt\": \"{{$node[\"Webhook\"].json.prompt}}\",\n  \"artworkPrompt\": \"{{$node[\"Webhook\"].json.artworkPrompt || ($node[\"Webhook\"].json.genre + ' music artwork')}}\",\n  \"genre\": \"{{$node[\"Webhook\"].json.genre || 'electronic'}}\",\n  \"duration\": \"{{$node[\"Webhook\"].json.duration || 30}}\",\n  \"quality\": \"{{$node[\"Webhook\"].json.quality || 'high'}}\",\n  \"status\": \"completed\",\n  \"timestamp\": \"{{new Date().toISOString()}}\"\n}",
+        "options": {
+          "responseHeaders": {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Content-Type": "application/json"
+          }
+        }
+      },
+      "id": "respond-1",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"error\": \"Invalid input\",\n  \"message\": \"Prompt is required\",\n  \"status\": \"error\"\n}",
+        "responseCode": 400,
+        "options": {
+          "responseHeaders": {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json"
+          }
+        }
+      },
+      "id": "error-1",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        460,
+        500
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Create Music Task",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create Artwork Task",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Music Task": {
+      "main": [
+        [
+          {
+            "node": "Wait 15s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Artwork Task": {
+      "main": [
+        [
+          {
+            "node": "Wait 15s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 15s": {
+      "main": [
+        [
+          {
+            "node": "Poll Music Status",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Poll Artwork Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poll Music Status": {
+      "main": [
+        [
+          {
+            "node": "Both Complete?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poll Artwork Status": {
+      "main": [
+        [
+          {
+            "node": "Both Complete?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Both Complete?": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 5s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 5s": {
+      "main": [
+        [
+          {
+            "node": "Poll Music Status",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Poll Artwork Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {},
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-06-22T15:50:00.000Z"
+}

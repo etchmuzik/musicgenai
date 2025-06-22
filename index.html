@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MusicGen AI - The Complete AI Music Creation Platform</title>
+    <meta name="description" content="Create professional music with AI. Features advanced AI generation, audio processing, gamification, and social collaboration. Join 50,000+ creators worldwide.">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* Modern Color Palette */
+            --primary: #00d4ff;
+            --secondary: #7c3aed;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            
+            /* Dark Theme */
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --text-muted: #6b7280;
+            
+            /* Glass Effects */
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-strong: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.3);
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, var(--primary), var(--secondary));
+            --gradient-accent: linear-gradient(135deg, var(--accent), #d97706);
+            --gradient-success: linear-gradient(135deg, var(--success), #059669);
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            --space-3xl: 4rem;
+            --space-4xl: 6rem;
+            
+            /* Typography */
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-md: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            --font-size-4xl: 2.25rem;
+            --font-size-5xl: 3rem;
+            --font-size-6xl: 3.75rem;
+            
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            --radius-full: 9999px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: var(--space-lg) 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav.scrolled {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: var(--space-md) 0;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: var(--font-size-xl);
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            letter-spacing: -0.025em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: var(--space-2xl);
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: var(--font-size-sm);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .nav-link.featured {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+
+        /* Auth Buttons */
+        .auth-buttons {
+            display: flex;
+            gap: var(--space-md);
+            align-items: center;
+        }
+
+        .cta-button {
+            padding: var(--space-sm) var(--space-lg);
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .outline-button {
+            padding: var(--space-sm) var(--space-lg);
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--glass-border);
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .outline-button:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* User Menu */
+        .user-menu {
+            position: relative;
+            display: none;
+        }
+
+        .user-menu.active {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .user-avatar:hover {
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: var(--space-sm);
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--space-sm);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-glass);
+        }
+
+        .user-menu:hover .user-dropdown,
+        .user-dropdown:hover {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-header {
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .dropdown-name {
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+        }
+
+        .dropdown-email {
+            font-size: var(--font-size-xs);
+            color: var(--text-secondary);
+        }
+
+        .dropdown-link {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+            font-size: var(--font-size-sm);
+        }
+
+        .dropdown-link:hover {
+            background: var(--glass);
+        }
+
+        .dropdown-link i {
+            width: 16px;
+            text-align: center;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--glass-border);
+            margin: var(--space-sm) 0;
+        }
+
+        .subscription-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--gradient-primary);
+            color: white;
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            border-radius: var(--radius-full);
+            margin-left: var(--space-sm);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: var(--font-size-xl);
+            cursor: pointer;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 10, 10, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: var(--space-xl);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        .mobile-menu .nav-link {
+            font-size: var(--font-size-xl);
+            color: var(--text-primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: var(--space-4xl) 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(0, 212, 255, 0.1), transparent),
+                radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.1), transparent),
+                radial-gradient(circle at 40% 40%, rgba(245, 158, 11, 0.05), transparent);
+            pointer-events: none;
+        }
+
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badges {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+            flex-wrap: wrap;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-lg);
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .hero-badge.ai { color: var(--primary); border-color: rgba(0, 212, 255, 0.3); }
+        .hero-badge.gamification { color: var(--accent); border-color: rgba(245, 158, 11, 0.3); }
+        .hero-badge.social { color: var(--success); border-color: rgba(16, 185, 129, 0.3); }
+
+        .hero-title {
+            font-size: clamp(var(--font-size-4xl), 8vw, var(--font-size-6xl));
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: var(--space-lg);
+            letter-spacing: -0.05em;
+        }
+
+        .hero-gradient-text {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: var(--font-size-xl);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2xl);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 300;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-2xl);
+            margin-bottom: var(--space-2xl);
+            flex-wrap: wrap;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-number {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+        }
+
+        .hero-stat-label {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: var(--space-lg);
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: var(--space-4xl);
+        }
+
+        .primary-button {
+            padding: var(--space-lg) var(--space-2xl);
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-xl);
+            font-weight: 600;
+            font-size: var(--font-size-lg);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .primary-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.3);
+        }
+
+        .secondary-button {
+            padding: var(--space-lg) var(--space-2xl);
+            background: var(--glass);
+            color: var(--text-primary);
+            border: 2px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            font-weight: 600;
+            font-size: var(--font-size-lg);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            backdrop-filter: blur(20px);
+        }
+
+        .secondary-button:hover {
+            background: var(--glass-strong);
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        /* User Welcome Section (shown when authenticated) */
+        .user-welcome {
+            display: none;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-2xl);
+            text-align: left;
+        }
+
+        .user-welcome.active {
+            display: block;
+        }
+
+        .welcome-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+        }
+
+        .welcome-title {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .quick-stat {
+            text-align: center;
+            padding: var(--space-md);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+        }
+
+        .quick-stat-value {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .quick-stat-label {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+        }
+
+        /* Feature Platforms Section */
+        .platforms {
+            padding: var(--space-4xl) 0;
+            background: var(--bg-secondary);
+        }
+
+        .platforms-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl);
+        }
+
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--space-2xl);
+        }
+
+        .platform-card {
+            background: var(--glass);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .platform-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .platform-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-lg);
+        }
+
+        .platform-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-2xl);
+            color: white;
+        }
+
+        .platform-icon.studio { background: var(--gradient-primary); }
+        .platform-icon.ai { background: var(--gradient-accent); }
+        .platform-icon.audio { background: var(--gradient-success); }
+        .platform-icon.gamification { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
+
+        .platform-title {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+        }
+
+        .platform-subtitle {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        .platform-features {
+            list-style: none;
+            margin-bottom: var(--space-lg);
+        }
+
+        .platform-features li {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-sm);
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        .platform-features i {
+            color: var(--success);
+            width: 16px;
+        }
+
+        .platform-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-lg);
+            background: var(--glass-strong);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .platform-cta:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        /* Features Section */
+        .features {
+            padding: var(--space-4xl) 0;
+        }
+
+        .features-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--space-4xl);
+        }
+
+        .section-badge {
+            display: inline-block;
+            padding: var(--space-sm) var(--space-lg);
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: var(--space-lg);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .section-title {
+            font-size: var(--font-size-4xl);
+            font-weight: 700;
+            margin-bottom: var(--space-lg);
+            letter-spacing: -0.025em;
+        }
+
+        .section-subtitle {
+            font-size: var(--font-size-xl);
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-xl);
+        }
+
+        .feature-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto var(--space-lg);
+            background: var(--gradient-primary);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-3xl);
+            color: white;
+        }
+
+        .feature-title {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            margin-bottom: var(--space-sm);
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Social Proof Section */
+        .social-proof {
+            padding: var(--space-4xl) 0;
+            background: var(--bg-secondary);
+        }
+
+        .social-proof-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl);
+            text-align: center;
+        }
+
+        .social-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-2xl);
+            margin-bottom: var(--space-4xl);
+        }
+
+        .social-stat {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+        }
+
+        .social-stat-number {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+            margin-bottom: var(--space-sm);
+        }
+
+        .social-stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: var(--space-4xl) 0;
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-primary);
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .cta-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-title {
+            font-size: var(--font-size-4xl);
+            font-weight: 700;
+            margin-bottom: var(--space-lg);
+        }
+
+        .cta-subtitle {
+            font-size: var(--font-size-xl);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2xl);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: var(--space-lg);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-primary);
+            border-top: 1px solid var(--glass-border);
+            padding: var(--space-4xl) 0 var(--space-xl);
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-2xl);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .footer-brand {
+            max-width: 350px;
+        }
+
+        .footer-logo {
+            font-size: var(--font-size-xl);
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: var(--space-lg);
+        }
+
+        .footer-description {
+            color: var(--text-secondary);
+            margin-bottom: var(--space-lg);
+            line-height: 1.6;
+        }
+
+        .footer-section h4 {
+            font-weight: 600;
+            margin-bottom: var(--space-lg);
+            color: var(--text-primary);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: var(--space-sm);
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s ease;
+            font-size: var(--font-size-sm);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--glass-border);
+            padding-top: var(--space-xl);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--space-lg);
+        }
+
+        .footer-copyright {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        .footer-social {
+            display: flex;
+            gap: var(--space-lg);
+        }
+
+        .footer-social a {
+            color: var(--text-secondary);
+            font-size: var(--font-size-lg);
+            transition: color 0.2s ease;
+        }
+
+        .footer-social a:hover {
+            color: var(--primary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .hero-title {
+                font-size: var(--font-size-4xl);
+            }
+
+            .hero-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .platforms-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .social-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .user-welcome {
+                padding: var(--space-lg);
+            }
+
+            .quick-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--text-muted);
+            border-radius: var(--radius-full);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav" id="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">MusicGen AI</a>
+            <div class="nav-links">
+                <a href="/music-studio" class="nav-link">Music Studio</a>
+                <a href="/ai-studio" class="nav-link featured">AI Studio</a>
+                <a href="/audio-editor" class="nav-link">Audio Editor</a>
+                <a href="/gamification" class="nav-link">Gamification</a>
+                <a href="/pricing" class="nav-link">Pricing</a>
+                <a href="/about" class="nav-link">About</a>
+                
+                <!-- Auth buttons (shown when not logged in) -->
+                <div class="auth-buttons" data-auth="false">
+                    <a href="/auth" class="outline-button">Sign In</a>
+                    <a href="/auth" class="cta-button">
+                        <i class="fas fa-rocket"></i>
+                        Start Free
+                    </a>
+                </div>
+                
+                <!-- User menu (shown when logged in) -->
+                <div class="user-menu" data-auth="true">
+                    <a href="/user-dashboard" class="cta-button">
+                        <i class="fas fa-th"></i>
+                        Dashboard
+                    </a>
+                    <img src="" alt="User Avatar" class="user-avatar" data-user="photo">
+                    <div class="user-dropdown">
+                        <div class="dropdown-header">
+                            <div class="dropdown-name" data-user="name">User</div>
+                            <div class="dropdown-email" data-user="email">email@example.com</div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="/user-dashboard" class="dropdown-link">
+                            <i class="fas fa-chart-line"></i>
+                            Dashboard
+                        </a>
+                        <a href="/profile" class="dropdown-link">
+                            <i class="fas fa-user"></i>
+                            Profile
+                        </a>
+                        <a href="/library" class="dropdown-link">
+                            <i class="fas fa-music"></i>
+                            My Library
+                        </a>
+                        <a href="/settings" class="dropdown-link">
+                            <i class="fas fa-cog"></i>
+                            Settings
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="/pricing" class="dropdown-link">
+                            <i class="fas fa-crown"></i>
+                            Upgrade
+                            <span class="subscription-badge" data-user="subscription">Free</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-link" onclick="signOut()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Sign Out
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <button class="mobile-menu-toggle" id="mobile-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <a href="/music-studio" class="nav-link">Music Studio</a>
+        <a href="/ai-studio" class="nav-link">AI Studio</a>
+        <a href="/audio-editor" class="nav-link">Audio Editor</a>
+        <a href="/gamification" class="nav-link">Gamification</a>
+        <a href="/pricing" class="nav-link">Pricing</a>
+        <a href="/about" class="nav-link">About</a>
+        <div data-auth="false">
+            <a href="/auth" class="cta-button">Sign In / Start Free</a>
+        </div>
+        <div data-auth="true" style="display: none;">
+            <a href="/user-dashboard" class="cta-button">Dashboard</a>
+            <a href="#" class="outline-button" onclick="signOut()">Sign Out</a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <!-- User Welcome (shown when authenticated) -->
+            <div class="user-welcome" data-auth="true">
+                <div class="welcome-header">
+                    <h2 class="welcome-title">Welcome back, <span data-user="name">User</span>! 👋</h2>
+                    <a href="/user-dashboard" class="outline-button">
+                        <i class="fas fa-chart-line"></i>
+                        View Full Dashboard
+                    </a>
+                </div>
+                <div class="quick-stats">
+                    <div class="quick-stat">
+                        <div class="quick-stat-value" data-user-stat="tracks">0</div>
+                        <div class="quick-stat-label">Tracks Created</div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="quick-stat-value" data-user-stat="minutes">0</div>
+                        <div class="quick-stat-label">Minutes Generated</div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="quick-stat-value" data-user-stat="achievements">0</div>
+                        <div class="quick-stat-label">Achievements</div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="quick-stat-value" data-user-stat="streak">0</div>
+                        <div class="quick-stat-label">Day Streak</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-badges fade-in-up">
+                <div class="hero-badge ai">
+                    <i class="fas fa-robot"></i>
+                    Advanced AI
+                </div>
+                <div class="hero-badge gamification">
+                    <i class="fas fa-trophy"></i>
+                    Gamification
+                </div>
+                <div class="hero-badge social">
+                    <i class="fas fa-users"></i>
+                    Social Platform
+                </div>
+            </div>
+            
+            <h1 class="hero-title fade-in-up delay-1">
+                The Complete <span class="hero-gradient-text">AI Music Platform</span><br>
+                for Modern Creators
+            </h1>
+            
+            <p class="hero-subtitle fade-in-up delay-2">
+                Create professional music with advanced AI, master your tracks with professional tools, 
+                compete in challenges, and collaborate with a global community of creators.
+            </p>
+
+            <div class="hero-stats fade-in-up delay-3">
+                <div class="hero-stat">
+                    <span class="hero-stat-number">50K+</span>
+                    <span class="hero-stat-label">Active Creators</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number">2M+</span>
+                    <span class="hero-stat-label">Tracks Generated</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number">95%</span>
+                    <span class="hero-stat-label">User Satisfaction</span>
+                </div>
+            </div>
+            
+            <div class="hero-actions fade-in-up delay-4">
+                <div data-auth="false">
+                    <a href="/auth" class="primary-button">
+                        <i class="fas fa-rocket"></i>
+                        Start Creating Free
+                    </a>
+                    <a href="/ai-studio" class="secondary-button">
+                        <i class="fas fa-magic"></i>
+                        Explore AI Studio
+                    </a>
+                </div>
+                <div data-auth="true" style="display: none;">
+                    <a href="/music-studio" class="primary-button">
+                        <i class="fas fa-music"></i>
+                        Create New Track
+                    </a>
+                    <a href="/library" class="secondary-button">
+                        <i class="fas fa-folder-open"></i>
+                        My Library
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature Platforms Section -->
+    <section class="platforms">
+        <div class="platforms-container">
+            <div class="section-header">
+                <div class="section-badge">Complete Platform</div>
+                <h2 class="section-title">Four Powerful Tools, One Platform</h2>
+                <p class="section-subtitle">
+                    Everything you need for professional music creation, collaboration, and growth
+                </p>
+            </div>
+            
+            <div class="platforms-grid">
+                <div class="platform-card">
+                    <div class="platform-header">
+                        <div class="platform-icon studio">
+                            <i class="fas fa-music"></i>
+                        </div>
+                        <div>
+                            <h3 class="platform-title">Music Studio</h3>
+                            <p class="platform-subtitle">Advanced music generation</p>
+                        </div>
+                    </div>
+                    <ul class="platform-features">
+                        <li><i class="fas fa-check"></i> 50+ genres and subgenres</li>
+                        <li><i class="fas fa-check"></i> Lyrics-to-music generation</li>
+                        <li><i class="fas fa-check"></i> Remix and extend features</li>
+                        <li><i class="fas fa-check"></i> Smart playlist management</li>
+                        <li><i class="fas fa-check"></i> Real-time generation progress</li>
+                    </ul>
+                    <a href="/music-studio" class="platform-cta">
+                        Open Studio <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="platform-card">
+                    <div class="platform-header">
+                        <div class="platform-icon ai">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div>
+                            <h3 class="platform-title">AI Studio</h3>
+                            <p class="platform-subtitle">Advanced AI features</p>
+                        </div>
+                    </div>
+                    <ul class="platform-features">
+                        <li><i class="fas fa-check"></i> Voice-to-music generation</li>
+                        <li><i class="fas fa-check"></i> Music style transfer</li>
+                        <li><i class="fas fa-check"></i> AI auto-mastering</li>
+                        <li><i class="fas fa-check"></i> Lyrics generation + music</li>
+                        <li><i class="fas fa-check"></i> Music analysis & insights</li>
+                    </ul>
+                    <a href="/ai-studio" class="platform-cta">
+                        Open AI Studio <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="platform-card">
+                    <div class="platform-header">
+                        <div class="platform-icon audio">
+                            <i class="fas fa-waveform-lines"></i>
+                        </div>
+                        <div>
+                            <h3 class="platform-title">Audio Editor</h3>
+                            <p class="platform-subtitle">Professional audio tools</p>
+                        </div>
+                    </div>
+                    <ul class="platform-features">
+                        <li><i class="fas fa-check"></i> Real-time audio editing</li>
+                        <li><i class="fas fa-check"></i> Stem separation & isolation</li>
+                        <li><i class="fas fa-check"></i> Waveform visualization</li>
+                        <li><i class="fas fa-check"></i> Professional effects suite</li>
+                        <li><i class="fas fa-check"></i> Multi-format export</li>
+                    </ul>
+                    <a href="/audio-editor" class="platform-cta">
+                        Open Editor <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="platform-card">
+                    <div class="platform-header">
+                        <div class="platform-icon gamification">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <div>
+                            <h3 class="platform-title">Gamification Hub</h3>
+                            <p class="platform-subtitle">Compete & grow</p>
+                        </div>
+                    </div>
+                    <ul class="platform-features">
+                        <li><i class="fas fa-check"></i> 35+ achievements to unlock</li>
+                        <li><i class="fas fa-check"></i> Daily & weekly challenges</li>
+                        <li><i class="fas fa-check"></i> Global leaderboards</li>
+                        <li><i class="fas fa-check"></i> Streak tracking & rewards</li>
+                        <li><i class="fas fa-check"></i> Social sharing & collaboration</li>
+                    </ul>
+                    <a href="/gamification" class="platform-cta">
+                        View Hub <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="features-container">
+            <div class="section-header">
+                <div class="section-badge">Why Choose Us</div>
+                <h2 class="section-title">Industry-Leading Capabilities</h2>
+                <p class="section-subtitle">
+                    Powered by cutting-edge AI technology and designed for creators of all levels
+                </p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎵</div>
+                    <h3 class="feature-title">AI Music Generation</h3>
+                    <p class="feature-description">
+                        State-of-the-art AI models create professional-quality music from simple text descriptions. Generate in any genre or style instantly.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3 class="feature-title">Advanced AI Features</h3>
+                    <p class="feature-description">
+                        Voice-to-music conversion, style transfer, auto-mastering, and lyrics generation powered by cutting-edge artificial intelligence.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎚️</div>
+                    <h3 class="feature-title">Professional Tools</h3>
+                    <p class="feature-description">
+                        Real-time audio editing, stem separation, waveform visualization, and professional effects suite for broadcast-quality results.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h3 class="feature-title">Gamified Experience</h3>
+                    <p class="feature-description">
+                        35+ achievements, daily challenges, leaderboards, and reward systems that make music creation engaging and motivating.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3 class="feature-title">Global Community</h3>
+                    <p class="feature-description">
+                        Connect with creators worldwide, share your music, collaborate on projects, and discover amazing tracks from the community.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3 class="feature-title">Lightning Fast</h3>
+                    <p class="feature-description">
+                        Generate complete tracks in under 60 seconds. From concept to finished song faster than any other platform available.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof Section -->
+    <section class="social-proof">
+        <div class="social-proof-container">
+            <div class="section-header">
+                <div class="section-badge">Trusted Globally</div>
+                <h2 class="section-title">Join the Music Revolution</h2>
+                <p class="section-subtitle">
+                    Creators worldwide are using MusicGen AI to bring their musical visions to life
+                </p>
+            </div>
+            
+            <div class="social-stats">
+                <div class="social-stat">
+                    <span class="social-stat-number">50,000+</span>
+                    <span class="social-stat-label">Active Creators</span>
+                </div>
+                <div class="social-stat">
+                    <span class="social-stat-number">2.1M+</span>
+                    <span class="social-stat-label">Tracks Generated</span>
+                </div>
+                <div class="social-stat">
+                    <span class="social-stat-number">180+</span>
+                    <span class="social-stat-label">Countries</span>
+                </div>
+                <div class="social-stat">
+                    <span class="social-stat-number">98%</span>
+                    <span class="social-stat-label">Uptime</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-container">
+            <h2 class="cta-title">Ready to Create Amazing Music?</h2>
+            <p class="cta-subtitle">
+                Join thousands of creators using AI to bring their musical ideas to life. 
+                Start with our free tier and upgrade as you grow.
+            </p>
+            <div class="cta-buttons">
+                <div data-auth="false">
+                    <a href="/auth" class="primary-button">
+                        <i class="fas fa-rocket"></i>
+                        Start Creating Free
+                    </a>
+                    <a href="/pricing" class="secondary-button">
+                        <i class="fas fa-tag"></i>
+                        View Pricing
+                    </a>
+                </div>
+                <div data-auth="true" style="display: none;">
+                    <a href="/music-studio" class="primary-button">
+                        <i class="fas fa-music"></i>
+                        Create New Track
+                    </a>
+                    <a href="/pricing" class="secondary-button">
+                        <i class="fas fa-crown"></i>
+                        Upgrade Plan
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">MusicGen AI</div>
+                    <p class="footer-description">
+                        The complete AI music platform for modern creators. Generate, edit, compete, and collaborate with advanced AI tools and a global community.
+                    </p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Platform</h4>
+                    <ul class="footer-links">
+                        <li><a href="/music-studio">Music Studio</a></li>
+                        <li><a href="/ai-studio">AI Studio</a></li>
+                        <li><a href="/audio-editor">Audio Editor</a></li>
+                        <li><a href="/gamification">Gamification Hub</a></li>
+                        <li><a href="/pricing">Pricing</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Features</h4>
+                    <ul class="footer-links">
+                        <li><a href="/music-studio">AI Music Generation</a></li>
+                        <li><a href="/ai-studio">Voice to Music</a></li>
+                        <li><a href="/audio-editor">Stem Separation</a></li>
+                        <li><a href="/gamification">Achievements</a></li>
+                        <li><a href="/library">Music Library</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="/help">Help Center</a></li>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/support">Support</a></li>
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                        <li><a href="/terms">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    &copy; 2024 MusicGen AI. All rights reserved.
+                </div>
+                <div class="footer-social">
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { authManager } from './js/firebase-config.js';
+
+        // Check authentication state
+        authManager.onAuthStateChange((user) => {
+            if (user) {
+                // User is signed in
+                document.querySelectorAll('[data-auth="true"]').forEach(el => {
+                    el.style.display = el.classList.contains('user-menu') || el.classList.contains('user-welcome') ? 'block' : 'block';
+                });
+                document.querySelectorAll('[data-auth="false"]').forEach(el => {
+                    el.style.display = 'none';
+                });
+                
+                // Update user stats (mock data for now - will be fetched from Firebase)
+                updateUserStats();
+            } else {
+                // User is not signed in
+                document.querySelectorAll('[data-auth="true"]').forEach(el => {
+                    el.style.display = 'none';
+                });
+                document.querySelectorAll('[data-auth="false"]').forEach(el => {
+                    el.style.display = 'block';
+                });
+            }
+        });
+
+        // Sign out function
+        window.signOut = async function() {
+            const result = await authManager.signOut();
+            if (result.success) {
+                window.location.href = '/';
+            }
+        };
+
+        // Update user stats
+        async function updateUserStats() {
+            // In production, these would be fetched from Firebase
+            const stats = {
+                tracks: localStorage.getItem('generatedTracks') ? JSON.parse(localStorage.getItem('generatedTracks')).length : 0,
+                minutes: Math.floor(Math.random() * 500), // Mock data
+                achievements: Math.floor(Math.random() * 20), // Mock data
+                streak: Math.floor(Math.random() * 30) // Mock data
+            };
+            
+            document.querySelector('[data-user-stat="tracks"]').textContent = stats.tracks;
+            document.querySelector('[data-user-stat="minutes"]').textContent = stats.minutes;
+            document.querySelector('[data-user-stat="achievements"]').textContent = stats.achievements;
+            document.querySelector('[data-user-stat="streak"]').textContent = stats.streak;
+        }
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Mobile menu toggle
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            const icon = mobileToggle.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.mobile-menu .nav-link, .mobile-menu .cta-button').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                const icon = mobileToggle.querySelector('i');
+                icon.classList.add('fa-bars');
+                icon.classList.remove('fa-times');
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('.platform-card, .feature-card, .social-stat').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Counter animation for stats
+        function animateCounter(element, target, duration) {
+            let start = 0;
+            const increment = target / (duration / 16);
+            
+            function update() {
+                start += increment;
+                if (start < target) {
+                    element.textContent = Math.floor(start).toLocaleString();
+                    requestAnimationFrame(update);
+                } else {
+                    element.textContent = target.toLocaleString();
+                }
+            }
+            
+            update();
+        }
+
+        // Animate counters when they come into view
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const number = entry.target.querySelector('.hero-stat-number, .social-stat-number');
+                    if (number && !number.dataset.animated) {
+                        number.dataset.animated = 'true';
+                        const text = number.textContent;
+                        const value = parseInt(text.replace(/\D/g, ''));
+                        if (value) {
+                            animateCounter(number, value, 2000);
+                        }
+                    }
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.hero-stat, .social-stat').forEach(stat => {
+            statObserver.observe(stat);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Recommendations - MusicGen AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --secondary: #7c3aed;
+            --accent: #f59e0b;
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1a1;
+            --success: #10b981;
+            --error: #ef4444;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 6rem 2rem 2rem;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .recommendation-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .recommendation-list {
+            list-style: none;
+        }
+
+        .recommendation-item {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .recommendation-item:hover {
+            background: var(--glass);
+            border-color: var(--primary);
+        }
+
+        .recommendation-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .recommendation-text {
+            font-size: 0.9rem;
+        }
+
+        .use-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .use-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .genre-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .genre-tag {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .genre-tag:hover,
+        .genre-tag.recommended {
+            background: var(--gradient);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .insights-section {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .insights-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .insight-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .insight-item:last-child {
+            border-bottom: none;
+        }
+
+        .insight-label {
+            color: var(--text-secondary);
+        }
+
+        .insight-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .progress-bar {
+            width: 100px;
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            transition: width 0.3s ease;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .recommendations-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 6rem 1rem 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <nav class="nav">
+            <a href="index.html" class="logo">MusicGen AI</a>
+            <div class="nav-links">
+                <a href="app-super-enhanced.html">Studio</a>
+                <a href="library.html">Library</a>
+                <a href="recommendations.html" class="active">Recommendations</a>
+                <a href="profile.html">Profile</a>
+            </div>
+        </nav>
+    </div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Personalized Recommendations</h1>
+            <p class="page-subtitle">AI-powered suggestions based on your music creation patterns</p>
+        </div>
+
+        <!-- User Insights -->
+        <div class="insights-section" id="userInsights" style="display: none;">
+            <h2 class="insights-title">
+                <i class="fas fa-chart-line"></i>
+                Your Music Profile
+            </h2>
+            <div id="insightsContent"></div>
+        </div>
+
+        <!-- Recommendations Grid -->
+        <div class="recommendations-grid">
+            <!-- Genre Recommendations -->
+            <div class="recommendation-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-music"></i>
+                    </div>
+                    <h3 class="card-title">Recommended Genres</h3>
+                </div>
+                <div class="genre-tags" id="genreRecommendations">
+                    <div class="empty-state">
+                        <i class="fas fa-music"></i>
+                        <p>Create some music first to get personalized genre recommendations!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prompt Suggestions -->
+            <div class="recommendation-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 class="card-title">Prompt Suggestions</h3>
+                </div>
+                <ul class="recommendation-list" id="promptRecommendations">
+                    <div class="empty-state">
+                        <i class="fas fa-lightbulb"></i>
+                        <p>Generate some tracks to unlock personalized prompt suggestions!</p>
+                    </div>
+                </ul>
+            </div>
+
+            <!-- Time-Based Suggestions -->
+            <div class="recommendation-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 class="card-title">Perfect for Right Now</h3>
+                </div>
+                <ul class="recommendation-list" id="timeBasedRecommendations">
+                    <div class="empty-state">
+                        <i class="fas fa-clock"></i>
+                        <p>We'll learn your listening patterns to suggest perfect timing!</p>
+                    </div>
+                </ul>
+            </div>
+
+            <!-- Style Recommendations -->
+            <div class="recommendation-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3 class="card-title">Your Signature Styles</h3>
+                </div>
+                <ul class="recommendation-list" id="styleRecommendations">
+                    <div class="empty-state">
+                        <i class="fas fa-palette"></i>
+                        <p>Create tracks with different styles to discover your preferences!</p>
+                    </div>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Default Recommendations for New Users -->
+        <div id="defaultRecommendations" style="display: none;">
+            <div class="recommendation-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 class="card-title">Popular Starting Points</h3>
+                </div>
+                <ul class="recommendation-list" id="popularPrompts"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { authManager } from './js/firebase-config.js';
+        import { recommendationEngine } from './js/recommendations.js';
+
+        let currentUser = null;
+
+        // Initialize page
+        authManager.onAuthStateChange(async (user) => {
+            currentUser = user;
+            
+            if (user) {
+                await loadPersonalizedRecommendations();
+            } else {
+                showDefaultRecommendations();
+            }
+        });
+
+        async function loadPersonalizedRecommendations() {
+            try {
+                // Wait for recommendation engine to load data
+                await new Promise(resolve => {
+                    const checkLoaded = () => {
+                        if (recommendationEngine.userProfile) {
+                            resolve();
+                        } else {
+                            setTimeout(checkLoaded, 100);
+                        }
+                    };
+                    checkLoaded();
+                });
+
+                // Get recommendations
+                const genreRecs = recommendationEngine.getRecommendations('genres', 6);
+                const promptRecs = recommendationEngine.getRecommendations('prompts', 5);
+                const styleRecs = recommendationEngine.getRecommendations('styles', 4);
+                const timeRecs = recommendationEngine.getRecommendations('timeBasedGenres', 3);
+
+                // Display recommendations
+                displayGenreRecommendations(genreRecs);
+                displayPromptRecommendations(promptRecs);
+                displayStyleRecommendations(styleRecs);
+                displayTimeBasedRecommendations(timeRecs);
+                displayUserInsights();
+
+            } catch (error) {
+                console.error('Failed to load recommendations:', error);
+                showDefaultRecommendations();
+            }
+        }
+
+        function displayGenreRecommendations(genres) {
+            const container = document.getElementById('genreRecommendations');
+            
+            if (genres.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-music"></i>
+                        <p>Create some music first to get personalized genre recommendations!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = genres.map(genre => `
+                <div class="genre-tag recommended" onclick="useGenre('${genre}')">
+                    ${genre.charAt(0).toUpperCase() + genre.slice(1)}
+                </div>
+            `).join('');
+        }
+
+        function displayPromptRecommendations(prompts) {
+            const container = document.getElementById('promptRecommendations');
+            
+            if (prompts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-lightbulb"></i>
+                        <p>Generate some tracks to unlock personalized prompt suggestions!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = prompts.map(prompt => `
+                <li class="recommendation-item" onclick="usePrompt('${prompt}')">
+                    <span class="recommendation-text">${prompt}</span>
+                    <button class="use-btn" onclick="event.stopPropagation(); usePrompt('${prompt}')">
+                        Use
+                    </button>
+                </li>
+            `).join('');
+        }
+
+        function displayStyleRecommendations(styles) {
+            const container = document.getElementById('styleRecommendations');
+            
+            if (styles.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-palette"></i>
+                        <p>Create tracks with different styles to discover your preferences!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = styles.map(style => `
+                <li class="recommendation-item" onclick="useStyle('${style}')">
+                    <span class="recommendation-text">${style.charAt(0).toUpperCase() + style.slice(1)} style</span>
+                    <button class="use-btn" onclick="event.stopPropagation(); useStyle('${style}')">
+                        Try
+                    </button>
+                </li>
+            `).join('');
+        }
+
+        function displayTimeBasedRecommendations(genres) {
+            const container = document.getElementById('timeBasedRecommendations');
+            const currentHour = new Date().getHours();
+            let timeLabel = 'right now';
+            
+            if (currentHour >= 6 && currentHour < 12) timeLabel = 'this morning';
+            else if (currentHour >= 12 && currentHour < 18) timeLabel = 'this afternoon';
+            else if (currentHour >= 18 && currentHour < 22) timeLabel = 'this evening';
+            else timeLabel = 'tonight';
+
+            if (genres.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-clock"></i>
+                        <p>We'll learn your listening patterns to suggest perfect timing!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = genres.map(genre => `
+                <li class="recommendation-item" onclick="useGenre('${genre}')">
+                    <span class="recommendation-text">${genre.charAt(0).toUpperCase() + genre.slice(1)} for ${timeLabel}</span>
+                    <button class="use-btn" onclick="event.stopPropagation(); useGenre('${genre}')">
+                        Create
+                    </button>
+                </li>
+            `).join('');
+        }
+
+        function displayUserInsights() {
+            const container = document.getElementById('userInsights');
+            const contentEl = document.getElementById('insightsContent');
+            
+            const preferences = recommendationEngine.exportPreferences();
+            
+            if (preferences.trackCount === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'block';
+            
+            // Top genres with progress bars
+            const topGenres = Object.entries(preferences.genreWeights)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 3);
+
+            contentEl.innerHTML = `
+                <div class="insight-item">
+                    <span class="insight-label">Tracks Created</span>
+                    <span class="insight-value">${preferences.trackCount}</span>
+                </div>
+                <div class="insight-item">
+                    <span class="insight-label">Favorite Genre</span>
+                    <span class="insight-value">${topGenres[0] ? topGenres[0][0] : 'Exploring'}</span>
+                </div>
+                ${topGenres.map(([genre, weight]) => `
+                    <div class="insight-item">
+                        <span class="insight-label">${genre.charAt(0).toUpperCase() + genre.slice(1)}</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${weight * 100}%"></div>
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function showDefaultRecommendations() {
+            // Show popular prompts for new users
+            const popularPrompts = [
+                'Uplifting electronic music for motivation',
+                'Chill lo-fi beats for studying',
+                'Energetic rock anthem with guitar solos',
+                'Peaceful ambient soundscape',
+                'Funky hip-hop beat with bass drops',
+                'Emotional piano ballad',
+                'Upbeat pop song with catchy melody',
+                'Dark synthwave with retro vibes'
+            ];
+
+            document.getElementById('defaultRecommendations').style.display = 'block';
+            document.getElementById('popularPrompts').innerHTML = popularPrompts.map(prompt => `
+                <li class="recommendation-item" onclick="usePrompt('${prompt}')">
+                    <span class="recommendation-text">${prompt}</span>
+                    <button class="use-btn" onclick="event.stopPropagation(); usePrompt('${prompt}')">
+                        Try
+                    </button>
+                </li>
+            `).join('');
+        }
+
+        // Action handlers
+        window.useGenre = function(genre) {
+            localStorage.setItem('selectedGenre', genre);
+            window.location.href = 'app-super-enhanced.html';
+        };
+
+        window.usePrompt = function(prompt) {
+            localStorage.setItem('suggestedPrompt', prompt);
+            window.location.href = 'app-super-enhanced.html';
+        };
+
+        window.useStyle = function(style) {
+            const prompt = `Create ${style} music with modern production`;
+            localStorage.setItem('suggestedPrompt', prompt);
+            window.location.href = 'app-super-enhanced.html';
+        };
+    </script>
+</body>
+</html>

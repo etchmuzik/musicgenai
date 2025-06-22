@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stem Separation - MusicGen AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --secondary: #7c3aed;
+            --accent: #f59e0b;
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1a1;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background: var(--glass-border);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            border-color: var(--primary);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: calc(100vh - 80px);
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            transition: all 0.3s ease;
+        }
+
+        .upload-section.drag-over {
+            border-color: var(--primary);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .upload-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .format-list {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Model Selection */
+        .model-section {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .model-card {
+            background: var(--bg-tertiary);
+            border: 2px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .model-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .model-card.selected {
+            border-color: var(--primary);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .model-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .model-description {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .model-stems {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .stem-tag {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        /* Processing Section */
+        .processing-section {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            display: none;
+        }
+
+        .processing-section.active {
+            display: block;
+        }
+
+        .progress-container {
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .processing-info {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Results Section */
+        .results-section {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            display: none;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        .stems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stem-player {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .stem-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stem-name {
+            font-weight: 600;
+            text-transform: capitalize;
+            color: var(--text-primary);
+        }
+
+        .stem-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stem-btn {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+        }
+
+        .stem-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .stem-btn.playing {
+            background: var(--success);
+            color: white;
+        }
+
+        .stem-sliders {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .slider-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .slider-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            min-width: 50px;
+        }
+
+        .slider {
+            flex: 1;
+            height: 4px;
+            background: var(--bg-primary);
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .mixer-section {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .mixer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .mixer-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* File Input */
+        .file-input {
+            display: none;
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--glass-border);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .model-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stems-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .upload-section {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="logo">MusicGen AI - Stem Separation</a>
+        <div class="header-actions">
+            <a href="audio-editor.html" class="btn">
+                <i class="fas fa-edit"></i>
+                Audio Editor
+            </a>
+            <a href="app-super-enhanced.html" class="btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Studio
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">AI-Powered Stem Separation</h1>
+            <p class="page-subtitle">
+                Separate your music into individual stems (vocals, drums, bass, etc.) using advanced AI models. 
+                Perfect for remixing, karaoke, and music production.
+            </p>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="upload-section" id="uploadSection">
+            <div class="upload-icon">
+                <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <h3 class="upload-title">Upload Your Music</h3>
+            <p class="upload-subtitle">Drop an audio file here or click to browse</p>
+            <button class="btn btn-primary" onclick="selectFile()">
+                <i class="fas fa-file-audio"></i>
+                Choose Audio File
+            </button>
+            <div class="format-list">
+                <span>Supported formats:</span>
+                <span>MP3</span>
+                <span>WAV</span>
+                <span>FLAC</span>
+                <span>M4A</span>
+                <span>OGG</span>
+            </div>
+        </div>
+
+        <!-- Model Selection -->
+        <div class="model-section" id="modelSection" style="display: none;">
+            <h2 class="section-title">
+                <i class="fas fa-brain"></i>
+                Choose AI Model
+            </h2>
+            <div class="model-grid">
+                <div class="model-card" data-model="spleeter-2stems">
+                    <div class="model-name">Spleeter 2-Stems</div>
+                    <div class="model-description">Fast separation into vocals and accompaniment. Great for karaoke and basic vocal isolation.</div>
+                    <div class="model-stems">
+                        <span class="stem-tag">vocals</span>
+                        <span class="stem-tag">accompaniment</span>
+                    </div>
+                </div>
+                
+                <div class="model-card selected" data-model="spleeter-4stems">
+                    <div class="model-name">Spleeter 4-Stems</div>
+                    <div class="model-description">Comprehensive separation into vocals, drums, bass, and other instruments. Best for music production.</div>
+                    <div class="model-stems">
+                        <span class="stem-tag">vocals</span>
+                        <span class="stem-tag">drums</span>
+                        <span class="stem-tag">bass</span>
+                        <span class="stem-tag">other</span>
+                    </div>
+                </div>
+                
+                <div class="model-card" data-model="demucs-htdemucs">
+                    <div class="model-name">Demucs HT-Demucs</div>
+                    <div class="model-description">State-of-the-art quality separation. Slower but highest quality results for professional use.</div>
+                    <div class="model-stems">
+                        <span class="stem-tag">vocals</span>
+                        <span class="stem-tag">drums</span>
+                        <span class="stem-tag">bass</span>
+                        <span class="stem-tag">other</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="btn btn-primary" onclick="startSeparation()" id="startBtn" disabled>
+                    <i class="fas fa-magic"></i>
+                    Start Separation
+                </button>
+            </div>
+        </div>
+
+        <!-- Processing Section -->
+        <div class="processing-section" id="processingSection">
+            <h2 class="section-title">
+                <i class="fas fa-cog fa-spin"></i>
+                Processing Audio
+            </h2>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">Initializing...</div>
+            </div>
+            <div class="processing-info">
+                <p><strong>Processing time:</strong> Typically 1-3 minutes depending on track length and model</p>
+                <p><strong>What's happening:</strong> Our AI is analyzing your audio and separating it into individual instrument tracks</p>
+                <p><strong>Please wait...</strong> Don't close this tab during processing</p>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            <h2 class="section-title">
+                <i class="fas fa-music"></i>
+                Separated Stems
+            </h2>
+            <div class="stems-grid" id="stemsGrid">
+                <!-- Stem players will be generated here -->
+            </div>
+            
+            <div class="mixer-section">
+                <div class="mixer-header">
+                    <h3>Mix & Export</h3>
+                    <div class="mixer-controls">
+                        <button class="btn" onclick="playAllStems()" id="playAllBtn">
+                            <i class="fas fa-play"></i>
+                            Play All
+                        </button>
+                        <button class="btn" onclick="stopAllStems()">
+                            <i class="fas fa-stop"></i>
+                            Stop All
+                        </button>
+                        <button class="btn btn-primary" onclick="exportMix()">
+                            <i class="fas fa-download"></i>
+                            Export Mix
+                        </button>
+                    </div>
+                </div>
+                <div class="slider-group">
+                    <span class="slider-label">Master Volume</span>
+                    <input type="range" class="slider" id="masterVolumeSlider" min="0" max="100" value="80" 
+                           onchange="setMasterVolume(this.value)">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Input -->
+    <input type="file" class="file-input" id="fileInput" accept="audio/*" onchange="handleFileSelect(event)">
+
+    <script type="module">
+        import { AudioEngine } from './js/audio-engine.js';
+        import { StemSeparator, StemMixer } from './js/stem-separator.js';
+
+        // Global state
+        let audioEngine = null;
+        let stemSeparator = null;
+        let stemMixer = null;
+        let currentAudioFile = null;
+        let currentStems = null;
+        let selectedModel = 'spleeter-4stems';
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializeStemSeparation();
+            setupEventListeners();
+            setupDropZone();
+        });
+
+        async function initializeStemSeparation() {
+            try {
+                audioEngine = new AudioEngine();
+                stemSeparator = new StemSeparator();
+                
+                // Set up stem separator listeners
+                stemSeparator.on('separationStarted', () => {
+                    showProcessingSection();
+                });
+                
+                stemSeparator.on('separationCompleted', (data) => {
+                    currentStems = data.stems;
+                    showResultsSection();
+                    createStemPlayers();
+                });
+                
+                stemSeparator.on('separationFailed', (data) => {
+                    alert('Separation failed: ' + data.error);
+                    hideProcessingSection();
+                });
+                
+                console.log('Stem separation initialized');
+            } catch (error) {
+                console.error('Failed to initialize stem separation:', error);
+            }
+        }
+
+        function setupEventListeners() {
+            // Model selection
+            document.querySelectorAll('.model-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    selectModel(card.dataset.model);
+                });
+            });
+        }
+
+        function setupDropZone() {
+            const uploadSection = document.getElementById('uploadSection');
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadSection.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadSection.addEventListener(eventName, () => {
+                    uploadSection.classList.add('drag-over');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadSection.addEventListener(eventName, () => {
+                    uploadSection.classList.remove('drag-over');
+                }, false);
+            });
+
+            uploadSection.addEventListener('drop', handleDrop, false);
+        }
+
+        async function handleDrop(e) {
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                await loadAudioFile(files[0]);
+            }
+        }
+
+        async function loadAudioFile(file) {
+            try {
+                currentAudioFile = file;
+                await audioEngine.loadAudioFromFile(file);
+                
+                // Show model selection
+                document.getElementById('uploadSection').style.display = 'none';
+                document.getElementById('modelSection').style.display = 'block';
+                document.getElementById('startBtn').disabled = false;
+                
+            } catch (error) {
+                alert('Failed to load audio file: ' + error.message);
+            }
+        }
+
+        function selectModel(modelName) {
+            selectedModel = modelName;
+            
+            // Update UI
+            document.querySelectorAll('.model-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.querySelector(`[data-model="${modelName}"]`).classList.add('selected');
+        }
+
+        async function startSeparation() {
+            if (!audioEngine.audioBuffer) {
+                alert('Please load an audio file first');
+                return;
+            }
+
+            try {
+                document.getElementById('startBtn').disabled = true;
+                
+                await stemSeparator.separateStems(
+                    audioEngine.audioBuffer,
+                    selectedModel,
+                    updateProgress
+                );
+                
+            } catch (error) {
+                alert('Separation failed: ' + error.message);
+                document.getElementById('startBtn').disabled = false;
+            }
+        }
+
+        function updateProgress(percentage, message) {
+            document.getElementById('progressFill').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = message;
+        }
+
+        function showProcessingSection() {
+            document.getElementById('modelSection').style.display = 'none';
+            document.getElementById('processingSection').classList.add('active');
+        }
+
+        function hideProcessingSection() {
+            document.getElementById('processingSection').classList.remove('active');
+        }
+
+        function showResultsSection() {
+            document.getElementById('processingSection').classList.remove('active');
+            document.getElementById('resultsSection').classList.add('active');
+            
+            // Initialize stem mixer
+            stemMixer = new StemMixer(audioEngine.audioContext);
+            stemMixer.loadStems(currentStems);
+        }
+
+        function createStemPlayers() {
+            const stemsGrid = document.getElementById('stemsGrid');
+            stemsGrid.innerHTML = '';
+            
+            Object.keys(currentStems).forEach(stemName => {
+                const stemPlayer = createStemPlayerElement(stemName);
+                stemsGrid.appendChild(stemPlayer);
+            });
+        }
+
+        function createStemPlayerElement(stemName) {
+            const div = document.createElement('div');
+            div.className = 'stem-player';
+            div.innerHTML = `
+                <div class="stem-header">
+                    <div class="stem-name">${stemName}</div>
+                </div>
+                <div class="stem-controls">
+                    <button class="stem-btn" onclick="toggleStemPlayback('${stemName}')" id="play-${stemName}">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button class="stem-btn" onclick="muteStem('${stemName}')" id="mute-${stemName}">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    <button class="stem-btn" onclick="soloStem('${stemName}')">
+                        <i class="fas fa-headphones"></i>
+                    </button>
+                    <button class="stem-btn" onclick="downloadStem('${stemName}')">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+                <div class="stem-sliders">
+                    <div class="slider-group">
+                        <span class="slider-label">Volume</span>
+                        <input type="range" class="slider" min="0" max="100" value="80" 
+                               onchange="setStemVolume('${stemName}', this.value)">
+                    </div>
+                    <div class="slider-group">
+                        <span class="slider-label">Pan</span>
+                        <input type="range" class="slider" min="-100" max="100" value="0" 
+                               onchange="setStemPan('${stemName}', this.value)">
+                    </div>
+                </div>
+            `;
+            return div;
+        }
+
+        // Global functions for UI
+        window.selectFile = function() {
+            document.getElementById('fileInput').click();
+        };
+
+        window.handleFileSelect = async function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                await loadAudioFile(file);
+            }
+        };
+
+        window.toggleStemPlayback = function(stemName) {
+            const btn = document.getElementById(`play-${stemName}`);
+            const icon = btn.querySelector('i');
+            
+            if (btn.classList.contains('playing')) {
+                stemMixer.stopStem(stemName);
+                icon.className = 'fas fa-play';
+                btn.classList.remove('playing');
+            } else {
+                stemMixer.playStem(stemName);
+                icon.className = 'fas fa-pause';
+                btn.classList.add('playing');
+            }
+        };
+
+        window.muteStem = function(stemName) {
+            const btn = document.getElementById(`mute-${stemName}`);
+            const icon = btn.querySelector('i');
+            const isMuted = icon.classList.contains('fa-volume-mute');
+            
+            stemMixer.muteStem(stemName, !isMuted);
+            
+            if (isMuted) {
+                icon.className = 'fas fa-volume-up';
+            } else {
+                icon.className = 'fas fa-volume-mute';
+            }
+        };
+
+        window.soloStem = function(stemName) {
+            stemMixer.soloStem(stemName);
+        };
+
+        window.setStemVolume = function(stemName, value) {
+            const volume = value / 100;
+            stemMixer.setStemVolume(stemName, volume);
+        };
+
+        window.setStemPan = function(stemName, value) {
+            const pan = value / 100;
+            stemMixer.setStemPan(stemName, pan);
+        };
+
+        window.playAllStems = function() {
+            const btn = document.getElementById('playAllBtn');
+            const icon = btn.querySelector('i');
+            
+            if (btn.classList.contains('playing')) {
+                stemMixer.stopAllStems();
+                icon.className = 'fas fa-play';
+                btn.classList.remove('playing');
+                
+                // Update individual play buttons
+                Object.keys(currentStems).forEach(stemName => {
+                    const stemBtn = document.getElementById(`play-${stemName}`);
+                    stemBtn.querySelector('i').className = 'fas fa-play';
+                    stemBtn.classList.remove('playing');
+                });
+            } else {
+                stemMixer.playAllStems();
+                icon.className = 'fas fa-pause';
+                btn.classList.add('playing');
+                
+                // Update individual play buttons
+                Object.keys(currentStems).forEach(stemName => {
+                    const stemBtn = document.getElementById(`play-${stemName}`);
+                    stemBtn.querySelector('i').className = 'fas fa-pause';
+                    stemBtn.classList.add('playing');
+                });
+            }
+        };
+
+        window.stopAllStems = function() {
+            stemMixer.stopAllStems();
+            
+            // Update all play buttons
+            const playAllBtn = document.getElementById('playAllBtn');
+            playAllBtn.querySelector('i').className = 'fas fa-play';
+            playAllBtn.classList.remove('playing');
+            
+            Object.keys(currentStems).forEach(stemName => {
+                const stemBtn = document.getElementById(`play-${stemName}`);
+                stemBtn.querySelector('i').className = 'fas fa-play';
+                stemBtn.classList.remove('playing');
+            });
+        };
+
+        window.setMasterVolume = function(value) {
+            const volume = value / 100;
+            stemMixer.setMasterVolume(volume);
+        };
+
+        window.downloadStem = async function(stemName) {
+            try {
+                const stemBuffer = currentStems[stemName];
+                const blob = await stemSeparator.exportStem(stemBuffer);
+                
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${stemName}-stem.wav`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+            } catch (error) {
+                alert('Failed to download stem: ' + error.message);
+            }
+        };
+
+        window.exportMix = async function() {
+            try {
+                // Get current mix settings from sliders
+                const mixConfig = {};
+                Object.keys(currentStems).forEach(stemName => {
+                    // You'd get the actual slider values here
+                    mixConfig[stemName] = 0.8; // Default volume
+                });
+                
+                const mixedBuffer = await stemSeparator.mixStems(currentStems, mixConfig);
+                const blob = await stemSeparator.exportStem(mixedBuffer);
+                
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'mixed-stems.wav';
+                a.click();
+                URL.revokeObjectURL(url);
+                
+            } catch (error) {
+                alert('Failed to export mix: ' + error.message);
+            }
+        };
+    </script>
+</body>
+</html>
