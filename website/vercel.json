@@ -1,4 +1,5 @@
 {
+  "version": 2,
   "trailingSlash": false,
   "cleanUrls": true,
   "headers": [

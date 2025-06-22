@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MusicGen AI Pro - Create Music with AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --secondary: #7c3aed;
+            --accent: #f59e0b;
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1a1;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Main Layout */
+        .main-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 6rem 2rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            min-height: 100vh;
+        }
+
+        /* Generation Panel */
+        .generation-panel {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .panel-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Generation Mode Selector */
+        .mode-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 0.5rem;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .mode-btn.active {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .mode-btn:hover:not(.active) {
+            background: var(--glass);
+            color: var(--text-primary);
+        }
+
+        /* Form Sections */
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        /* Enhanced Text Input */
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 120px;
+            transition: all 0.3s ease;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.2);
+        }
+
+        /* Genre Selection */
+        .genre-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .genre-btn {
+            padding: 0.75rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .genre-btn:hover {
+            background: var(--glass);
+            color: var(--text-primary);
+        }
+
+        .genre-btn.selected {
+            background: var(--gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Advanced Options */
+        .advanced-options {
+            display: none;
+            padding: 1.5rem;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .advanced-options.open {
+            display: block;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .option-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .slider {
+            flex: 1;
+            height: 6px;
+            background: var(--bg-secondary);
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .slider-value {
+            min-width: 3rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* Generation Button */
+        .generate-btn {
+            width: 100%;
+            padding: 1.2rem 2rem;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .advanced-toggle {
+            width: 100%;
+            padding: 0.75rem;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .advanced-toggle:hover {
+            background: var(--glass);
+            color: var(--text-primary);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Player Section */
+        .player-section {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+        }
+
+        .player-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .play-btn {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient);
+            color: white;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Track List */
+        .track-list {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid var(--glass-border);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .track-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .track-item:hover {
+            background: var(--glass);
+        }
+
+        .track-item.playing {
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.5);
+        }
+
+        .track-artwork {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .track-info {
+            flex: 1;
+        }
+
+        .track-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .track-meta {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .track-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            background: var(--glass);
+            border: none;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Playlist Section */
+        .playlist-section {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .playlist-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .playlist-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tab-btn {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .tab-btn.active {
+            background: var(--gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--bg-tertiary);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .sidebar {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .genre-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <a href="index.html" class="logo">MusicGen AI Pro</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="pricing.html">Pricing</a>
+                <a href="about.html">About</a>
+                <a href="help.html">Help</a>
+                <a href="dashboard.html">Dashboard</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="main-container">
+        <!-- Generation Panel -->
+        <div class="generation-panel">
+            <div class="panel-header">
+                <h1 class="panel-title">AI Music Studio</h1>
+                <i class="fas fa-music"></i>
+            </div>
+
+            <!-- Generation Mode Selector -->
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="prompt">Text to Music</button>
+                <button class="mode-btn" data-mode="lyrics">Lyrics to Music</button>
+                <button class="mode-btn" data-mode="remix">Remix Track</button>
+                <button class="mode-btn" data-mode="extend">Extend Track</button>
+            </div>
+
+            <!-- Text to Music Mode -->
+            <div class="generation-mode" id="prompt-mode">
+                <div class="form-section">
+                    <div class="input-group">
+                        <label class="input-label">Describe your music</label>
+                        <textarea class="text-input" id="promptInput" 
+                            placeholder="e.g., Upbeat electronic dance music with Arabic vibes and heavy bass, energetic and modern"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-title">Genre & Style</div>
+                    <div class="genre-grid">
+                        <div class="genre-btn" data-genre="electronic">Electronic</div>
+                        <div class="genre-btn" data-genre="hip-hop">Hip Hop</div>
+                        <div class="genre-btn" data-genre="rock">Rock</div>
+                        <div class="genre-btn" data-genre="pop">Pop</div>
+                        <div class="genre-btn" data-genre="jazz">Jazz</div>
+                        <div class="genre-btn" data-genre="classical">Classical</div>
+                        <div class="genre-btn" data-genre="ambient">Ambient</div>
+                        <div class="genre-btn" data-genre="folk">Folk</div>
+                        <div class="genre-btn" data-genre="reggae">Reggae</div>
+                        <div class="genre-btn" data-genre="country">Country</div>
+                        <div class="genre-btn" data-genre="latin">Latin</div>
+                        <div class="genre-btn" data-genre="arabic">Arabic</div>
+                        <div class="genre-btn" data-genre="indian">Indian</div>
+                        <div class="genre-btn" data-genre="african">African</div>
+                        <div class="genre-btn" data-genre="lofi">Lo-Fi</div>
+                        <div class="genre-btn" data-genre="synthwave">Synthwave</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lyrics to Music Mode -->
+            <div class="generation-mode" id="lyrics-mode" style="display: none;">
+                <div class="form-section">
+                    <div class="input-group">
+                        <label class="input-label">Enter your lyrics</label>
+                        <textarea class="text-input" id="lyricsInput" 
+                            placeholder="Verse 1:
+In the desert night I roam
+Looking for a place called home
+Stars above me guide the way
+Through the dunes until the day
+
+Chorus:
+Desert dreams and midnight schemes
+Nothing's quite the way it seems..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="input-group">
+                        <label class="input-label">Musical style for these lyrics</label>
+                        <textarea class="text-input" id="lyricsStyleInput" 
+                            placeholder="e.g., Acoustic folk ballad with gentle guitar and soft drums"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Remix Mode -->
+            <div class="generation-mode" id="remix-mode" style="display: none;">
+                <div class="form-section">
+                    <div class="input-group">
+                        <label class="input-label">Select track to remix</label>
+                        <select class="text-input" id="remixTrackSelect">
+                            <option value="">Choose a track from your library...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="input-group">
+                        <label class="input-label">Remix style</label>
+                        <textarea class="text-input" id="remixStyleInput" 
+                            placeholder="e.g., Transform into a hip-hop version with heavy beats and rap-style rhythm"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Extend Mode -->
+            <div class="generation-mode" id="extend-mode" style="display: none;">
+                <div class="form-section">
+                    <div class="input-group">
+                        <label class="input-label">Select track to extend</label>
+                        <select class="text-input" id="extendTrackSelect">
+                            <option value="">Choose a track from your library...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="input-group">
+                        <label class="input-label">Extension direction</label>
+                        <textarea class="text-input" id="extendDirectionInput" 
+                            placeholder="e.g., Continue with a more intense build-up, add a guitar solo section"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Options -->
+            <button class="advanced-toggle" onclick="toggleAdvanced()">
+                <i class="fas fa-cog"></i> Advanced Options
+            </button>
+
+            <div class="advanced-options" id="advancedOptions">
+                <div class="options-grid">
+                    <div class="option-group">
+                        <label class="input-label">Duration</label>
+                        <div class="slider-container">
+                            <input type="range" class="slider" id="durationSlider" min="30" max="240" value="130">
+                            <span class="slider-value" id="durationValue">130s</span>
+                        </div>
+                    </div>
+
+                    <div class="option-group">
+                        <label class="input-label">Energy</label>
+                        <div class="slider-container">
+                            <input type="range" class="slider" id="energySlider" min="1" max="10" value="5">
+                            <span class="slider-value" id="energyValue">5</span>
+                        </div>
+                    </div>
+
+                    <div class="option-group">
+                        <label class="input-label">Creativity</label>
+                        <div class="slider-container">
+                            <input type="range" class="slider" id="creativitySlider" min="1" max="10" value="7">
+                            <span class="slider-value" id="creativityValue">7</span>
+                        </div>
+                    </div>
+
+                    <div class="option-group">
+                        <label class="input-label">Tempo</label>
+                        <div class="slider-container">
+                            <input type="range" class="slider" id="tempoSlider" min="60" max="180" value="120">
+                            <span class="slider-value" id="tempoValue">120 BPM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generate Button -->
+            <button class="generate-btn" id="generateBtn" onclick="generateMusic()">
+                <i class="fas fa-magic"></i> Generate Music
+            </button>
+
+            <!-- Loading Spinner -->
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Player Section -->
+            <div class="player-section">
+                <div class="player-header">
+                    <h3 class="section-title">Now Playing</h3>
+                    <i class="fas fa-music"></i>
+                </div>
+
+                <div id="currentTrack" style="display: none;">
+                    <div class="track-item playing">
+                        <div class="track-artwork">🎵</div>
+                        <div class="track-info">
+                            <div class="track-title" id="currentTitle">Desert Echoes</div>
+                            <div class="track-meta" id="currentMeta">Electronic • 2:31</div>
+                        </div>
+                    </div>
+
+                    <div class="player-controls">
+                        <button class="control-btn" onclick="previousTrack()"><i class="fas fa-step-backward"></i></button>
+                        <button class="play-btn control-btn" id="playBtn" onclick="togglePlay()"><i class="fas fa-play"></i></button>
+                        <button class="control-btn" onclick="nextTrack()"><i class="fas fa-step-forward"></i></button>
+                        <button class="control-btn" onclick="toggleRepeat()"><i class="fas fa-redo"></i></button>
+                    </div>
+
+                    <div class="progress-bar" onclick="seekTrack(event)">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+
+                    <div class="time-display">
+                        <span id="currentTime">0:00</span>
+                        <span id="totalTime">2:31</span>
+                    </div>
+                </div>
+
+                <div id="noTrack">
+                    <p style="text-align: center; color: var(--text-secondary); padding: 2rem;">
+                        No track selected. Generate music to start playing!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Playlist Section -->
+            <div class="playlist-section">
+                <div class="playlist-header">
+                    <h3 class="section-title">Your Music</h3>
+                    <button class="control-btn" onclick="createPlaylist()"><i class="fas fa-plus"></i></button>
+                </div>
+
+                <div class="playlist-tabs">
+                    <button class="tab-btn active" data-tab="recent">Recent</button>
+                    <button class="tab-btn" data-tab="favorites">Favorites</button>
+                    <button class="tab-btn" data-tab="playlists">Playlists</button>
+                </div>
+
+                <div class="track-list" id="trackList">
+                    <!-- Tracks will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="audioPlayer" preload="metadata"></audio>
+
+    <script>
+        // Global variables
+        let currentTrack = null;
+        let tracks = [];
+        let playlists = [];
+        let isPlaying = false;
+        let currentMode = 'prompt';
+
+        // PiAPI Configuration
+        const apiKey = 'd3a513bec58ea7c7e60eebf377fbbfb806f2304f12e1ef208cd701139658c088';
+        const apiEndpoint = 'https://api.piapi.ai/api/v1/task';
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            loadSavedTracks();
+            setupEventListeners();
+        });
+
+        function initializeApp() {
+            // Setup mode switching
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.addEventListener('click', () => switchMode(btn.dataset.mode));
+            });
+
+            // Setup genre selection
+            document.querySelectorAll('.genre-btn').forEach(btn => {
+                btn.addEventListener('click', () => toggleGenre(btn));
+            });
+
+            // Setup sliders
+            setupSliders();
+
+            // Setup playlist tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+            });
+        }
+
+        function setupEventListeners() {
+            // Audio player events
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.addEventListener('timeupdate', updateProgress);
+            audioPlayer.addEventListener('ended', onTrackEnd);
+            audioPlayer.addEventListener('loadedmetadata', onTrackLoaded);
+        }
+
+        function setupSliders() {
+            const sliders = ['duration', 'energy', 'creativity', 'tempo'];
+            sliders.forEach(slider => {
+                const element = document.getElementById(slider + 'Slider');
+                const valueElement = document.getElementById(slider + 'Value');
+                
+                element.addEventListener('input', () => {
+                    let value = element.value;
+                    if (slider === 'duration') {
+                        valueElement.textContent = value + 's';
+                    } else if (slider === 'tempo') {
+                        valueElement.textContent = value + ' BPM';
+                    } else {
+                        valueElement.textContent = value;
+                    }
+                });
+            });
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            
+            // Update mode buttons
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+
+            // Show/hide mode panels
+            document.querySelectorAll('.generation-mode').forEach(panel => {
+                panel.style.display = 'none';
+            });
+            document.getElementById(mode + '-mode').style.display = 'block';
+
+            // Update generate button text
+            const generateBtn = document.getElementById('generateBtn');
+            const modeTexts = {
+                'prompt': 'Generate Music',
+                'lyrics': 'Create Song from Lyrics',
+                'remix': 'Remix Track',
+                'extend': 'Extend Track'
+            };
+            generateBtn.innerHTML = `<i class="fas fa-magic"></i> ${modeTexts[mode]}`;
+        }
+
+        function toggleGenre(btn) {
+            btn.classList.toggle('selected');
+        }
+
+        function toggleAdvanced() {
+            const options = document.getElementById('advancedOptions');
+            options.classList.toggle('open');
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            
+            loadTabContent(tab);
+        }
+
+        function loadTabContent(tab) {
+            const trackList = document.getElementById('trackList');
+            
+            switch(tab) {
+                case 'recent':
+                    displayTracks(tracks.slice(-10).reverse());
+                    break;
+                case 'favorites':
+                    displayTracks(tracks.filter(track => track.favorited));
+                    break;
+                case 'playlists':
+                    displayPlaylists();
+                    break;
+            }
+        }
+
+        async function generateMusic() {
+            const generateBtn = document.getElementById('generateBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            
+            generateBtn.disabled = true;
+            loadingSpinner.style.display = 'flex';
+
+            try {
+                let prompt = '';
+                
+                switch(currentMode) {
+                    case 'prompt':
+                        prompt = buildPromptFromInputs();
+                        break;
+                    case 'lyrics':
+                        prompt = buildLyricsPrompt();
+                        break;
+                    case 'remix':
+                        prompt = buildRemixPrompt();
+                        break;
+                    case 'extend':
+                        prompt = buildExtendPrompt();
+                        break;
+                }
+
+                if (!prompt) {
+                    throw new Error('Please provide input for music generation');
+                }
+
+                console.log('Generating music with prompt:', prompt);
+
+                const response = await fetch(apiEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': apiKey
+                    },
+                    body: JSON.stringify({
+                        model: 'music-u',
+                        task_type: 'music_generation',
+                        input: {
+                            prompt: prompt
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API request failed: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('API Response:', data);
+
+                if (data.task_id) {
+                    await pollForResult(data.task_id);
+                } else {
+                    throw new Error('No task ID received from API');
+                }
+
+            } catch (error) {
+                console.error('Error generating music:', error);
+                alert('Error generating music: ' + error.message);
+            } finally {
+                generateBtn.disabled = false;
+                loadingSpinner.style.display = 'none';
+            }
+        }
+
+        function buildPromptFromInputs() {
+            const promptInput = document.getElementById('promptInput').value;
+            const selectedGenres = Array.from(document.querySelectorAll('.genre-btn.selected'))
+                .map(btn => btn.dataset.genre);
+            
+            let prompt = promptInput;
+            
+            if (selectedGenres.length > 0) {
+                prompt += ` in ${selectedGenres.join(', ')} style`;
+            }
+
+            // Add advanced options
+            const energy = document.getElementById('energySlider').value;
+            const tempo = document.getElementById('tempoSlider').value;
+            
+            if (energy > 7) {
+                prompt += ', high energy';
+            } else if (energy < 4) {
+                prompt += ', calm and relaxed';
+            }
+
+            prompt += `, ${tempo} BPM tempo`;
+
+            return prompt;
+        }
+
+        function buildLyricsPrompt() {
+            const lyrics = document.getElementById('lyricsInput').value;
+            const style = document.getElementById('lyricsStyleInput').value;
+            
+            if (!lyrics) return '';
+            
+            return `Create music for these lyrics: "${lyrics}". Musical style: ${style || 'contemporary pop'}`;
+        }
+
+        function buildRemixPrompt() {
+            const selectedTrack = document.getElementById('remixTrackSelect').value;
+            const remixStyle = document.getElementById('remixStyleInput').value;
+            
+            if (!selectedTrack || !remixStyle) return '';
+            
+            return `Remix this track: ${selectedTrack}. New style: ${remixStyle}`;
+        }
+
+        function buildExtendPrompt() {
+            const selectedTrack = document.getElementById('extendTrackSelect').value;
+            const direction = document.getElementById('extendDirectionInput').value;
+            
+            if (!selectedTrack || !direction) return '';
+            
+            return `Extend this track: ${selectedTrack}. Direction: ${direction}`;
+        }
+
+        async function pollForResult(taskId) {
+            const maxAttempts = 60;
+            let attempts = 0;
+
+            while (attempts < maxAttempts) {
+                try {
+                    const response = await fetch(`${apiEndpoint}/${taskId}`, {
+                        headers: {
+                            'X-API-Key': apiKey
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Polling failed: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    console.log('Polling attempt', attempts + 1, ':', result);
+
+                    if (result.status === 'completed' && result.output) {
+                        handleGenerationResult(result.output);
+                        return;
+                    } else if (result.status === 'failed') {
+                        throw new Error('Music generation failed');
+                    }
+
+                    await new Promise(resolve => setTimeout(resolve, 3000));
+                    attempts++;
+
+                } catch (error) {
+                    console.error('Polling error:', error);
+                    attempts++;
+                    await new Promise(resolve => setTimeout(resolve, 3000));
+                }
+            }
+
+            throw new Error('Music generation timed out');
+        }
+
+        function handleGenerationResult(output) {
+            console.log('Generation completed:', output);
+
+            if (output.music_list && output.music_list.length > 0) {
+                output.music_list.forEach((track, index) => {
+                    const newTrack = {
+                        id: Date.now() + index,
+                        title: track.title || `Generated Track ${tracks.length + 1}`,
+                        url: track.audio_url,
+                        artwork: track.image_url,
+                        duration: track.duration || '2:31',
+                        genre: extractGenreFromPrompt(),
+                        timestamp: new Date().toISOString(),
+                        favorited: false
+                    };
+
+                    tracks.push(newTrack);
+                    addTrackToList(newTrack);
+                    
+                    if (index === 0) {
+                        playTrack(newTrack);
+                    }
+                });
+
+                saveTracks();
+                populateRemixSelects();
+            } else {
+                throw new Error('No music tracks in response');
+            }
+        }
+
+        function extractGenreFromPrompt() {
+            const selectedGenres = Array.from(document.querySelectorAll('.genre-btn.selected'))
+                .map(btn => btn.textContent);
+            return selectedGenres.length > 0 ? selectedGenres[0] : 'Unknown';
+        }
+
+        function addTrackToList(track) {
+            const trackList = document.getElementById('trackList');
+            
+            const trackElement = document.createElement('div');
+            trackElement.className = 'track-item';
+            trackElement.dataset.trackId = track.id;
+            
+            trackElement.innerHTML = `
+                <div class="track-artwork">🎵</div>
+                <div class="track-info">
+                    <div class="track-title">${track.title}</div>
+                    <div class="track-meta">${track.genre} • ${track.duration}</div>
+                </div>
+                <div class="track-actions">
+                    <button class="action-btn" onclick="toggleFavorite(${track.id})" title="Favorite">
+                        <i class="fas fa-heart${track.favorited ? '' : '-o'}"></i>
+                    </button>
+                    <button class="action-btn" onclick="downloadTrack(${track.id})" title="Download">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="action-btn" onclick="shareTrack(${track.id})" title="Share">
+                        <i class="fas fa-share"></i>
+                    </button>
+                </div>
+            `;
+            
+            trackElement.addEventListener('click', () => playTrack(track));
+            trackList.insertBefore(trackElement, trackList.firstChild);
+        }
+
+        function playTrack(track) {
+            currentTrack = track;
+            const audioPlayer = document.getElementById('audioPlayer');
+            
+            // Update UI
+            document.getElementById('currentTitle').textContent = track.title;
+            document.getElementById('currentMeta').textContent = `${track.genre} • ${track.duration}`;
+            document.getElementById('currentTrack').style.display = 'block';
+            document.getElementById('noTrack').style.display = 'none';
+            
+            // Update track list UI
+            document.querySelectorAll('.track-item').forEach(item => {
+                item.classList.remove('playing');
+            });
+            document.querySelector(`[data-track-id="${track.id}"]`)?.classList.add('playing');
+            
+            // Load and play audio
+            audioPlayer.src = track.url;
+            audioPlayer.load();
+            audioPlayer.play();
+            isPlaying = true;
+            
+            document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>';
+        }
+
+        function togglePlay() {
+            const audioPlayer = document.getElementById('audioPlayer');
+            const playBtn = document.getElementById('playBtn');
+            
+            if (isPlaying) {
+                audioPlayer.pause();
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                isPlaying = false;
+            } else {
+                audioPlayer.play();
+                playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                isPlaying = true;
+            }
+        }
+
+        function updateProgress() {
+            const audioPlayer = document.getElementById('audioPlayer');
+            const progressFill = document.getElementById('progressFill');
+            const currentTimeEl = document.getElementById('currentTime');
+            
+            if (audioPlayer.duration) {
+                const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+                progressFill.style.width = progress + '%';
+                currentTimeEl.textContent = formatTime(audioPlayer.currentTime);
+            }
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function onTrackEnd() {
+            nextTrack();
+        }
+
+        function onTrackLoaded() {
+            const audioPlayer = document.getElementById('audioPlayer');
+            document.getElementById('totalTime').textContent = formatTime(audioPlayer.duration);
+        }
+
+        function previousTrack() {
+            if (!currentTrack || tracks.length === 0) return;
+            
+            const currentIndex = tracks.findIndex(track => track.id === currentTrack.id);
+            const prevIndex = currentIndex > 0 ? currentIndex - 1 : tracks.length - 1;
+            playTrack(tracks[prevIndex]);
+        }
+
+        function nextTrack() {
+            if (!currentTrack || tracks.length === 0) return;
+            
+            const currentIndex = tracks.findIndex(track => track.id === currentTrack.id);
+            const nextIndex = currentIndex < tracks.length - 1 ? currentIndex + 1 : 0;
+            playTrack(tracks[nextIndex]);
+        }
+
+        function toggleFavorite(trackId) {
+            const track = tracks.find(t => t.id === trackId);
+            if (track) {
+                track.favorited = !track.favorited;
+                saveTracks();
+                
+                // Update UI
+                const heartIcon = document.querySelector(`[data-track-id="${trackId}"] .fa-heart, [data-track-id="${trackId}"] .fa-heart-o`);
+                if (track.favorited) {
+                    heartIcon.className = 'fas fa-heart';
+                } else {
+                    heartIcon.className = 'fas fa-heart-o';
+                }
+            }
+        }
+
+        function downloadTrack(trackId) {
+            const track = tracks.find(t => t.id === trackId);
+            if (track) {
+                const a = document.createElement('a');
+                a.href = track.url;
+                a.download = `${track.title}.mp3`;
+                a.click();
+            }
+        }
+
+        function shareTrack(trackId) {
+            const track = tracks.find(t => t.id === trackId);
+            if (track && navigator.share) {
+                navigator.share({
+                    title: track.title,
+                    text: `Check out this AI-generated music: ${track.title}`,
+                    url: track.url
+                });
+            } else {
+                // Fallback: copy URL to clipboard
+                if (track) {
+                    navigator.clipboard.writeText(track.url);
+                    alert('Track URL copied to clipboard!');
+                }
+            }
+        }
+
+        function displayTracks(tracksToShow) {
+            const trackList = document.getElementById('trackList');
+            trackList.innerHTML = '';
+            
+            tracksToShow.forEach(track => {
+                addTrackToList(track);
+            });
+        }
+
+        function displayPlaylists() {
+            const trackList = document.getElementById('trackList');
+            trackList.innerHTML = '<p style="text-align: center; padding: 2rem; color: var(--text-secondary);">Playlist management coming soon!</p>';
+        }
+
+        function createPlaylist() {
+            const name = prompt('Enter playlist name:');
+            if (name) {
+                const playlist = {
+                    id: Date.now(),
+                    name: name,
+                    tracks: [],
+                    created: new Date().toISOString()
+                };
+                playlists.push(playlist);
+                savePlaylists();
+                alert('Playlist created!');
+            }
+        }
+
+        function populateRemixSelects() {
+            const remixSelect = document.getElementById('remixTrackSelect');
+            const extendSelect = document.getElementById('extendTrackSelect');
+            
+            // Clear existing options
+            remixSelect.innerHTML = '<option value="">Choose a track from your library...</option>';
+            extendSelect.innerHTML = '<option value="">Choose a track from your library...</option>';
+            
+            tracks.forEach(track => {
+                const option = document.createElement('option');
+                option.value = track.title;
+                option.textContent = track.title;
+                
+                remixSelect.appendChild(option.cloneNode(true));
+                extendSelect.appendChild(option);
+            });
+        }
+
+        function saveTracks() {
+            localStorage.setItem('musicgen_tracks', JSON.stringify(tracks));
+        }
+
+        function loadSavedTracks() {
+            const saved = localStorage.getItem('musicgen_tracks');
+            if (saved) {
+                tracks = JSON.parse(saved);
+                displayTracks(tracks.slice(-10).reverse());
+                populateRemixSelects();
+            }
+        }
+
+        function savePlaylists() {
+            localStorage.setItem('musicgen_playlists', JSON.stringify(playlists));
+        }
+
+        function loadSavedPlaylists() {
+            const saved = localStorage.getItem('musicgen_playlists');
+            if (saved) {
+                playlists = JSON.parse(saved);
+            }
+        }
+    </script>
+</body>
+</html>

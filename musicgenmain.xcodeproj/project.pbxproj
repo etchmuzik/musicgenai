@@ -6,6 +6,37 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		EDD253A12E003764002DE1EB /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253A02E003764002DE1EB /* FirebaseAnalytics */; };
+		EDD253A32E003764002DE1EB /* FirebaseAnalyticsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253A22E003764002DE1EB /* FirebaseAnalyticsOnDeviceConversion */; };
+		EDD253A52E003764002DE1EB /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253A42E003764002DE1EB /* FirebaseAnalyticsSwift */; };
+		EDD253A72E003764002DE1EB /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253A62E003764002DE1EB /* FirebaseAnalyticsWithoutAdIdSupport */; };
+		EDD253A92E003764002DE1EB /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253A82E003764002DE1EB /* FirebaseAppCheck */; };
+		EDD253AB2E003764002DE1EB /* FirebaseAppDistribution-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253AA2E003764002DE1EB /* FirebaseAppDistribution-Beta */; };
+		EDD253AD2E003764002DE1EB /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253AC2E003764002DE1EB /* FirebaseAuth */; };
+		EDD253AF2E003764002DE1EB /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253AE2E003764002DE1EB /* FirebaseAuthCombine-Community */; };
+		EDD253B12E003764002DE1EB /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253B02E003764002DE1EB /* FirebaseCrashlytics */; };
+		EDD253B32E003764002DE1EB /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253B22E003764002DE1EB /* FirebaseDatabase */; };
+		EDD253B52E003764002DE1EB /* FirebaseDatabaseSwift in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253B42E003764002DE1EB /* FirebaseDatabaseSwift */; };
+		EDD253B72E003764002DE1EB /* FirebaseDynamicLinks in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253B62E003764002DE1EB /* FirebaseDynamicLinks */; };
+		EDD253B92E003764002DE1EB /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253B82E003764002DE1EB /* FirebaseFirestore */; };
+		EDD253BB2E003764002DE1EB /* FirebaseFirestoreCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253BA2E003764002DE1EB /* FirebaseFirestoreCombine-Community */; };
+		EDD253BD2E003764002DE1EB /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253BC2E003764002DE1EB /* FirebaseFirestoreSwift */; };
+		EDD253BF2E003764002DE1EB /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253BE2E003764002DE1EB /* FirebaseFunctions */; };
+		EDD253C12E003764002DE1EB /* FirebaseFunctionsCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253C02E003764002DE1EB /* FirebaseFunctionsCombine-Community */; };
+		EDD253C32E003764002DE1EB /* FirebaseInAppMessaging-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253C22E003764002DE1EB /* FirebaseInAppMessaging-Beta */; };
+		EDD253C52E003764002DE1EB /* FirebaseInAppMessagingSwift-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253C42E003764002DE1EB /* FirebaseInAppMessagingSwift-Beta */; };
+		EDD253C72E003764002DE1EB /* FirebaseInstallations in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253C62E003764002DE1EB /* FirebaseInstallations */; };
+		EDD253C92E003764002DE1EB /* FirebaseMLModelDownloader in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253C82E003764002DE1EB /* FirebaseMLModelDownloader */; };
+		EDD253CB2E003764002DE1EB /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253CA2E003764002DE1EB /* FirebaseMessaging */; };
+		EDD253CD2E003764002DE1EB /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253CC2E003764002DE1EB /* FirebasePerformance */; };
+		EDD253CF2E003764002DE1EB /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253CE2E003764002DE1EB /* FirebaseRemoteConfig */; };
+		EDD253D12E003764002DE1EB /* FirebaseRemoteConfigSwift in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253D02E003764002DE1EB /* FirebaseRemoteConfigSwift */; };
+		EDD253D32E003764002DE1EB /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253D22E003764002DE1EB /* FirebaseStorage */; };
+		EDD253D52E003764002DE1EB /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253D42E003764002DE1EB /* FirebaseStorageCombine-Community */; };
+		EDD253D72E003764002DE1EB /* FirebaseVertexAI-Preview in Frameworks */ = {isa = PBXBuildFile; productRef = EDD253D62E003764002DE1EB /* FirebaseVertexAI-Preview */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		EDA7BE052DFEE5DB00BAC628 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +83,34 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EDD253B32E003764002DE1EB /* FirebaseDatabase in Frameworks */,
+				EDD253C12E003764002DE1EB /* FirebaseFunctionsCombine-Community in Frameworks */,
+				EDD253B92E003764002DE1EB /* FirebaseFirestore in Frameworks */,
+				EDD253A52E003764002DE1EB /* FirebaseAnalyticsSwift in Frameworks */,
+				EDD253A12E003764002DE1EB /* FirebaseAnalytics in Frameworks */,
+				EDD253A32E003764002DE1EB /* FirebaseAnalyticsOnDeviceConversion in Frameworks */,
+				EDD253C92E003764002DE1EB /* FirebaseMLModelDownloader in Frameworks */,
+				EDD253BD2E003764002DE1EB /* FirebaseFirestoreSwift in Frameworks */,
+				EDD253A92E003764002DE1EB /* FirebaseAppCheck in Frameworks */,
+				EDD253A72E003764002DE1EB /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
+				EDD253AD2E003764002DE1EB /* FirebaseAuth in Frameworks */,
+				EDD253B12E003764002DE1EB /* FirebaseCrashlytics in Frameworks */,
+				EDD253D12E003764002DE1EB /* FirebaseRemoteConfigSwift in Frameworks */,
+				EDD253C32E003764002DE1EB /* FirebaseInAppMessaging-Beta in Frameworks */,
+				EDD253B52E003764002DE1EB /* FirebaseDatabaseSwift in Frameworks */,
+				EDD253BF2E003764002DE1EB /* FirebaseFunctions in Frameworks */,
+				EDD253D52E003764002DE1EB /* FirebaseStorageCombine-Community in Frameworks */,
+				EDD253CF2E003764002DE1EB /* FirebaseRemoteConfig in Frameworks */,
+				EDD253AB2E003764002DE1EB /* FirebaseAppDistribution-Beta in Frameworks */,
+				EDD253AF2E003764002DE1EB /* FirebaseAuthCombine-Community in Frameworks */,
+				EDD253CD2E003764002DE1EB /* FirebasePerformance in Frameworks */,
+				EDD253C52E003764002DE1EB /* FirebaseInAppMessagingSwift-Beta in Frameworks */,
+				EDD253D32E003764002DE1EB /* FirebaseStorage in Frameworks */,
+				EDD253B72E003764002DE1EB /* FirebaseDynamicLinks in Frameworks */,
+				EDD253D72E003764002DE1EB /* FirebaseVertexAI-Preview in Frameworks */,
+				EDD253BB2E003764002DE1EB /* FirebaseFirestoreCombine-Community in Frameworks */,
+				EDD253CB2E003764002DE1EB /* FirebaseMessaging in Frameworks */,
+				EDD253C72E003764002DE1EB /* FirebaseInstallations in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,6 +131,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B0432CDF55EDB4F30335EF68 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		EDA7BDED2DFEE5D900BAC628 = {
 			isa = PBXGroup;
 			children = (
@@ -79,6 +145,7 @@
 				EDA7BE072DFEE5DB00BAC628 /* musicgenmainTests */,
 				EDA7BE112DFEE5DB00BAC628 /* musicgenmainUITests */,
 				EDA7BDF72DFEE5D900BAC628 /* Products */,
+				B0432CDF55EDB4F30335EF68 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -111,8 +178,6 @@
 				EDA7BDF82DFEE5D900BAC628 /* musicgenmain */,
 			);
 			name = musicgenmain;
-			packageProductDependencies = (
-			);
 			productName = musicgenmain;
 			productReference = EDA7BDF62DFEE5D900BAC628 /* musicgenmain.app */;
 			productType = "com.apple.product-type.application";
@@ -134,8 +199,6 @@
 				EDA7BE072DFEE5DB00BAC628 /* musicgenmainTests */,
 			);
 			name = musicgenmainTests;
-			packageProductDependencies = (
-			);
 			productName = musicgenmainTests;
 			productReference = EDA7BE042DFEE5DB00BAC628 /* musicgenmainTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -157,8 +220,6 @@
 				EDA7BE112DFEE5DB00BAC628 /* musicgenmainUITests */,
 			);
 			name = musicgenmainUITests;
-			packageProductDependencies = (
-			);
 			productName = musicgenmainUITests;
 			productReference = EDA7BE0E2DFEE5DB00BAC628 /* musicgenmainUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -195,6 +256,9 @@
 			);
 			mainGroup = EDA7BDED2DFEE5D900BAC628;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EDA7BDF72DFEE5D900BAC628 /* Products */;
 			projectDirPath = "";
@@ -391,24 +455,32 @@
 				CODE_SIGN_ENTITLEMENTS = musicgenmain/musicgenmain.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CHSAVJ5X6U;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "MusicGen AI";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "This app needs music library access to save your generated tracks and access your music.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app may use camera for profile pictures and content creation.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app needs microphone access to record audio for music generation and voice features.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app may access photos for profile pictures and sharing your music creations.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UIBackgroundModes = audio;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				LD_RUNPATH_SEARCH_PATHS = "\"$(inherited) @executable_path/Frameworks\"";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = beyond.musicgenmain;
+				PRODUCT_BUNDLE_IDENTIFIER = com.beyond.musicgenai;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -428,24 +500,32 @@
 				CODE_SIGN_ENTITLEMENTS = musicgenmain/musicgenmain.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CHSAVJ5X6U;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "MusicGen AI";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "This app needs music library access to save your generated tracks and access your music.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app may use camera for profile pictures and content creation.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app needs microphone access to record audio for music generation and voice features.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app may access photos for profile pictures and sharing your music creations.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UIBackgroundModes = audio;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = beyond.musicgenmain;
+				PRODUCT_BUNDLE_IDENTIFIER = com.beyond.musicgenai;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -464,6 +544,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "MusicGen AI";
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "This app needs music library access to save your generated tracks and access your music.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app may use camera for profile pictures and content creation.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app needs microphone access to record audio for music generation and voice features.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app may access photos for profile pictures and sharing your music creations.";
+				INFOPLIST_KEY_UIBackgroundModes = audio;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
 				MACOSX_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;
@@ -486,6 +572,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "MusicGen AI";
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "This app needs music library access to save your generated tracks and access your music.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app may use camera for profile pictures and content creation.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app needs microphone access to record audio for music generation and voice features.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app may access photos for profile pictures and sharing your music creations.";
+				INFOPLIST_KEY_UIBackgroundModes = audio;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
 				MACOSX_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;
@@ -507,6 +599,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "MusicGen AI";
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "This app needs music library access to save your generated tracks and access your music.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app may use camera for profile pictures and content creation.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app needs microphone access to record audio for music generation and voice features.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app may access photos for profile pictures and sharing your music creations.";
+				INFOPLIST_KEY_UIBackgroundModes = audio;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
 				MACOSX_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;
@@ -528,6 +626,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "MusicGen AI";
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "This app needs music library access to save your generated tracks and access your music.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app may use camera for profile pictures and content creation.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app needs microphone access to record audio for music generation and voice features.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app may access photos for profile pictures and sharing your music creations.";
+				INFOPLIST_KEY_UIBackgroundModes = audio;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
 				MACOSX_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;
@@ -583,6 +687,160 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EDD253A02E003764002DE1EB /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		EDD253A22E003764002DE1EB /* FirebaseAnalyticsOnDeviceConversion */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsOnDeviceConversion;
+		};
+		EDD253A42E003764002DE1EB /* FirebaseAnalyticsSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsSwift;
+		};
+		EDD253A62E003764002DE1EB /* FirebaseAnalyticsWithoutAdIdSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsWithoutAdIdSupport;
+		};
+		EDD253A82E003764002DE1EB /* FirebaseAppCheck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAppCheck;
+		};
+		EDD253AA2E003764002DE1EB /* FirebaseAppDistribution-Beta */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseAppDistribution-Beta";
+		};
+		EDD253AC2E003764002DE1EB /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		EDD253AE2E003764002DE1EB /* FirebaseAuthCombine-Community */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseAuthCombine-Community";
+		};
+		EDD253B02E003764002DE1EB /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+		EDD253B22E003764002DE1EB /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		EDD253B42E003764002DE1EB /* FirebaseDatabaseSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabaseSwift;
+		};
+		EDD253B62E003764002DE1EB /* FirebaseDynamicLinks */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDynamicLinks;
+		};
+		EDD253B82E003764002DE1EB /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		EDD253BA2E003764002DE1EB /* FirebaseFirestoreCombine-Community */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseFirestoreCombine-Community";
+		};
+		EDD253BC2E003764002DE1EB /* FirebaseFirestoreSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestoreSwift;
+		};
+		EDD253BE2E003764002DE1EB /* FirebaseFunctions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFunctions;
+		};
+		EDD253C02E003764002DE1EB /* FirebaseFunctionsCombine-Community */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseFunctionsCombine-Community";
+		};
+		EDD253C22E003764002DE1EB /* FirebaseInAppMessaging-Beta */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseInAppMessaging-Beta";
+		};
+		EDD253C42E003764002DE1EB /* FirebaseInAppMessagingSwift-Beta */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseInAppMessagingSwift-Beta";
+		};
+		EDD253C62E003764002DE1EB /* FirebaseInstallations */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseInstallations;
+		};
+		EDD253C82E003764002DE1EB /* FirebaseMLModelDownloader */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMLModelDownloader;
+		};
+		EDD253CA2E003764002DE1EB /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+		EDD253CC2E003764002DE1EB /* FirebasePerformance */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebasePerformance;
+		};
+		EDD253CE2E003764002DE1EB /* FirebaseRemoteConfig */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseRemoteConfig;
+		};
+		EDD253D02E003764002DE1EB /* FirebaseRemoteConfigSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseRemoteConfigSwift;
+		};
+		EDD253D22E003764002DE1EB /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		EDD253D42E003764002DE1EB /* FirebaseStorageCombine-Community */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseStorageCombine-Community";
+		};
+		EDD253D62E003764002DE1EB /* FirebaseVertexAI-Preview */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED23024A2E0035E2000618F5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseVertexAI-Preview";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EDA7BDEE2DFEE5D900BAC628 /* Project object */;
 }

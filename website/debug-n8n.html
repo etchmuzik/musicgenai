@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>n8n Connection Debug</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #0a0a0a;
+            color: #ffffff;
+        }
+        .test-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        button {
+            background: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        .log {
+            background: #000;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .error { color: #ff4444; }
+        .success { color: #44ff44; }
+        .info { color: #4444ff; }
+    </style>
+</head>
+<body>
+    <h1>🔧 n8n Connection Debug Tool</h1>
+    
+    <div class="test-section">
+        <h2>1. Check n8n Status</h2>
+        <button onclick="checkN8nStatus()">Test n8n Connection</button>
+        <div id="statusLog" class="log"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Test Webhook</h2>
+        <button onclick="testWebhook()">Send Test Request</button>
+        <div id="webhookLog" class="log"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. CORS Test</h2>
+        <button onclick="testCORS()">Test CORS Headers</button>
+        <div id="corsLog" class="log"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Full Music Generation Test</h2>
+        <button onclick="testFullGeneration()">Test Music Generation</button>
+        <div id="fullLog" class="log"></div>
+    </div>
+
+    <script>
+        const N8N_WEBHOOK = 'http://localhost:5679/webhook/generate-music-ai';
+        
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const colorClass = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            element.innerHTML += `<span class="${colorClass}">[${timestamp}] ${message}</span>\n`;
+            element.scrollTop = element.scrollHeight;
+        }
+        
+        async function checkN8nStatus() {
+            const logId = 'statusLog';
+            document.getElementById(logId).innerHTML = '';
+            
+            log(logId, '🔍 Checking n8n status...');
+            
+            try {
+                // Check if n8n is running
+                const response = await fetch('http://localhost:5678', {
+                    method: 'GET',
+                    mode: 'no-cors' // Bypass CORS for this test
+                });
+                
+                log(logId, '✅ n8n server appears to be running', 'success');
+                
+            } catch (error) {
+                log(logId, `❌ n8n server not accessible: ${error.message}`, 'error');
+                log(logId, '💡 Make sure n8n is running on localhost:5678', 'info');
+            }
+        }
+        
+        async function testCORS() {
+            const logId = 'corsLog';
+            document.getElementById(logId).innerHTML = '';
+            
+            log(logId, '🌐 Testing CORS...');
+            
+            try {
+                const response = await fetch(N8N_WEBHOOK, {
+                    method: 'OPTIONS'
+                });
+                
+                log(logId, `OPTIONS response: ${response.status}`, 'info');
+                
+                // Check CORS headers
+                const corsHeaders = [
+                    'Access-Control-Allow-Origin',
+                    'Access-Control-Allow-Methods', 
+                    'Access-Control-Allow-Headers'
+                ];
+                
+                corsHeaders.forEach(header => {
+                    const value = response.headers.get(header);
+                    if (value) {
+                        log(logId, `✅ ${header}: ${value}`, 'success');
+                    } else {
+                        log(logId, `❌ Missing: ${header}`, 'error');
+                    }
+                });
+                
+            } catch (error) {
+                log(logId, `❌ CORS test failed: ${error.message}`, 'error');
+                log(logId, '💡 Add CORS headers to your n8n webhook response:', 'info');
+                log(logId, '   Access-Control-Allow-Origin: *', 'info');
+                log(logId, '   Access-Control-Allow-Methods: POST, OPTIONS', 'info');
+                log(logId, '   Access-Control-Allow-Headers: Content-Type', 'info');
+            }
+        }
+        
+        async function testWebhook() {
+            const logId = 'webhookLog';
+            document.getElementById(logId).innerHTML = '';
+            
+            log(logId, '📡 Testing webhook...');
+            
+            const testData = {
+                test: true,
+                prompt: 'Test connection'
+            };
+            
+            try {
+                const response = await fetch(N8N_WEBHOOK, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                log(logId, `Response status: ${response.status}`, 'info');
+                log(logId, `Response headers:`, 'info');
+                
+                for (const [key, value] of response.headers.entries()) {
+                    log(logId, `  ${key}: ${value}`, 'info');
+                }
+                
+                const responseText = await response.text();
+                log(logId, `Response body: ${responseText}`, response.ok ? 'success' : 'error');
+                
+            } catch (error) {
+                log(logId, `❌ Webhook test failed: ${error.message}`, 'error');
+                
+                if (error.message.includes('fetch')) {
+                    log(logId, '💡 This looks like a CORS or network error', 'info');
+                    log(logId, '💡 Check that n8n is running and webhook URL is correct', 'info');
+                }
+            }
+        }
+        
+        async function testFullGeneration() {
+            const logId = 'fullLog';
+            document.getElementById(logId).innerHTML = '';
+            
+            log(logId, '🎵 Testing full music generation...');
+            
+            const generationData = {
+                prompt: 'Happy upbeat electronic dance music',
+                artworkPrompt: 'Electronic music artwork, happy mood, modern style',
+                genre: 'electronic',
+                duration: 30,
+                quality: 'high'
+            };
+            
+            log(logId, `Sending request: ${JSON.stringify(generationData, null, 2)}`, 'info');
+            
+            try {
+                const startTime = Date.now();
+                
+                const response = await fetch(N8N_WEBHOOK, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(generationData)
+                });
+                
+                const endTime = Date.now();
+                log(logId, `Request completed in ${(endTime - startTime) / 1000}s`, 'info');
+                log(logId, `Status: ${response.status}`, 'info');
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    log(logId, '✅ Generation successful!', 'success');
+                    log(logId, `Audio URL: ${result.audio_url || 'Not provided'}`, 'info');
+                    log(logId, `Image URL: ${result.image_url || 'Not provided'}`, 'info');
+                    log(logId, `Extended Audio: ${result.extended_audio_url || 'Not provided'}`, 'info');
+                    
+                    // Test if audio URL is accessible
+                    if (result.audio_url) {
+                        try {
+                            const audioTest = await fetch(result.audio_url, { method: 'HEAD' });
+                            log(logId, `✅ Audio file accessible (${audioTest.status})`, 'success');
+                        } catch (e) {
+                            log(logId, `❌ Audio file not accessible: ${e.message}`, 'error');
+                        }
+                    }
+                    
+                } else {
+                    const errorText = await response.text();
+                    log(logId, `❌ Generation failed: ${errorText}`, 'error');
+                }
+                
+            } catch (error) {
+                log(logId, `❌ Full generation test failed: ${error.message}`, 'error');
+            }
+        }
+        
+        // Auto-run basic tests on page load
+        window.addEventListener('load', () => {
+            setTimeout(checkN8nStatus, 500);
+        });
+    </script>
+</body>
+</html>

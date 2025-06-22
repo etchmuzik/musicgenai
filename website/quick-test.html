@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Test - Music Generation</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 600px; 
+            margin: 50px auto; 
+            padding: 20px;
+            background: #0a0a0a;
+            color: #fff;
+        }
+        .container { 
+            background: #1a1a1a; 
+            padding: 30px; 
+            border-radius: 10px; 
+            border: 1px solid #333;
+        }
+        input, button { 
+            width: 100%; 
+            padding: 12px; 
+            margin: 10px 0; 
+            border-radius: 5px;
+            border: 1px solid #333;
+            background: #0a0a0a;
+            color: #fff;
+        }
+        button { 
+            background: #00d4ff; 
+            color: #000;
+            cursor: pointer; 
+            font-weight: bold;
+        }
+        button:hover { background: #00b8e6; }
+        .result { 
+            margin-top: 20px; 
+            padding: 15px; 
+            border-radius: 5px;
+            word-break: break-all;
+        }
+        .success { background: #1a4a1a; border: 1px solid #4a8a4a; }
+        .error { background: #4a1a1a; border: 1px solid #8a4a4a; }
+        .loading { background: #4a4a1a; border: 1px solid #8a8a4a; }
+        audio { width: 100%; margin: 10px 0; }
+        img { max-width: 100%; margin: 10px 0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Quick Music Generation Test</h1>
+        <p>Direct test of n8n webhook endpoint</p>
+        
+        <input type="text" id="prompt" placeholder="Enter music prompt (e.g., 'upbeat electronic music')" value="chill lo-fi hip hop beats">
+        
+        <button onclick="testGeneration()">🚀 Test Music Generation</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function testGeneration() {
+            const prompt = document.getElementById('prompt').value;
+            const resultDiv = document.getElementById('result');
+            
+            if (!prompt.trim()) {
+                resultDiv.innerHTML = '<div class="error">❌ Please enter a prompt</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="loading">⏳ Generating music... This takes about 30-60 seconds</div>';
+            
+            try {
+                const response = await fetch('http://localhost:5679/webhook/generate-music-ai', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        genre: 'electronic'
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                let html = '<div class="success">✅ Success!</div>';
+                html += '<h3>📊 Response Data:</h3>';
+                html += '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                
+                if (data.audio_url) {
+                    html += '<h3>🎵 Generated Audio:</h3>';
+                    html += '<audio controls><source src="' + data.audio_url + '" type="audio/mpeg"></audio>';
+                }
+                
+                if (data.image_url) {
+                    html += '<h3>🎨 Generated Artwork:</h3>';
+                    html += '<img src="' + data.image_url + '" alt="Generated Artwork">';
+                }
+                
+                resultDiv.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = '<div class="error">❌ Error: ' + error.message + '</div>';
+                
+                // Additional debugging info
+                resultDiv.innerHTML += '<h3>🔧 Debug Info:</h3>';
+                resultDiv.innerHTML += '<p><strong>Endpoint:</strong> http://localhost:5679/webhook/generate-music-ai</p>';
+                resultDiv.innerHTML += '<p><strong>Payload:</strong> ' + JSON.stringify({prompt: prompt, genre: 'electronic'}) + '</p>';
+                resultDiv.innerHTML += '<p><strong>Check:</strong> Is the workflow active in n8n dashboard?</p>';
+            }
+        }
+        
+        // Test on Enter key
+        document.getElementById('prompt').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                testGeneration();
+            }
+        });
+    </script>
+</body>
+</html>

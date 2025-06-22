@@ -1,0 +1,748 @@
+{
+  "name": "Optimized Music Generation Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🎵 Optimized Music Generation Workflow\n\n**Features:**\n- ✅ Proper error handling\n- ✅ CORS headers\n- ✅ Input validation\n- ✅ Efficient polling\n- ✅ Environment variables\n- ✅ Parallel processing\n- ✅ Fallback responses",
+        "height": 160,
+        "width": 300
+      },
+      "id": "workflow-info",
+      "name": "Workflow Info",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [200, 0]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generate-music-ai",
+        "responseMode": "onReceived",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "webhook-start",
+      "name": "Music Generation Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [560, 200],
+      "webhookId": "generate-music-ai"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "prompt-check",
+              "leftValue": "={{ $json.prompt }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            },
+            {
+              "id": "prompt-length",
+              "leftValue": "={{ $json.prompt?.length || 0 }}",
+              "rightValue": 10,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "validate-input",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [780, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  \"error\": \"Invalid input\",\n  \"message\": \"Prompt is required and must be at least 10 characters long\",\n  \"received\": $json\n} }}",
+        "responseCode": 400,
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "error-response",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [780, 380]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "task-id",
+              "name": "taskId",
+              "value": "={{ $now().toString() + '-' + Math.random().toString(36).substr(2, 9) }}",
+              "type": "string"
+            },
+            {
+              "id": "clean-prompt",
+              "name": "cleanPrompt",
+              "value": "={{ $json.prompt.trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "artwork-prompt",
+              "name": "artworkPrompt",
+              "value": "={{ $json.artworkPrompt || ($json.genre + ' music album cover, ' + ($json.mood || 'modern') + ' style, professional artwork') }}",
+              "type": "string"
+            },
+            {
+              "id": "duration",
+              "name": "duration",
+              "value": "={{ parseInt($json.duration) || 30 }}",
+              "type": "number"
+            },
+            {
+              "id": "quality",
+              "name": "quality",
+              "value": "={{ $json.quality || 'high' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "prepare-data",
+      "name": "Prepare Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1000, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.piapi.ai/api/v1/task",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "={{ $vars.PIAPI_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={{ {\n  \"model\": \"music-u\",\n  \"task_type\": \"generate_music\",\n  \"input\": {\n    \"gpt_description_prompt\": $json.cleanPrompt,\n    \"negative_tags\": \"\",\n    \"lyrics_type\": \"instrumental\",\n    \"seed\": -1\n  }\n} }}",
+        "options": {
+          "timeout": 30000,
+          "retry": {
+            "enabled": true,
+            "maxAttempts": 3
+          }
+        }
+      },
+      "id": "create-music-task",
+      "name": "Create Music Task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1220, 120]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.piapi.ai/api/v1/task",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "={{ $vars.PIAPI_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={{ {\n  \"model\": \"flux\",\n  \"task_type\": \"text2img\",\n  \"input\": {\n    \"prompt\": $('Prepare Data').item.json.artworkPrompt,\n    \"width\": 512,\n    \"height\": 512,\n    \"guidance_scale\": 7.5,\n    \"num_inference_steps\": 20\n  }\n} }}",
+        "options": {
+          "timeout": 30000,
+          "retry": {
+            "enabled": true,
+            "maxAttempts": 3
+          }
+        }
+      },
+      "id": "create-artwork-task",
+      "name": "Create Artwork Task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1220, 280]
+    },
+    {
+      "parameters": {
+        "amount": 15,
+        "unit": "seconds"
+      },
+      "id": "initial-wait",
+      "name": "Wait 15s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1440, 200]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ \"https://api.piapi.ai/api/v1/task/\" + $('Create Music Task').item.json.data.task_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "={{ $vars.PIAPI_API_KEY }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "poll-music-status",
+      "name": "Poll Music Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1660, 120]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ \"https://api.piapi.ai/api/v1/task/\" + $('Create Artwork Task').item.json.data.task_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "={{ $vars.PIAPI_API_KEY }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "poll-artwork-status",
+      "name": "Poll Artwork Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1660, 280]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "music-complete",
+              "leftValue": "={{ $('Poll Music Status').item.json.data?.status }}",
+              "rightValue": "completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "artwork-complete",
+              "leftValue": "={{ $('Poll Artwork Status').item.json.data?.status }}",
+              "rightValue": "completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-completion",
+      "name": "Both Tasks Complete?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1880, 200]
+    },
+    {
+      "parameters": {
+        "amount": 5,
+        "unit": "seconds"
+      },
+      "id": "polling-wait",
+      "name": "Wait 5s (Polling)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1880, 380]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "duration-check",
+              "leftValue": "={{ $('Prepare Data').item.json.duration }}",
+              "rightValue": 60,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "should-extend",
+      "name": "Should Extend Audio?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2100, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.piapi.ai/api/v1/task",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "={{ $vars.PIAPI_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={{ {\n  \"model\": \"music-u\",\n  \"task_type\": \"generate_music\",\n  \"input\": {\n    \"gpt_description_prompt\": $('Prepare Data').item.json.cleanPrompt + \" (extended version)\",\n    \"negative_tags\": \"\",\n    \"lyrics_type\": \"instrumental\",\n    \"seed\": -1\n  }\n} }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "create-extended-task",
+      "name": "Create Extended Music",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2320, 120]
+    },
+    {
+      "parameters": {
+        "amount": 20,
+        "unit": "seconds"
+      },
+      "id": "extended-wait",
+      "name": "Wait 20s (Extended)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [2540, 120]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ \"https://api.piapi.ai/api/v1/task/\" + $('Create Extended Music').item.json.data.task_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "={{ $vars.PIAPI_API_KEY }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "poll-extended-status",
+      "name": "Poll Extended Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2760, 120]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "extended-complete",
+              "leftValue": "={{ $json.data?.status }}",
+              "rightValue": "completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-extended-completion",
+      "name": "Extended Complete?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2980, 120]
+    },
+    {
+      "parameters": {
+        "amount": 5,
+        "unit": "seconds"
+      },
+      "id": "extended-polling-wait",
+      "name": "Wait 5s (Extended Poll)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [2980, 280]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  \"audio_url\": $('Poll Music Status').item.json.data?.output || null,\n  \"image_url\": $('Poll Artwork Status').item.json.data?.output || null,\n  \"extended_audio_url\": $('Poll Extended Status').item?.json?.data?.output || null,\n  \"prompt\": $('Prepare Data').item.json.cleanPrompt,\n  \"artworkPrompt\": $('Prepare Data').item.json.artworkPrompt,\n  \"genre\": $('Music Generation Webhook').item.json.genre || 'electronic',\n  \"duration\": $('Prepare Data').item.json.duration,\n  \"quality\": $('Prepare Data').item.json.quality,\n  \"taskId\": $('Prepare Data').item.json.taskId,\n  \"status\": \"completed\",\n  \"timestamp\": $now().toISOString(),\n  \"processing_time\": Math.round(($now() - Date.parse($('Music Generation Webhook').item.json.timestamp || $now().toISOString())) / 1000) + \" seconds\"\n} }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "POST, GET, OPTIONS"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, Authorization"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Cache-Control",
+                "value": "no-cache"
+              }
+            ]
+          }
+        }
+      },
+      "id": "success-response",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [3200, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  \"audio_url\": $('Poll Music Status').item.json.data?.output || null,\n  \"image_url\": $('Poll Artwork Status').item.json.data?.output || null,\n  \"extended_audio_url\": null,\n  \"prompt\": $('Prepare Data').item.json.cleanPrompt,\n  \"artworkPrompt\": $('Prepare Data').item.json.artworkPrompt,\n  \"genre\": $('Music Generation Webhook').item.json.genre || 'electronic',\n  \"duration\": $('Prepare Data').item.json.duration,\n  \"quality\": $('Prepare Data').item.json.quality,\n  \"taskId\": $('Prepare Data').item.json.taskId,\n  \"status\": \"completed\",\n  \"timestamp\": $now().toISOString(),\n  \"processing_time\": Math.round(($now() - Date.parse($('Music Generation Webhook').item.json.timestamp || $now().toISOString())) / 1000) + \" seconds\"\n} }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "POST, GET, OPTIONS"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, Authorization"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "no-extension-response",
+      "name": "No Extension Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [2320, 280]
+    }
+  ],
+  "connections": {
+    "Music Generation Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Prepare Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Data": {
+      "main": [
+        [
+          {
+            "node": "Create Music Task",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create Artwork Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Music Task": {
+      "main": [
+        [
+          {
+            "node": "Initial Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Artwork Task": {
+      "main": [
+        [
+          {
+            "node": "Initial Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Initial Wait": {
+      "main": [
+        [
+          {
+            "node": "Poll Music Status",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Poll Artwork Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poll Music Status": {
+      "main": [
+        [
+          {
+            "node": "Both Tasks Complete?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poll Artwork Status": {
+      "main": [
+        [
+          {
+            "node": "Both Tasks Complete?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Both Tasks Complete?": {
+      "main": [
+        [
+          {
+            "node": "Should Extend Audio?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Polling Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Polling Wait": {
+      "main": [
+        [
+          {
+            "node": "Poll Music Status",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Poll Artwork Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should Extend Audio?": {
+      "main": [
+        [
+          {
+            "node": "Create Extended Music",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Extension Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Extended Music": {
+      "main": [
+        [
+          {
+            "node": "Extended Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extended Wait": {
+      "main": [
+        [
+          {
+            "node": "Poll Extended Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poll Extended Status": {
+      "main": [
+        [
+          {
+            "node": "Extended Complete?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extended Complete?": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extended Polling Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extended Polling Wait": {
+      "main": [
+        [
+          {
+            "node": "Poll Extended Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-06-22T15:45:00.000Z",
+  "versionId": "1"
+}
