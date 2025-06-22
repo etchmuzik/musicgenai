@@ -1,119 +1,106 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "website/**",
-      "use": "@vercel/static"
-    }
-  ],
+  "outputDirectory": "website",
   "routes": [
     {
       "src": "/app",
-      "dest": "/website/app-super-enhanced.html"
+      "dest": "/app-super-enhanced.html"
     },
     {
       "src": "/privacy",
-      "dest": "/website/privacy.html"
+      "dest": "/privacy.html"
     },
     {
       "src": "/terms",
-      "dest": "/website/terms.html"
+      "dest": "/terms.html"
     },
     {
       "src": "/support",
-      "dest": "/website/help.html"
+      "dest": "/help.html"
     },
     {
       "src": "/pricing",
-      "dest": "/website/pricing.html"
+      "dest": "/pricing.html"
     },
     {
       "src": "/about",
-      "dest": "/website/about.html"
+      "dest": "/about.html"
     },
     {
       "src": "/help",
-      "dest": "/website/help.html"
+      "dest": "/help.html"
     },
     {
       "src": "/dashboard",
-      "dest": "/website/user-dashboard.html"
+      "dest": "/user-dashboard.html"
     },
     {
       "src": "/user-dashboard",
-      "dest": "/website/user-dashboard.html"
+      "dest": "/user-dashboard.html"
     },
     {
       "src": "/library",
-      "dest": "/website/library.html"
+      "dest": "/library.html"
     },
     {
       "src": "/settings",
-      "dest": "/website/settings.html"
+      "dest": "/settings.html"
     },
     {
       "src": "/auth",
-      "dest": "/website/auth.html"
+      "dest": "/auth.html"
     },
     {
       "src": "/signin",
-      "dest": "/website/auth.html"
+      "dest": "/auth.html"
     },
     {
       "src": "/signup",
-      "dest": "/website/auth.html"
+      "dest": "/auth.html"
     },
     {
       "src": "/profile",
-      "dest": "/website/profile.html"
+      "dest": "/profile.html"
     },
     {
       "src": "/recommendations",
-      "dest": "/website/recommendations.html"
+      "dest": "/recommendations.html"
     },
     {
       "src": "/audio-editor",
-      "dest": "/website/audio-editor.html"
+      "dest": "/audio-editor.html"
     },
     {
       "src": "/stem-separation",
-      "dest": "/website/stem-separation.html"
+      "dest": "/stem-separation.html"
     },
     {
       "src": "/stems",
-      "dest": "/website/stem-separation.html"
+      "dest": "/stem-separation.html"
     },
     {
       "src": "/ai-studio",
-      "dest": "/website/ai-studio.html"
+      "dest": "/ai-studio.html"
     },
     {
       "src": "/ai",
-      "dest": "/website/ai-studio.html"
+      "dest": "/ai-studio.html"
     },
     {
       "src": "/gamification",
-      "dest": "/website/gamification.html"
+      "dest": "/gamification.html"
     },
     {
       "src": "/rewards",
-      "dest": "/website/gamification.html"
+      "dest": "/gamification.html"
     },
     {
       "src": "/music-studio",
-      "dest": "/website/music-studio.html"
+      "dest": "/music-studio.html"
     },
     {
       "src": "/studio",
-      "dest": "/website/music-studio.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/website/$1"
-    },
-    {
-      "src": "/",
-      "dest": "/website/index.html"
+      "dest": "/music-studio.html"
     }
   ],
   "trailingSlash": false,
