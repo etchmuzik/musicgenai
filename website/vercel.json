@@ -31,6 +31,11 @@
   ],
   "redirects": [
     {
+      "source": "/lander",
+      "destination": "/",
+      "permanent": true
+    },
+    {
       "source": "/app",
       "destination": "/app-enhanced.html"
     },
