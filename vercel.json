@@ -84,6 +84,14 @@
       "dest": "/website/stem-separation.html"
     },
     {
+      "src": "/ai-studio",
+      "dest": "/website/ai-studio.html"
+    },
+    {
+      "src": "/ai",
+      "dest": "/website/ai-studio.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/website/$1"
     },
