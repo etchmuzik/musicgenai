@@ -72,6 +72,18 @@
       "dest": "/website/recommendations.html"
     },
     {
+      "src": "/audio-editor",
+      "dest": "/website/audio-editor.html"
+    },
+    {
+      "src": "/stem-separation",
+      "dest": "/website/stem-separation.html"
+    },
+    {
+      "src": "/stems",
+      "dest": "/website/stem-separation.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/website/$1"
     },
