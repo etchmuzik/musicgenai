@@ -17,182 +17,617 @@
     <link rel="stylesheet" href="/css/suno-design.css">
     
     <style>
-        /* Create page specific styles */
-        .create-section {
-            background: var(--bg-card);
-            border-radius: 1rem;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            border: 1px solid var(--border);
+        /* Glass morphism design */
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --blur: blur(10px);
         }
 
+        /* Main content styling */
+        .main-content {
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated background */
+        .create-background {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: var(--bg-primary);
+        }
+
+        .create-background::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+            left: -300px;
+            top: -300px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .create-background::after {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.08) 0%, transparent 70%);
+            right: -400px;
+            bottom: -400px;
+            animation: float 25s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        /* Create container */
+        .create-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header redesign */
         .create-header {
-            margin-bottom: 2rem;
+            text-align: center;
+            margin-bottom: 3rem;
         }
 
         .create-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .create-subtitle {
+            font-size: 1.25rem;
             color: var(--text-secondary);
         }
 
-        .creation-modes {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        /* Mode selector cards */
+        .mode-selector {
+            display: flex;
             gap: 1rem;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
         }
 
         .mode-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid var(--border);
-            border-radius: 0.75rem;
+            flex: 0 0 auto;
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
             padding: 1.5rem;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
+            min-width: 140px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mode-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent, rgba(139, 92, 246, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .mode-card:hover {
-            border-color: var(--primary);
-            background: rgba(139, 92, 246, 0.1);
+            transform: translateY(-2px);
+            border-color: rgba(139, 92, 246, 0.3);
         }
 
         .mode-card.active {
+            background: rgba(139, 92, 246, 0.1);
             border-color: var(--primary);
-            background: rgba(139, 92, 246, 0.15);
+        }
+
+        .mode-card.active::before {
+            opacity: 1;
         }
 
         .mode-icon {
             font-size: 2rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             color: var(--primary);
         }
 
-        .mode-title {
+        .mode-label {
             font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .mode-description {
-            color: var(--text-secondary);
             font-size: 0.875rem;
         }
 
-        .generation-form {
-            display: grid;
-            gap: 1.5rem;
+        /* Main creation area */
+        .creation-panel {
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            box-shadow: var(--glass-shadow);
         }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+        /* Prompt area redesign */
+        .prompt-section {
+            margin-bottom: 2rem;
         }
 
-        .style-pills {
+        .prompt-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .prompt-textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            color: var(--text-primary);
+            font-size: 1.125rem;
+            line-height: 1.6;
+            resize: vertical;
+            min-height: 120px;
+            transition: all 0.3s ease;
+        }
+
+        .prompt-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .prompt-suggestions {
             display: flex;
-            flex-wrap: wrap;
             gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
         }
 
-        .style-pill {
-            padding: 0.5rem 1rem;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
+        .suggestion-chip {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
             border-radius: 2rem;
-            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
             font-size: 0.875rem;
+            color: var(--primary);
             cursor: pointer;
             transition: all 0.2s ease;
         }
 
-        .style-pill:hover {
-            border-color: var(--primary);
-            color: var(--text-primary);
+        .suggestion-chip:hover {
+            background: rgba(139, 92, 246, 0.2);
+            transform: scale(1.05);
         }
 
-        .style-pill.selected {
-            background: var(--primary);
+        /* Controls section */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .control-group {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .control-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        /* Custom select dropdown */
+        .custom-select {
+            position: relative;
+        }
+
+        .select-trigger {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .select-trigger:hover {
+            border-color: var(--primary);
+        }
+
+        .select-value {
+            font-weight: 500;
+        }
+
+        .select-arrow {
+            transition: transform 0.2s ease;
+        }
+
+        .custom-select.open .select-arrow {
+            transform: rotate(180deg);
+        }
+
+        .select-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 0.5rem;
+            background: var(--bg-card);
+            backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+            z-index: 10;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .custom-select.open .select-options {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .select-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .select-option:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .select-option.selected {
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--primary);
+        }
+
+        /* Slider controls */
+        .slider-control {
+            margin-top: 0.75rem;
+        }
+
+        .slider-track {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .slider-fill {
+            height: 100%;
+            background: var(--primary-gradient);
+            border-radius: 3px;
+            width: 60%;
+            transition: width 0.2s ease;
+        }
+
+        .slider-thumb {
+            position: absolute;
+            top: 50%;
+            left: 60%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 3px solid var(--primary);
+            border-radius: 50%;
+            cursor: grab;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .slider-value {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Toggle switches */
+        .toggle-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .toggle-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 2rem;
+            padding: 0.5rem 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+        }
+
+        .toggle-item:hover {
+            border-color: rgba(139, 92, 246, 0.5);
+        }
+
+        .toggle-item.active {
+            background: rgba(139, 92, 246, 0.2);
             border-color: var(--primary);
             color: white;
         }
 
+        /* Advanced options */
+        .advanced-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .advanced-toggle:hover {
+            color: var(--text-primary);
+        }
+
+        .advanced-options {
+            display: none;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 1rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .advanced-options.open {
+            display: block;
+        }
+
+        /* Generate button */
+        .generate-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .generate-button {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 2rem;
+            padding: 1rem 3rem;
+            color: white;
+            font-weight: 600;
+            font-size: 1.125rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .generate-button::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .generate-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        .generate-button:hover::before {
+            transform: translateX(0);
+        }
+
+        .credit-cost {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Progress state */
         .generation-progress {
             display: none;
             text-align: center;
-            padding: 3rem 2rem;
+            padding: 4rem 2rem;
         }
 
         .generation-progress.active {
             display: block;
         }
 
-        .progress-spinner {
-            width: 80px;
-            height: 80px;
-            border: 4px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
+        .progress-ring {
+            width: 120px;
+            height: 120px;
             margin: 0 auto 2rem;
-            animation: spin 1s linear infinite;
+            position: relative;
         }
 
-        .progress-text {
+        .progress-ring svg {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-circle {
+            fill: none;
+            stroke: rgba(139, 92, 246, 0.2);
+            stroke-width: 4;
+        }
+
+        .progress-ring-progress {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-dasharray: 339.292;
+            stroke-dashoffset: 339.292;
+            animation: progress 2s ease-in-out infinite;
+        }
+
+        @keyframes progress {
+            0% { stroke-dashoffset: 339.292; }
+            50% { stroke-dashoffset: 170; }
+            100% { stroke-dashoffset: 339.292; }
+        }
+
+        .progress-status {
             font-size: 1.25rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
         }
 
-        .progress-subtext {
-            color: var(--text-secondary);
-        }
-
+        /* Result display */
         .generation-result {
             display: none;
-            text-align: center;
-            padding: 2rem;
         }
 
         .generation-result.active {
             display: block;
         }
 
-        .result-icon {
-            font-size: 4rem;
-            color: var(--success);
-            margin-bottom: 1rem;
+        .result-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: var(--glass-shadow);
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .result-artwork {
+            width: 120px;
+            height: 120px;
+            border-radius: 1rem;
+            background: var(--primary-gradient);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .result-artwork img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .result-info {
+            flex: 1;
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-meta {
+            color: var(--text-secondary);
         }
 
         .result-player {
-            background: var(--bg-secondary);
-            border-radius: 0.75rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 1rem;
             padding: 1.5rem;
-            margin: 2rem 0;
+            margin-bottom: 2rem;
         }
 
         .result-actions {
             display: flex;
             gap: 1rem;
-            justify-content: center;
             flex-wrap: wrap;
         }
 
+        .result-action {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .result-action:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        /* Mobile responsive */
         @media (max-width: 768px) {
-            .form-row {
+            .create-title {
+                font-size: 2rem;
+            }
+
+            .creation-panel {
+                padding: 1.5rem;
+            }
+
+            .controls-grid {
                 grid-template-columns: 1fr;
             }
 
-            .creation-modes {
-                grid-template-columns: 1fr;
+            .mode-selector {
+                gap: 0.75rem;
+            }
+
+            .generate-section {
+                flex-direction: column;
+                gap: 1rem;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Animated Background -->
+    <div class="create-background"></div>
+
     <!-- Mobile Menu Toggle -->
     <button class="mobile-menu-toggle" onclick="toggleSidebar()">
         <i class="fas fa-bars"></i>
@@ -220,6 +655,18 @@
                     <a href="/library" class="nav-link">
                         <span class="nav-icon"><i class="fas fa-folder"></i></span>
                         Library
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/remix" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-sync"></i></span>
+                        Remix
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/lyrics" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-pen"></i></span>
+                        Lyrics
                     </a>
                 </li>
                 <li class="nav-item">
@@ -251,7 +698,7 @@
             </div>
             <div class="credits-value" id="userCredits">200</div>
             <div class="credits-subtitle">Monthly credits remaining</div>
-            <a href="/pricing" class="btn btn-secondary" style="width: 100%; margin-top: 1rem; justify-content: center; text-decoration: none;">
+            <a href="/pricing" class="btn btn-secondary" style="width: 100%; margin-top: 1rem; justify-content: center;">
                 Upgrade Plan
             </a>
         </div>
@@ -259,228 +706,253 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <!-- Header -->
-        <header class="header">
-            <h1 class="header-title">
-                Create Your <span class="gradient-text">Masterpiece</span>
-            </h1>
-            <p class="header-subtitle">
-                Choose your creation mode and let AI transform your ideas into music
-            </p>
-        </header>
+        <div class="create-container">
+            <!-- Header -->
+            <header class="create-header">
+                <h1 class="create-title">Create Your Music</h1>
+                <p class="create-subtitle">Transform ideas into amazing tracks with AI</p>
+            </header>
 
-        <!-- Creation Modes -->
-        <section class="create-section">
-            <div class="create-header">
-                <h2 class="create-title">Choose Creation Mode</h2>
-                <p class="create-subtitle">Select how you want to create your music</p>
-            </div>
-
-            <div class="creation-modes">
+            <!-- Mode Selector -->
+            <div class="mode-selector">
                 <div class="mode-card active" data-mode="simple">
                     <div class="mode-icon">🎵</div>
-                    <h3 class="mode-title">Simple Creation</h3>
-                    <p class="mode-description">Describe your song in words and let AI create it</p>
+                    <div class="mode-label">Simple</div>
                 </div>
                 <div class="mode-card" data-mode="lyrics">
                     <div class="mode-icon">📝</div>
-                    <h3 class="mode-title">Custom Lyrics</h3>
-                    <p class="mode-description">Provide your own lyrics and choose the style</p>
+                    <div class="mode-label">With Lyrics</div>
+                </div>
+                <div class="mode-card" data-mode="instrumental">
+                    <div class="mode-icon">🎹</div>
+                    <div class="mode-label">Instrumental</div>
                 </div>
                 <div class="mode-card" data-mode="remix">
                     <div class="mode-icon">🔄</div>
-                    <h3 class="mode-title">Remix & Extend</h3>
-                    <p class="mode-description">Upload a track to remix or extend</p>
+                    <div class="mode-label">Remix</div>
                 </div>
-                <div class="mode-card" data-mode="tts">
-                    <div class="mode-icon">🎙️</div>
-                    <h3 class="mode-title">Text to Speech</h3>
-                    <p class="mode-description">Convert text to natural speech with AI voices</p>
-                </div>
-                <div class="mode-card" data-mode="artwork">
-                    <div class="mode-icon">🎨</div>
-                    <h3 class="mode-title">Music + Artwork</h3>
-                    <p class="mode-description">Generate music with custom album artwork</p>
+                <div class="mode-card" data-mode="extend">
+                    <div class="mode-icon">➕</div>
+                    <div class="mode-label">Extend</div>
                 </div>
                 <div class="mode-card" data-mode="video">
                     <div class="mode-icon">🎬</div>
-                    <h3 class="mode-title">Video to Audio</h3>
-                    <p class="mode-description">Generate audio from video content</p>
+                    <div class="mode-label">Video Sync</div>
                 </div>
             </div>
-        </section>
 
-        <!-- Generation Form -->
-        <section class="create-section" id="generationSection">
-            <div class="create-header">
-                <h2 class="create-title">Song Details</h2>
-                <p class="create-subtitle">Describe your vision and we'll make it reality</p>
-            </div>
-
-            <form class="generation-form" id="generationForm">
-                <div class="form-group" id="descriptionGroup">
-                    <label class="form-label">Song Description</label>
+            <!-- Creation Panel -->
+            <div class="creation-panel" id="creationPanel">
+                <!-- Prompt Section -->
+                <div class="prompt-section">
+                    <label class="prompt-label">Describe your music</label>
                     <textarea 
-                        class="form-textarea" 
-                        id="songDescription" 
-                        placeholder="A happy pop song about summer vacation with upbeat melody and catchy chorus..."
-                        rows="4"
+                        class="prompt-textarea" 
+                        id="musicPrompt"
+                        placeholder="A chill lofi beat with soft piano and rain sounds..."
                     ></textarea>
-                </div>
-                
-                <div class="form-group" id="lyricsGroup" style="display: none;">
-                    <label class="form-label">Custom Lyrics</label>
-                    <textarea 
-                        class="form-textarea" 
-                        id="customLyrics" 
-                        placeholder="Verse 1:&#10;Walking down the beach at sunset...&#10;&#10;Chorus:&#10;Summer dreams come alive..."
-                        rows="8"
-                    ></textarea>
-                </div>
-                
-                <div class="form-group" id="uploadGroup" style="display: none;">
-                    <label class="form-label">Upload Track to Remix/Extend</label>
-                    <input type="file" accept="audio/*" id="audioUpload" class="form-input" />
-                    <p class="form-hint">Upload an MP3 or WAV file to remix or extend</p>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Duration</label>
-                        <select class="form-select" id="duration">
-                            <option value="30">30 seconds</option>
-                            <option value="60" selected>1 minute</option>
-                            <option value="120">2 minutes</option>
-                            <option value="240">4 minutes</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Music Type</label>
-                        <select class="form-select" id="musicType">
-                            <option value="instrumental">Instrumental</option>
-                            <option value="vocal" selected>With Vocals</option>
-                        </select>
+                    
+                    <div class="prompt-suggestions">
+                        <div class="suggestion-chip" onclick="addSuggestion('upbeat electronic dance')">
+                            Upbeat Electronic
+                        </div>
+                        <div class="suggestion-chip" onclick="addSuggestion('cinematic orchestral epic')">
+                            Cinematic Epic
+                        </div>
+                        <div class="suggestion-chip" onclick="addSuggestion('smooth jazz piano')">
+                            Smooth Jazz
+                        </div>
+                        <div class="suggestion-chip" onclick="addSuggestion('aggressive rock anthem')">
+                            Rock Anthem
+                        </div>
                     </div>
                 </div>
 
-                <div class="form-group" id="modelGroup">
-                    <label class="form-label">Quality Level</label>
-                    <select class="form-select" id="aiModel">
-                        <option value="music-u" selected>Standard (Fast Generation)</option>
-                        <option value="suno">Premium (Balanced Quality)</option>
-                        <option value="suno-v3.5">Premium Plus (Enhanced)</option>
-                        <option value="suno-v4">Ultra (High Fidelity)</option>
-                        <option value="suno-v4.5">Ultra Max (Best Quality)</option>
-                        <option value="Qubico/diffrhythm">Studio (Professional)</option>
-                        <option value="ace-step">Creative (Experimental)</option>
-                        <option value="mmaudio">Video Sync (For Videos)</option>
-                    </select>
-                </div>
-
-                <div class="form-group" id="extendGroup" style="display: none;">
-                    <label class="form-label">Extend Options</label>
-                    <select class="form-select" id="extendDirection">
-                        <option value="end">Extend End</option>
-                        <option value="beginning">Extend Beginning</option>
-                        <option value="both">Extend Both</option>
-                    </select>
-                </div>
-
-                <div class="form-group" id="ttsGroup" style="display: none;">
-                    <label class="form-label">Text for Speech</label>
+                <!-- Lyrics Section (hidden by default) -->
+                <div class="prompt-section" id="lyricsSection" style="display: none;">
+                    <label class="prompt-label">Your Lyrics</label>
                     <textarea 
-                        class="form-textarea" 
-                        id="ttsText" 
-                        placeholder="Enter the text you want to convert to speech..."
-                        rows="4"
+                        class="prompt-textarea" 
+                        id="customLyrics"
+                        placeholder="Verse 1:&#10;Walking down the street...&#10;&#10;Chorus:&#10;This is our time..."
+                        style="min-height: 200px;"
                     ></textarea>
-                    <label class="form-label" style="margin-top: 1rem;">Voice Style</label>
-                    <select class="form-select" id="voiceStyle">
-                        <option value="default">Default</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="child">Child</option>
-                        <option value="narrator">Narrator</option>
-                    </select>
                 </div>
 
-                <div class="form-group" id="artworkGroup" style="display: none;">
-                    <label class="form-label">Music & Artwork Theme</label>
-                    <textarea 
-                        class="form-textarea" 
-                        id="artworkPrompt" 
-                        placeholder="Describe the music and visual theme (e.g., 'Futuristic synthwave with neon cityscape visuals')"
-                        rows="3"
-                    ></textarea>
-                    <p class="form-hint">PiAPI generates matching album artwork with every track!</p>
-                </div>
+                <!-- Controls Grid -->
+                <div class="controls-grid">
+                    <!-- Duration Control -->
+                    <div class="control-group">
+                        <label class="control-label">Duration</label>
+                        <div class="slider-control">
+                            <div class="slider-track" onclick="updateDuration(event)">
+                                <div class="slider-fill" id="durationFill"></div>
+                                <div class="slider-thumb" id="durationThumb"></div>
+                            </div>
+                            <div class="slider-value">
+                                <span>15s</span>
+                                <span id="durationValue">1:00</span>
+                                <span>4:00</span>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="form-group" id="videoGroup" style="display: none;">
-                    <label class="form-label">Video URL</label>
-                    <input type="url" class="form-input" id="videoUrl" placeholder="https://example.com/video.mp4" />
-                    <p class="form-hint">Enter a video URL to generate matching audio</p>
-                </div>
+                    <!-- Quality Control -->
+                    <div class="control-group">
+                        <label class="control-label">Quality</label>
+                        <div class="custom-select" id="qualitySelect">
+                            <div class="select-trigger" onclick="toggleSelect('qualitySelect')">
+                                <span class="select-value">Standard</span>
+                                <i class="fas fa-chevron-down select-arrow"></i>
+                            </div>
+                            <div class="select-options">
+                                <div class="select-option selected" data-value="music-u">Standard</div>
+                                <div class="select-option" data-value="suno">Premium</div>
+                                <div class="select-option" data-value="suno-v3.5">Premium Plus</div>
+                                <div class="select-option" data-value="suno-v4">Ultra</div>
+                                <div class="select-option" data-value="suno-v4.5">Ultra Max</div>
+                                <div class="select-option" data-value="Qubico/diffrhythm">Studio</div>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="form-group">
-                    <label class="form-label">Style & Genre (Optional)</label>
-                    <div class="style-pills">
-                        <div class="style-pill" data-style="pop">Pop</div>
-                        <div class="style-pill" data-style="rock">Rock</div>
-                        <div class="style-pill" data-style="electronic">Electronic</div>
-                        <div class="style-pill" data-style="hiphop">Hip Hop</div>
-                        <div class="style-pill" data-style="jazz">Jazz</div>
-                        <div class="style-pill" data-style="classical">Classical</div>
-                        <div class="style-pill" data-style="country">Country</div>
-                        <div class="style-pill" data-style="rnb">R&B</div>
-                        <div class="style-pill" data-style="folk">Folk</div>
-                        <div class="style-pill" data-style="ambient">Ambient</div>
+                    <!-- Style Control -->
+                    <div class="control-group">
+                        <label class="control-label">Style</label>
+                        <div class="toggle-group">
+                            <div class="toggle-item active" data-style="auto">Auto</div>
+                            <div class="toggle-item" data-style="energetic">Energetic</div>
+                            <div class="toggle-item" data-style="chill">Chill</div>
+                            <div class="toggle-item" data-style="dark">Dark</div>
+                            <div class="toggle-item" data-style="happy">Happy</div>
+                        </div>
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="font-size: 1.125rem; padding: 1rem 2rem;">
-                    <i class="fas fa-magic"></i>
-                    Generate Music (5 Credits)
-                </button>
-            </form>
-        </section>
-
-        <!-- Generation Progress -->
-        <section class="create-section generation-progress" id="generationProgress">
-            <div class="progress-spinner"></div>
-            <h3 class="progress-text">Creating your masterpiece...</h3>
-            <p class="progress-subtext">This usually takes 30-60 seconds</p>
-        </section>
-
-        <!-- Generation Result -->
-        <section class="create-section generation-result" id="generationResult">
-            <div class="result-icon">🎉</div>
-            <h3 class="progress-text">Your song is ready!</h3>
-            
-            <div class="result-player">
-                <div id="resultArtwork" style="margin-bottom: 1.5rem; display: none;">
-                    <img src="" alt="Album Artwork" style="width: 300px; height: 300px; border-radius: 1rem; margin: 0 auto; display: block; box-shadow: 0 8px 32px rgba(0,0,0,0.3);" id="artworkImage">
+                <!-- Advanced Options -->
+                <div class="advanced-toggle" onclick="toggleAdvanced()">
+                    <i class="fas fa-cog"></i>
+                    <span>Advanced Options</span>
+                    <i class="fas fa-chevron-down" id="advancedArrow"></i>
                 </div>
-                <audio controls style="width: 100%;" id="resultAudio">
-                    <source src="" type="audio/mpeg">
-                </audio>
-                <h4 style="margin-top: 1rem;" id="resultTitle">Generated Song</h4>
+
+                <div class="advanced-options" id="advancedOptions">
+                    <div class="controls-grid">
+                        <div class="control-group">
+                            <label class="control-label">Tempo</label>
+                            <div class="custom-select" id="tempoSelect">
+                                <div class="select-trigger" onclick="toggleSelect('tempoSelect')">
+                                    <span class="select-value">Auto</span>
+                                    <i class="fas fa-chevron-down select-arrow"></i>
+                                </div>
+                                <div class="select-options">
+                                    <div class="select-option selected" data-value="auto">Auto</div>
+                                    <div class="select-option" data-value="slow">Slow (60-90)</div>
+                                    <div class="select-option" data-value="medium">Medium (90-120)</div>
+                                    <div class="select-option" data-value="fast">Fast (120-160)</div>
+                                    <div class="select-option" data-value="very-fast">Very Fast (160+)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">Key</label>
+                            <div class="custom-select" id="keySelect">
+                                <div class="select-trigger" onclick="toggleSelect('keySelect')">
+                                    <span class="select-value">Auto</span>
+                                    <i class="fas fa-chevron-down select-arrow"></i>
+                                </div>
+                                <div class="select-options">
+                                    <div class="select-option selected" data-value="auto">Auto</div>
+                                    <div class="select-option" data-value="c-major">C Major</div>
+                                    <div class="select-option" data-value="d-major">D Major</div>
+                                    <div class="select-option" data-value="e-major">E Major</div>
+                                    <div class="select-option" data-value="f-major">F Major</div>
+                                    <div class="select-option" data-value="g-major">G Major</div>
+                                    <div class="select-option" data-value="a-minor">A Minor</div>
+                                    <div class="select-option" data-value="e-minor">E Minor</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label">Instruments</label>
+                            <div class="toggle-group">
+                                <div class="toggle-item" data-instrument="piano">Piano</div>
+                                <div class="toggle-item" data-instrument="guitar">Guitar</div>
+                                <div class="toggle-item" data-instrument="drums">Drums</div>
+                                <div class="toggle-item" data-instrument="synth">Synth</div>
+                                <div class="toggle-item" data-instrument="strings">Strings</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generate Section -->
+                <div class="generate-section">
+                    <div class="credit-cost">
+                        <i class="fas fa-coins"></i>
+                        <span>5 credits</span>
+                    </div>
+                    <button class="generate-button" onclick="generateMusic()">
+                        <i class="fas fa-magic"></i>
+                        Generate Music
+                    </button>
+                </div>
             </div>
 
-            <div class="result-actions">
-                <button class="btn btn-secondary" onclick="downloadSong()">
-                    <i class="fas fa-download"></i>
-                    Download
-                </button>
-                <button class="btn btn-accent" onclick="addToLibrary()">
-                    <i class="fas fa-plus"></i>
-                    Add to Library
-                </button>
-                <button class="btn btn-primary" onclick="createAnother()">
-                    <i class="fas fa-magic"></i>
-                    Create Another
-                </button>
+            <!-- Generation Progress -->
+            <div class="creation-panel generation-progress" id="generationProgress">
+                <div class="progress-ring">
+                    <svg width="120" height="120">
+                        <circle class="progress-ring-circle" cx="60" cy="60" r="54"></circle>
+                        <circle class="progress-ring-progress" cx="60" cy="60" r="54"></circle>
+                    </svg>
+                </div>
+                <h3 class="progress-status">Creating your masterpiece...</h3>
+                <p class="progress-subtext">This usually takes 30-60 seconds</p>
             </div>
-        </section>
+
+            <!-- Generation Result -->
+            <div class="generation-result" id="generationResult">
+                <div class="result-card">
+                    <div class="result-header">
+                        <div class="result-artwork" id="resultArtwork">
+                            <img src="" alt="Track artwork" id="artworkImage" style="display: none;">
+                        </div>
+                        <div class="result-info">
+                            <h2 class="result-title" id="resultTitle">Your Generated Track</h2>
+                            <p class="result-meta" id="resultMeta">Duration: 1:00 • Quality: Standard</p>
+                        </div>
+                    </div>
+
+                    <div class="result-player">
+                        <audio controls style="width: 100%;" id="resultAudio">
+                            <source src="" type="audio/mpeg">
+                        </audio>
+                    </div>
+
+                    <div class="result-actions">
+                        <a href="#" class="result-action" onclick="downloadTrack()">
+                            <i class="fas fa-download"></i>
+                            Download
+                        </a>
+                        <a href="#" class="result-action" onclick="saveToLibrary()">
+                            <i class="fas fa-folder-plus"></i>
+                            Save to Library
+                        </a>
+                        <a href="/remix" class="result-action">
+                            <i class="fas fa-sync"></i>
+                            Remix
+                        </a>
+                        <a href="#" class="result-action" onclick="createAnother()">
+                            <i class="fas fa-plus"></i>
+                            Create Another
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Player Bar -->
@@ -520,378 +992,271 @@
     
     <script>
         // Initialize PiAPI
-        const piapi = new PiAPIMusic(); // Uses the key from piapi-music.js
-        // Creation mode selection
+        const piapi = new PiAPIMusic();
+        let currentMode = 'simple';
+        let selectedQuality = 'music-u';
+        let selectedDuration = 60;
+
+        // Mode selection
         document.querySelectorAll('.mode-card').forEach(card => {
             card.addEventListener('click', function() {
                 document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
                 this.classList.add('active');
-                
-                const mode = this.dataset.mode;
-                updateFormForMode(mode);
+                currentMode = this.dataset.mode;
+                updateUIForMode();
             });
         });
 
-        // Style pill selection
-        document.querySelectorAll('.style-pill').forEach(pill => {
-            pill.addEventListener('click', function() {
-                this.classList.toggle('selected');
-            });
-        });
-
-        // Form submission
-        document.getElementById('generationForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        // Update UI based on mode
+        function updateUIForMode() {
+            const lyricsSection = document.getElementById('lyricsSection');
+            const promptSection = document.querySelector('.prompt-section');
             
-            const description = document.getElementById('songDescription').value.trim();
-            if (!description) {
-                alert('Please describe what kind of song you want');
+            // Reset all sections
+            lyricsSection.style.display = 'none';
+            
+            switch(currentMode) {
+                case 'lyrics':
+                    lyricsSection.style.display = 'block';
+                    break;
+                case 'instrumental':
+                    // Update prompt placeholder
+                    document.getElementById('musicPrompt').placeholder = 'Describe the instrumental mood and style...';
+                    break;
+                case 'remix':
+                case 'extend':
+                    // Would show upload interface
+                    break;
+            }
+        }
+
+        // Custom select functionality
+        function toggleSelect(selectId) {
+            const select = document.getElementById(selectId);
+            select.classList.toggle('open');
+            
+            // Close other selects
+            document.querySelectorAll('.custom-select').forEach(s => {
+                if (s.id !== selectId) s.classList.remove('open');
+            });
+        }
+
+        // Handle select option clicks
+        document.querySelectorAll('.select-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const select = this.closest('.custom-select');
+                const trigger = select.querySelector('.select-value');
+                
+                // Update selected
+                select.querySelectorAll('.select-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                // Update display
+                trigger.textContent = this.textContent;
+                
+                // Store value
+                if (select.id === 'qualitySelect') {
+                    selectedQuality = this.dataset.value;
+                }
+                
+                // Close select
+                select.classList.remove('open');
+            });
+        });
+
+        // Style toggles
+        document.querySelectorAll('.toggle-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const group = this.parentElement;
+                if (this.dataset.style) {
+                    // Single selection for style
+                    group.querySelectorAll('.toggle-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                } else {
+                    // Multi-selection for instruments
+                    this.classList.toggle('active');
+                }
+            });
+        });
+
+        // Duration slider
+        function updateDuration(event) {
+            const track = event.currentTarget;
+            const rect = track.getBoundingClientRect();
+            const percent = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+            
+            // Map to 15s - 240s
+            selectedDuration = Math.round(15 + (240 - 15) * percent);
+            
+            // Update UI
+            const fill = document.getElementById('durationFill');
+            const thumb = document.getElementById('durationThumb');
+            const value = document.getElementById('durationValue');
+            
+            fill.style.width = `${percent * 100}%`;
+            thumb.style.left = `${percent * 100}%`;
+            
+            // Format time
+            const minutes = Math.floor(selectedDuration / 60);
+            const seconds = selectedDuration % 60;
+            value.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Advanced options toggle
+        function toggleAdvanced() {
+            const options = document.getElementById('advancedOptions');
+            const arrow = document.getElementById('advancedArrow');
+            
+            options.classList.toggle('open');
+            arrow.style.transform = options.classList.contains('open') ? 'rotate(180deg)' : '';
+        }
+
+        // Add suggestion to prompt
+        function addSuggestion(text) {
+            const prompt = document.getElementById('musicPrompt');
+            prompt.value = text + ' ';
+            prompt.focus();
+        }
+
+        // Generate music
+        async function generateMusic() {
+            const prompt = document.getElementById('musicPrompt').value.trim();
+            
+            if (!prompt) {
+                alert('Please describe the music you want to create');
                 return;
             }
 
             // Show progress
-            document.getElementById('generationSection').style.display = 'none';
+            document.getElementById('creationPanel').style.display = 'none';
             document.getElementById('generationProgress').classList.add('active');
 
             try {
-                // Call music generation API
-                const result = await generateMusic({
-                    prompt: description,
-                    duration: document.getElementById('duration').value,
-                    type: document.getElementById('musicType').value,
-                    styles: getSelectedStyles()
+                // Gather all parameters
+                const styles = Array.from(document.querySelectorAll('.toggle-item[data-style].active'))
+                    .map(item => item.dataset.style);
+                
+                const instruments = Array.from(document.querySelectorAll('.toggle-item[data-instrument].active'))
+                    .map(item => item.dataset.instrument);
+
+                let fullPrompt = prompt;
+                if (styles.length > 0 && styles[0] !== 'auto') {
+                    fullPrompt += `, ${styles.join(', ')} style`;
+                }
+                if (instruments.length > 0) {
+                    fullPrompt += ` with ${instruments.join(', ')}`;
+                }
+
+                // Call PiAPI
+                const result = await piapi.createMusic({
+                    prompt: fullPrompt,
+                    make_instrumental: currentMode === 'instrumental',
+                    custom_lyrics: currentMode === 'lyrics' ? document.getElementById('customLyrics').value : '',
+                    model: selectedQuality,
+                    duration: selectedDuration
                 });
 
-                // Show result if successful
-                if (result && result.success) {
-                    showResult(result);
+                if (result.success) {
+                    // Poll for completion
+                    const finalResult = await piapi.waitForCompletion(result.taskId);
+                    showResult(finalResult);
                 } else {
-                    throw new Error(result?.error || 'Generation failed');
+                    throw new Error(result.error || 'Generation failed');
                 }
 
             } catch (error) {
                 console.error('Generation failed:', error);
-                alert(`Generation failed: ${error.message}\n\nPlease check the console for details.`);
-                resetForm();
-            }
-        });
-
-        function updateFormForMode(mode) {
-            // Hide all mode-specific fields
-            document.getElementById('descriptionGroup').style.display = 'none';
-            document.getElementById('lyricsGroup').style.display = 'none';
-            document.getElementById('uploadGroup').style.display = 'none';
-            document.getElementById('extendGroup').style.display = 'none';
-            document.getElementById('ttsGroup').style.display = 'none';
-            document.getElementById('artworkGroup').style.display = 'none';
-            document.getElementById('videoGroup').style.display = 'none';
-            document.getElementById('modelGroup').style.display = 'block';
-            
-            // Hide style pills for non-music modes
-            const stylePillsGroup = document.querySelector('.form-group:has(.style-pills)');
-            const durationGroup = document.querySelector('.form-row');
-            
-            // Show relevant fields based on mode
-            switch(mode) {
-                case 'simple':
-                    document.getElementById('descriptionGroup').style.display = 'block';
-                    break;
-                case 'lyrics':
-                    document.getElementById('descriptionGroup').style.display = 'block';
-                    document.getElementById('lyricsGroup').style.display = 'block';
-                    break;
-                case 'remix':
-                    document.getElementById('uploadGroup').style.display = 'block';
-                    document.getElementById('descriptionGroup').style.display = 'block';
-                    document.getElementById('extendGroup').style.display = 'block';
-                    break;
-                case 'tts':
-                    document.getElementById('ttsGroup').style.display = 'block';
-                    document.getElementById('modelGroup').style.display = 'none';
-                    if (stylePillsGroup) stylePillsGroup.style.display = 'none';
-                    if (durationGroup) durationGroup.style.display = 'none';
-                    break;
-                case 'artwork':
-                    document.getElementById('artworkGroup').style.display = 'block';
-                    document.getElementById('modelGroup').style.display = 'none';
-                    if (stylePillsGroup) stylePillsGroup.style.display = 'none';
-                    if (durationGroup) durationGroup.style.display = 'none';
-                    break;
-                case 'video':
-                    document.getElementById('videoGroup').style.display = 'block';
-                    document.getElementById('descriptionGroup').style.display = 'block';
-                    document.getElementById('modelGroup').style.display = 'none';
-                    break;
+                alert(`Generation failed: ${error.message}`);
+                resetUI();
             }
         }
 
-        function getSelectedStyles() {
-            return Array.from(document.querySelectorAll('.style-pill.selected'))
-                .map(pill => pill.dataset.style);
-        }
-
-        async function generateMusic(params) {
-            try {
-                // Get selected mode and model
-                const mode = document.querySelector('.mode-card.active').dataset.mode;
-                const selectedModel = document.getElementById('aiModel')?.value || 'music-u';
-                
-                // Build style string from selected pills
-                const selectedStyles = params.styles || [];
-                const stylePrompt = selectedStyles.join(', ');
-                
-                let result;
-                
-                switch(mode) {
-                    case 'lyrics':
-                        // Generate with custom lyrics
-                        const lyricsText = document.getElementById('customLyrics')?.value || '';
-                        result = await piapi.createMusic({
-                            prompt: params.prompt,
-                            make_instrumental: params.type === 'instrumental',
-                            song_style: stylePrompt,
-                            custom_lyrics: lyricsText,
-                            title: params.prompt.substring(0, 50),
-                            model: selectedModel
-                        });
-                        break;
-                        
-                    case 'remix':
-                        // Handle remix/extend mode
-                        const fileInput = document.getElementById('audioUpload');
-                        if (!fileInput.files || fileInput.files.length === 0) {
-                            alert('Please upload an audio file to remix/extend');
-                            return { success: false };
-                        }
-                        
-                        // Upload file and get URL (placeholder for now)
-                        const audioFile = fileInput.files[0];
-                        const audioUrl = URL.createObjectURL(audioFile);
-                        const extendDirection = document.getElementById('extendDirection').value;
-                        
-                        // For now, generate a remix by using the description
-                        result = await piapi.createMusic({
-                            prompt: `Remix/extend this track: ${params.prompt}`,
-                            make_instrumental: params.type === 'instrumental',
-                            song_style: stylePrompt,
-                            custom_lyrics: '',
-                            title: `Remix: ${params.prompt.substring(0, 40)}`,
-                            model: selectedModel
-                        });
-                        break;
-                        
-                    case 'tts':
-                        // Text to Speech
-                        const ttsText = document.getElementById('ttsText')?.value || '';
-                        const voiceStyle = document.getElementById('voiceStyle')?.value || 'default';
-                        
-                        if (!ttsText) {
-                            alert('Please enter text to convert to speech');
-                            return { success: false };
-                        }
-                        
-                        result = await piapi.textToSpeech({
-                            text: ttsText,
-                            voice: voiceStyle,
-                            speed: 1.0
-                        });
-                        break;
-                        
-                    case 'artwork':
-                        // PiAPI automatically generates artwork with music!
-                        const artworkPrompt = document.getElementById('artworkPrompt')?.value || '';
-                        
-                        if (!artworkPrompt) {
-                            alert('Please describe the music style for artwork generation');
-                            return { success: false };
-                        }
-                        
-                        // Generate music with specific prompt for artwork
-                        result = await piapi.createMusic({
-                            prompt: artworkPrompt,
-                            make_instrumental: true,
-                            song_style: 'Ambient', // Good for artwork showcase
-                            custom_lyrics: '',
-                            title: `Artwork: ${artworkPrompt.substring(0, 40)}`,
-                            model: selectedModel
-                        });
-                        break;
-                        
-                    case 'video':
-                        // Video to Audio
-                        const videoUrl = document.getElementById('videoUrl')?.value || '';
-                        
-                        if (!videoUrl) {
-                            alert('Please enter a video URL');
-                            return { success: false };
-                        }
-                        
-                        result = await piapi.videoToAudio({
-                            video_url: videoUrl,
-                            prompt: params.prompt || ''
-                        });
-                        break;
-                        
-                    default:
-                        // Simple creation mode
-                        result = await piapi.createMusic({
-                            prompt: params.prompt,
-                            make_instrumental: params.type === 'instrumental',
-                            song_style: stylePrompt,
-                            custom_lyrics: '',
-                            title: params.prompt.substring(0, 50),
-                            model: selectedModel
-                        });
-                }
-                
-                if (result.success) {
-                    // Poll for completion
-                    updateProgress('Processing your request...', 25);
-                    
-                    const finalResult = await pollForResult(result.taskId);
-                    return finalResult;
-                } else {
-                    throw new Error(result.error || 'Generation failed');
-                }
-                
-            } catch (error) {
-                console.error('Generation error:', error);
-                throw error;
-            }
-        }
-        
-        async function pollForResult(taskId) {
-            try {
-                updateProgress('Generating your music...', 25);
-                
-                // Use PiAPI's waitForCompletion method
-                const result = await piapi.waitForCompletion(taskId);
-                
-                // Extract audio URL using helper
-                const audioUrl = piapi.extractAudioUrl(result);
-                
-                if (!audioUrl) {
-                    console.error('No audio URL found in response:', result);
-                    throw new Error('No audio URL in response');
-                }
-                
-                // Extract metadata from songs array (like Swift)
-                let title = 'Generated Song';
-                let duration = 60;
-                let imageUrl = null;
-                
-                if (result.output?.songs && result.output.songs.length > 0) {
-                    const firstSong = result.output.songs[0];
-                    title = firstSong.title || title;
-                    imageUrl = firstSong.image_url || firstSong.image_path;
-                    // Duration might not be in response, use requested duration
-                }
-                
-                return {
-                    success: true,
-                    audio_url: audioUrl,
-                    title: title,
-                    duration: duration,
-                    image_url: imageUrl,
-                    taskId: taskId,
-                    raw_output: result.output // Store full output for debugging
-                };
-            } catch (error) {
-                console.error('Polling failed:', error);
-                throw error;
-            }
-        }
-        
-        function updateProgress(text, percent) {
-            const progressText = document.querySelector('.progress-text');
-            const progressSubtext = document.querySelector('.progress-subtext');
-            
-            if (progressText) progressText.textContent = text;
-            if (progressSubtext) progressSubtext.textContent = `${Math.round(percent)}% complete`;
-        }
-
+        // Show result
         function showResult(result) {
             document.getElementById('generationProgress').classList.remove('active');
             document.getElementById('generationResult').classList.add('active');
             
-            // Update result display
-            if (result.audio_url && result.audio_url !== '#') {
-                document.getElementById('resultAudio').src = result.audio_url;
-            }
-            document.getElementById('resultTitle').textContent = result.title || 'Generated Song';
+            // Extract audio URL
+            const audioUrl = piapi.extractAudioUrl(result);
             
-            // Show artwork if available (PiAPI includes this!)
-            if (result.image_url) {
-                document.getElementById('resultArtwork').style.display = 'block';
-                document.getElementById('artworkImage').src = result.image_url;
-            } else {
-                document.getElementById('resultArtwork').style.display = 'none';
-            }
-            
-            // Store result for download/library
-            window.currentGeneratedTrack = result;
-        }
-
-        function downloadSong() {
-            if (window.currentGeneratedTrack && window.currentGeneratedTrack.audio_url) {
-                const link = document.createElement('a');
-                link.href = window.currentGeneratedTrack.audio_url;
-                link.download = `${window.currentGeneratedTrack.title || 'generated-song'}.mp3`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            } else {
-                alert('No track available to download');
-            }
-        }
-
-        function addToLibrary() {
-            if (window.currentGeneratedTrack) {
-                // Get existing library or create new
-                let library = JSON.parse(localStorage.getItem('musicLibrary') || '[]');
+            if (audioUrl) {
+                document.getElementById('resultAudio').src = audioUrl;
                 
-                // Add new track
-                const track = {
-                    id: window.currentGeneratedTrack.taskId || Date.now().toString(),
-                    title: window.currentGeneratedTrack.title || 'Generated Song',
-                    audio_url: window.currentGeneratedTrack.audio_url,
-                    image_url: window.currentGeneratedTrack.image_url || null, // Save PiAPI artwork!
-                    created_at: new Date().toISOString(),
-                    duration: window.currentGeneratedTrack.duration,
-                    genre: getSelectedStyles()[0] || 'Unknown'
+                // Update metadata
+                const quality = document.querySelector('#qualitySelect .select-value').textContent;
+                document.getElementById('resultMeta').textContent = 
+                    `Duration: ${formatDuration(selectedDuration)} • Quality: ${quality}`;
+                
+                // Show artwork if available
+                if (result.output?.songs?.[0]?.image_url) {
+                    const img = document.getElementById('artworkImage');
+                    img.src = result.output.songs[0].image_url;
+                    img.style.display = 'block';
+                }
+                
+                // Store for actions
+                window.currentResult = {
+                    audioUrl: audioUrl,
+                    title: result.output?.songs?.[0]?.title || 'Generated Track',
+                    imageUrl: result.output?.songs?.[0]?.image_url,
+                    duration: selectedDuration
                 };
-                
-                library.unshift(track); // Add to beginning
-                
-                // Save to localStorage
+            }
+        }
+
+        // Action handlers
+        function downloadTrack() {
+            if (window.currentResult?.audioUrl) {
+                const a = document.createElement('a');
+                a.href = window.currentResult.audioUrl;
+                a.download = `${window.currentResult.title}.mp3`;
+                a.click();
+            }
+        }
+
+        function saveToLibrary() {
+            if (window.currentResult) {
+                let library = JSON.parse(localStorage.getItem('musicLibrary') || '[]');
+                library.unshift({
+                    id: Date.now().toString(),
+                    ...window.currentResult,
+                    created_at: new Date().toISOString()
+                });
                 localStorage.setItem('musicLibrary', JSON.stringify(library));
-                
-                alert('Track added to your library!');
-            } else {
-                alert('No track to add to library');
+                alert('Saved to library!');
             }
         }
 
         function createAnother() {
-            resetForm();
+            resetUI();
         }
 
-        function resetForm() {
-            document.getElementById('generationSection').style.display = 'block';
+        function resetUI() {
+            document.getElementById('creationPanel').style.display = 'block';
             document.getElementById('generationProgress').classList.remove('active');
             document.getElementById('generationResult').classList.remove('active');
-            document.getElementById('generationForm').reset();
-            
-            // Reset style pills
-            document.querySelectorAll('.style-pill').forEach(pill => {
-                pill.classList.remove('selected');
-            });
+            document.getElementById('musicPrompt').value = '';
+            document.getElementById('customLyrics').value = '';
+        }
+
+        // Helper functions
+        function formatDuration(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
         }
 
         // Mobile sidebar toggle
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('active');
         }
+
+        // Close selects when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.custom-select')) {
+                document.querySelectorAll('.custom-select').forEach(s => s.classList.remove('open'));
+            }
+        });
     </script>
 
     <!-- Firebase Integration -->
@@ -901,9 +1266,6 @@
         authManager.onAuthStateChange((user) => {
             if (user) {
                 updateUserCredits(user);
-            } else {
-                // Redirect to auth if not logged in
-                // window.location.href = '/auth?redirect=/create';
             }
         });
 
