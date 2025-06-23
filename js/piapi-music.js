@@ -1,159 +1,204 @@
-// PiAPI Music Generation System
-// Supports: Create, Edit, Remix, Lyrics, Artwork generation
+// PiAPI Music Generation System - EXACT Implementation
+// Following PiAPI documentation precisely
 
 class PiAPIMusic {
     constructor(apiKey) {
         this.apiKey = apiKey || 'd3a513bec58ea7c7e60eebf377fbbfb806f2304f12e1ef208cd701139658c088';
         this.baseURL = 'https://api.piapi.ai';
+        
+        // All PiAPI Music Models
         this.models = {
-            suno: 'suno-v3.5',
-            music: 'music-u',
-            lyrics: 'lyrics-ai',
+            // Suno Models
+            suno35: 'suno-v3.5',
+            suno45: 'suno-v4.5', // If available
+            
+            // Udio Model
+            udio: 'udio',
+            
+            // DiffRhythm
             diffrhythm: 'Qubico/diffrhythm',
-            aceStep: 'ace-step'
+            
+            // Ace Step
+            aceStep: 'ace-step',
+            
+            // Mmaudio
+            mmaudio: 'mmaudio',
+            
+            // Music models
+            musicU: 'music-u',
+            musicS: 'music-s',
+            
+            // Other models
+            lyricsAI: 'lyrics-ai',
+            f5TTS: 'f5-tts'
         };
     }
 
-    // Create music generation task (Suno API)
+    // ========== SUNO API ==========
+    // Create music with Suno (EXACT as per PiAPI docs)
     async createMusic(params) {
         const {
             prompt,
-            lyrics,
-            style,
-            duration = 60,
-            instrumental = false,
+            make_instrumental = false,
+            song_style = '',
+            custom_lyrics = '',
+            title = '',
             model = 'suno-v3.5'
         } = params;
-
-        // Build the full prompt
-        let fullPrompt = prompt || '';
-        if (style) {
-            fullPrompt = `${fullPrompt} ${style}`.trim();
-        }
 
         const payload = {
             model: model,
             task_type: 'generate_music',
             input: {
-                gpt_description_prompt: fullPrompt,
-                make_instrumental: instrumental,
-                song_style: style || '',
-                custom_lyrics: lyrics || '',
-                title: prompt ? prompt.substring(0, 50) : 'Generated Song'
+                gpt_description_prompt: prompt,
+                make_instrumental: make_instrumental,
+                song_style: song_style,
+                custom_lyrics: custom_lyrics,
+                title: title
             }
         };
 
         return this.createTask(payload);
     }
 
-    // Extend existing music
-    async extendMusic(params) {
+    // ========== UDIO API ==========
+    // Generate song with Udio
+    async generateSongUdio(params) {
         const {
-            audio_url,
             prompt,
-            extend_duration = 30,
-            continuation_type = 'smooth' // smooth, creative, match
+            lyrics = '',
+            style = '',
+            duration = 60
         } = params;
 
         const payload = {
-            model: this.models.suno,
-            task_type: 'music_extend',
+            model: this.models.udio,
+            task_type: 'generate_song',
+            input: {
+                prompt: prompt,
+                lyrics: lyrics,
+                style: style,
+                duration: duration
+            }
+        };
+
+        return this.createTask(payload);
+    }
+
+    // Extend song with Udio
+    async extendSongUdio(params) {
+        const {
+            audio_url,
+            prompt = '',
+            continuation_seconds = 30
+        } = params;
+
+        const payload = {
+            model: this.models.udio,
+            task_type: 'song_extend',
             input: {
                 audio_url: audio_url,
                 prompt: prompt,
-                extend_duration: extend_duration,
-                continuation_type: continuation_type
+                continuation_seconds: continuation_seconds
             }
         };
 
         return this.createTask(payload);
     }
 
-    // Remix existing music
-    async remixMusic(params) {
+    // Generate lyrics with Udio
+    async generateLyricsUdio(params) {
         const {
-            audio_url,
-            style,
-            strength = 0.7, // 0-1, how much to change
-            preserve_vocals = true
+            prompt,
+            genre = '',
+            mood = ''
         } = params;
 
         const payload = {
-            model: this.models.suno,
-            task_type: 'music_remix',
-            input: {
-                audio_url: audio_url,
-                style: style,
-                strength: strength,
-                preserve_vocals: preserve_vocals
-            }
-        };
-
-        return this.createTask(payload);
-    }
-
-    // Generate lyrics
-    async generateLyrics(params) {
-        const {
-            topic,
-            genre,
-            mood,
-            language = 'english',
-            verse_count = 2,
-            include_chorus = true
-        } = params;
-
-        const payload = {
-            model: this.models.lyrics,
+            model: this.models.udio,
             task_type: 'generate_lyrics',
             input: {
-                topic: topic,
+                prompt: prompt,
                 genre: genre,
-                mood: mood,
-                language: language,
-                structure: {
-                    verses: verse_count,
-                    chorus: include_chorus,
-                    bridge: verse_count > 2
-                }
+                mood: mood
             }
         };
 
         return this.createTask(payload);
     }
 
-    // Create from lyrics (text to music with custom lyrics)
-    async createFromLyrics(params) {
+    // ========== DIFFRHYTHM API ==========
+    // Create music with DiffRhythm
+    async createMusicDiffRhythm(params) {
         const {
-            lyrics,
-            style,
-            tempo = 'medium',
-            voice_type = 'auto' // auto, male, female, duet
+            prompt,
+            reference_audio = '',
+            lyrics = ''
         } = params;
 
         const payload = {
-            model: this.models.suno,
-            task_type: 'lyrics_to_music',
+            model: this.models.diffrhythm,
+            task_type: 'create_task',
             input: {
-                lyrics: lyrics,
-                style: style,
-                tempo: tempo,
-                voice_type: voice_type,
-                quality: 'high'
+                prompt: prompt,
+                reference_audio: reference_audio,
+                lyrics: lyrics
             }
         };
 
         return this.createTask(payload);
     }
 
-    // Edit specific part of music
-    async editMusic(params) {
+    // ========== ACE STEP API ==========
+    // Text to Audio
+    async textToAudioAceStep(params) {
+        const {
+            prompt,
+            lyrics = '',
+            duration = 60
+        } = params;
+
+        const payload = {
+            model: this.models.aceStep,
+            task_type: 'text_to_audio',
+            input: {
+                prompt: prompt,
+                lyrics: lyrics,
+                duration: duration
+            }
+        };
+
+        return this.createTask(payload);
+    }
+
+    // Audio to Audio
+    async audioToAudioAceStep(params) {
         const {
             audio_url,
+            prompt,
+            strength = 0.7
+        } = params;
+
+        const payload = {
+            model: this.models.aceStep,
+            task_type: 'audio_to_audio',
+            input: {
+                audio_url: audio_url,
+                prompt: prompt,
+                strength: strength
+            }
+        };
+
+        return this.createTask(payload);
+    }
+
+    // Audio Edit
+    async audioEditAceStep(params) {
+        const {
+            audio_url,
+            prompt,
             start_time,
-            end_time,
-            edit_type, // replace, remove, enhance
-            new_content
+            end_time
         } = params;
 
         const payload = {
@@ -161,110 +206,80 @@ class PiAPIMusic {
             task_type: 'audio_edit',
             input: {
                 audio_url: audio_url,
-                edits: [{
-                    start_time: start_time,
-                    end_time: end_time,
-                    type: edit_type,
-                    content: new_content
-                }]
+                prompt: prompt,
+                start_time: start_time,
+                end_time: end_time
             }
         };
 
         return this.createTask(payload);
     }
 
-    // Generate album artwork
-    async generateArtwork(params) {
-        const {
-            title,
-            artist,
-            genre,
-            mood,
-            style = 'album_cover'
-        } = params;
-
-        const payload = {
-            model: 'flux-pro',
-            task_type: 'text_to_image',
-            input: {
-                prompt: `Album cover art for "${title}" by ${artist}, ${genre} music, ${mood} mood, professional album artwork, ${style}`,
-                width: 1024,
-                height: 1024,
-                quality: 'high'
-            }
-        };
-
-        return this.createTask(payload);
-    }
-
-    // Style transfer (change genre/style of existing music)
-    async styleTransfer(params) {
+    // Audio Extend
+    async audioExtendAceStep(params) {
         const {
             audio_url,
-            target_style,
-            preserve_melody = true,
-            preserve_rhythm = false
+            prompt,
+            duration = 30
         } = params;
 
         const payload = {
-            model: this.models.diffrhythm,
-            task_type: 'style_transfer',
+            model: this.models.aceStep,
+            task_type: 'audio_extend',
             input: {
                 audio_url: audio_url,
-                target_style: target_style,
-                preservation: {
-                    melody: preserve_melody,
-                    rhythm: preserve_rhythm,
-                    vocals: true
-                }
+                prompt: prompt,
+                duration: duration
             }
         };
 
         return this.createTask(payload);
     }
 
-    // Separate stems (vocals, drums, bass, etc.)
-    async separateStems(params) {
+    // ========== MMAUDIO API ==========
+    // Generate audio from video
+    async videoToAudio(params) {
         const {
-            audio_url,
-            stems = ['vocals', 'drums', 'bass', 'other']
+            video_url,
+            prompt = ''
         } = params;
 
         const payload = {
-            model: 'demucs',
-            task_type: 'stem_separation',
+            model: this.models.mmaudio,
+            task_type: 'create_task',
             input: {
-                audio_url: audio_url,
-                stems: stems,
-                quality: 'high'
+                video_url: video_url,
+                prompt: prompt
             }
         };
 
         return this.createTask(payload);
     }
 
-    // Create variations of existing music
-    async createVariation(params) {
+    // ========== F5 TTS API ==========
+    // Text to Speech
+    async textToSpeech(params) {
         const {
-            audio_url,
-            variation_type = 'moderate', // subtle, moderate, creative
-            preserve_structure = true
+            text,
+            voice = 'default',
+            speed = 1.0
         } = params;
 
         const payload = {
-            model: this.models.suno,
-            task_type: 'music_variation',
+            model: this.models.f5TTS,
+            task_type: 'text_to_speech',
             input: {
-                audio_url: audio_url,
-                variation_strength: variation_type,
-                preserve_structure: preserve_structure
+                text: text,
+                voice: voice,
+                speed: speed
             }
         };
 
         return this.createTask(payload);
     }
 
-    // Core task creation method (PiAPI unified API)
+    // ========== CORE TASK METHODS ==========
+    // Create task - EXACT PiAPI unified API
     async createTask(payload) {
         console.log('PiAPI Request:', JSON.stringify(payload, null, 2));
         
@@ -273,8 +288,7 @@ class PiAPIMusic {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${this.apiKey}`,
-                    'Content-Type': 'application/json',
-                    'X-API-Version': '1.0'
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(payload)
             });
@@ -288,7 +302,6 @@ class PiAPIMusic {
                     const errorData = JSON.parse(responseText);
                     errorMessage = errorData.message || errorData.error || errorMessage;
                 } catch (e) {
-                    // If response is not JSON, use the text
                     errorMessage = responseText || errorMessage;
                 }
                 throw new Error(errorMessage);
@@ -296,18 +309,10 @@ class PiAPIMusic {
 
             const result = JSON.parse(responseText);
             
-            // Handle different response formats
-            const taskId = result.task_id || result.id || result.taskId;
-            
-            if (!taskId) {
-                throw new Error('No task ID received from API');
-            }
-            
             return {
                 success: true,
-                taskId: taskId,
-                status: result.status || 'processing',
-                estimatedTime: result.estimated_time || result.eta || 60
+                taskId: result.task_id,
+                status: 'processing'
             };
         } catch (error) {
             console.error('PiAPI Error:', error);
@@ -318,14 +323,13 @@ class PiAPIMusic {
         }
     }
 
-    // Get task status and result
+    // Get task - EXACT PiAPI unified API
     async getTask(taskId) {
         try {
             const response = await fetch(`${this.baseURL}/api/v1/task/${taskId}`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${this.apiKey}`,
-                    'X-API-Version': '1.0'
+                    'Authorization': `Bearer ${this.apiKey}`
                 }
             });
 
@@ -338,33 +342,25 @@ class PiAPIMusic {
 
             const result = JSON.parse(responseText);
             
-            // Map the actual API response format
-            return {
-                success: true,
-                status: result.status || 'processing',
-                progress: result.progress || result.percentage || 0,
-                output: result.output || result.result || result.data || null,
-                error: result.error || result.message || null
-            };
+            return result;
         } catch (error) {
             console.error('PiAPI Get Task Error:', error);
             return {
-                success: false,
                 status: 'failed',
                 error: error.message
             };
         }
     }
 
-    // Poll for task completion
-    async waitForCompletion(taskId, maxAttempts = 60, interval = 2000) {
+    // Poll for completion
+    async waitForCompletion(taskId, maxAttempts = 120, interval = 2000) {
         for (let i = 0; i < maxAttempts; i++) {
             const result = await this.getTask(taskId);
             
             if (result.status === 'completed') {
                 return result;
-            } else if (result.status === 'failed') {
-                throw new Error(result.error || 'Task failed');
+            } else if (result.status === 'failed' || result.status === 'error') {
+                throw new Error(result.error || result.message || 'Task failed');
             }
             
             await new Promise(resolve => setTimeout(resolve, interval));
@@ -373,14 +369,13 @@ class PiAPIMusic {
         throw new Error('Task timeout');
     }
 
-    // Cancel a running task
+    // Cancel task
     async cancelTask(taskId) {
         try {
             const response = await fetch(`${this.baseURL}/api/v1/task/${taskId}/cancel`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${this.apiKey}`,
-                    'X-API-Version': '1.0'
+                    'Authorization': `Bearer ${this.apiKey}`
                 }
             });
 
@@ -391,42 +386,61 @@ class PiAPIMusic {
         }
     }
 
-    // Get available styles and genres
-    getAvailableStyles() {
+    // Get available models
+    getAvailableModels() {
         return {
-            genres: [
-                'pop', 'rock', 'jazz', 'classical', 'electronic', 'hip-hop',
-                'country', 'r&b', 'folk', 'metal', 'indie', 'latin',
-                'reggae', 'blues', 'funk', 'soul', 'disco', 'house',
-                'techno', 'trap', 'drill', 'ambient', 'experimental'
-            ],
-            moods: [
-                'happy', 'sad', 'energetic', 'calm', 'aggressive', 'peaceful',
-                'melancholic', 'uplifting', 'dark', 'bright', 'nostalgic',
-                'romantic', 'epic', 'mysterious', 'playful', 'serious'
-            ],
-            instruments: [
-                'piano', 'guitar', 'drums', 'bass', 'violin', 'saxophone',
-                'trumpet', 'flute', 'synthesizer', 'orchestra', 'acoustic',
-                'electric', 'strings', 'brass', 'woodwind', 'percussion'
-            ]
+            suno: ['suno-v3.5', 'suno-v4.5'],
+            udio: ['udio'],
+            diffrhythm: ['Qubico/diffrhythm'],
+            aceStep: ['ace-step'],
+            mmaudio: ['mmaudio'],
+            music: ['music-u', 'music-s'],
+            tts: ['f5-tts']
         };
     }
 
-    // Helper to build style prompt
-    buildStylePrompt(options) {
-        const { genre, mood, instruments, tempo, era } = options;
-        let prompt = [];
+    // Helper to identify model type from task result
+    identifyOutputType(result) {
+        if (result.output) {
+            // Audio outputs
+            if (result.output.audio_url || result.output.url) {
+                return 'audio';
+            }
+            // Multiple audio outputs
+            if (result.output.audio_urls || result.output.tracks) {
+                return 'audio_multiple';
+            }
+            // Lyrics output
+            if (result.output.lyrics) {
+                return 'lyrics';
+            }
+            // Image output (for album art)
+            if (result.output.image_url) {
+                return 'image';
+            }
+        }
+        return 'unknown';
+    }
+
+    // Extract audio URL from result
+    extractAudioUrl(result) {
+        if (!result.output) return null;
         
-        if (genre) prompt.push(`${genre} music`);
-        if (mood) prompt.push(`${mood} mood`);
-        if (instruments?.length) prompt.push(`featuring ${instruments.join(', ')}`);
-        if (tempo) prompt.push(`${tempo} tempo`);
-        if (era) prompt.push(`${era} style`);
+        // Single audio URL
+        if (result.output.audio_url) return result.output.audio_url;
+        if (result.output.url) return result.output.url;
         
-        return prompt.join(', ');
+        // Multiple audio URLs
+        if (result.output.audio_urls && result.output.audio_urls.length > 0) {
+            return result.output.audio_urls[0];
+        }
+        if (result.output.tracks && result.output.tracks.length > 0) {
+            return result.output.tracks[0].url || result.output.tracks[0].audio_url;
+        }
+        
+        return null;
     }
 }
 
-// Export for use in other modules
+// Export for use
 window.PiAPIMusic = PiAPIMusic;

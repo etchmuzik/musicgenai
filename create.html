@@ -514,22 +514,22 @@
                 // Get selected mode
                 const mode = document.querySelector('.mode-card.active').dataset.mode;
                 
-                // Build style prompt from selected pills
-                const stylePrompt = piapi.buildStylePrompt({
-                    genre: params.styles[0],
-                    mood: params.styles[1],
-                    tempo: params.duration > 120 ? 'slow' : 'medium'
-                });
+                // Build style string from selected pills
+                const selectedStyles = params.styles || [];
+                const stylePrompt = selectedStyles.join(', ');
                 
                 let result;
                 
                 if (mode === 'lyrics') {
                     // Generate with custom lyrics
-                    const lyricsText = document.getElementById('customLyrics')?.value || params.prompt;
-                    result = await piapi.createFromLyrics({
-                        lyrics: lyricsText,
-                        style: stylePrompt,
-                        voice_type: params.type === 'vocal' ? 'auto' : 'instrumental'
+                    const lyricsText = document.getElementById('customLyrics')?.value || '';
+                    result = await piapi.createMusic({
+                        prompt: params.prompt,
+                        make_instrumental: params.type === 'instrumental',
+                        song_style: stylePrompt,
+                        custom_lyrics: lyricsText,
+                        title: params.prompt.substring(0, 50),
+                        model: 'suno-v3.5'
                     });
                 } else if (mode === 'remix') {
                     // For remix mode (would need file upload)
@@ -539,9 +539,10 @@
                     // Simple creation mode
                     result = await piapi.createMusic({
                         prompt: params.prompt,
-                        style: stylePrompt,
-                        duration: parseInt(params.duration),
-                        instrumental: params.type === 'instrumental',
+                        make_instrumental: params.type === 'instrumental',
+                        song_style: stylePrompt,
+                        custom_lyrics: '',
+                        title: params.prompt.substring(0, 50),
                         model: 'suno-v3.5'
                     });
                 }
@@ -564,35 +565,31 @@
         
         async function pollForResult(taskId) {
             let attempts = 0;
-            const maxAttempts = 60;
+            const maxAttempts = 120; // 4 minutes max
             
             while (attempts < maxAttempts) {
                 const result = await piapi.getTask(taskId);
                 
                 if (result.status === 'completed' && result.output) {
-                    // Handle different output formats from PiAPI
-                    let audioUrl = null;
-                    let title = 'Generated Song';
-                    let duration = 60;
-                    
-                    // Check for audio URL in different possible locations
-                    if (typeof result.output === 'string') {
-                        audioUrl = result.output;
-                    } else if (result.output.audio_url) {
-                        audioUrl = result.output.audio_url;
-                    } else if (result.output.url) {
-                        audioUrl = result.output.url;
-                    } else if (result.output.audio_urls && result.output.audio_urls.length > 0) {
-                        audioUrl = result.output.audio_urls[0];
-                    } else if (result.output.tracks && result.output.tracks.length > 0) {
-                        audioUrl = result.output.tracks[0].url || result.output.tracks[0].audio_url;
-                        title = result.output.tracks[0].title || title;
-                        duration = result.output.tracks[0].duration || duration;
-                    }
+                    // Use PiAPI helper to extract audio URL
+                    const audioUrl = piapi.extractAudioUrl(result);
                     
                     if (!audioUrl) {
                         console.error('No audio URL found in response:', result);
                         throw new Error('No audio URL in response');
+                    }
+                    
+                    // Extract other metadata
+                    let title = 'Generated Song';
+                    let duration = 60;
+                    
+                    if (result.output.title) title = result.output.title;
+                    if (result.output.duration) duration = result.output.duration;
+                    
+                    // For multiple tracks
+                    if (result.output.tracks && result.output.tracks.length > 0) {
+                        title = result.output.tracks[0].title || title;
+                        duration = result.output.tracks[0].duration || duration;
                     }
                     
                     return {
@@ -600,10 +597,11 @@
                         audio_url: audioUrl,
                         title: title,
                         duration: duration,
-                        taskId: taskId
+                        taskId: taskId,
+                        raw_output: result.output // Store full output for debugging
                     };
                 } else if (result.status === 'failed' || result.status === 'error') {
-                    throw new Error(result.error || 'Generation failed');
+                    throw new Error(result.error || result.message || 'Generation failed');
                 }
                 
                 // Update progress
