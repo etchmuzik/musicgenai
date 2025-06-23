@@ -54,6 +54,14 @@
     {
       "source": "/music-gen-fix",
       "destination": "/music-gen-fix.html"
+    },
+    {
+      "source": "/create",
+      "destination": "/create-simple.html"
+    },
+    {
+      "source": "/simple",
+      "destination": "/index-simple.html"
     }
   ]
 }

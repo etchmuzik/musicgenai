@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Music - MusicGen AI</title>
+    <meta name="description" content="Create your song with AI">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-dark: #7c3aed;
+            --bg: #0a0a0a;
+            --surface: #1a1a1a;
+            --text: #ffffff;
+            --text-secondary: #a1a1aa;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Simple Header */
+        header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 800;
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .nav-link:hover {
+            color: var(--text);
+        }
+
+        /* Main Content */
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Progress Steps */
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .step.active {
+            color: var(--primary);
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .step.active .step-number {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Creation Form */
+        .creation-container {
+            background: var(--surface);
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        /* Input Area */
+        .input-group {
+            margin-bottom: 2rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 120px;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Style Pills */
+        .style-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .style-pill {
+            padding: 0.5rem 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .style-pill:hover {
+            border-color: var(--primary);
+            color: var(--text);
+        }
+
+        .style-pill.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* Generate Button */
+        .generate-button {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1.125rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .generate-button:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .generate-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Loading State */
+        .loading-container {
+            display: none;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .loading-container.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            margin: 0 auto 2rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-subtext {
+            color: var(--text-secondary);
+        }
+
+        /* Success State */
+        .success-container {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .success-container.active {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .song-player {
+            background: var(--bg);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border: 1px solid var(--border);
+        }
+
+        audio {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .action-button {
+            padding: 0.75rem 1.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .action-button:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .action-button.primary {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .action-button.primary:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .steps {
+                gap: 1rem;
+                font-size: 0.75rem;
+            }
+
+            .step span {
+                display: none;
+            }
+
+            .creation-container {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .style-options {
+                gap: 0.5rem;
+            }
+
+            .style-pill {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Simple Header -->
+    <header>
+        <nav>
+            <a href="/" class="logo">MusicGen AI</a>
+            <div class="nav-links">
+                <a href="/library" class="nav-link">My Songs</a>
+                <a href="/pricing" class="nav-link">Upgrade</a>
+                <a href="#" class="nav-link" id="userInfo">Free Plan</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Progress Steps -->
+        <div class="steps">
+            <div class="step active" id="step1">
+                <div class="step-number">1</div>
+                <span>Describe</span>
+            </div>
+            <div class="step" id="step2">
+                <div class="step-number">2</div>
+                <span>Creating</span>
+            </div>
+            <div class="step" id="step3">
+                <div class="step-number">3</div>
+                <span>Done</span>
+            </div>
+        </div>
+
+        <!-- Creation Form -->
+        <div class="creation-container" id="createForm">
+            <h1>What kind of song do you want?</h1>
+            <p class="subtitle">Describe your song or choose a style below</p>
+
+            <div class="input-group">
+                <label for="description">Song Description</label>
+                <textarea 
+                    id="description" 
+                    placeholder="A happy pop song about summer vacation with upbeat melody and catchy chorus..."
+                    maxlength="500"
+                ></textarea>
+            </div>
+
+            <label>Quick Styles (Optional)</label>
+            <div class="style-options">
+                <div class="style-pill" data-style="pop">Pop</div>
+                <div class="style-pill" data-style="rock">Rock</div>
+                <div class="style-pill" data-style="hip-hop">Hip Hop</div>
+                <div class="style-pill" data-style="electronic">Electronic</div>
+                <div class="style-pill" data-style="jazz">Jazz</div>
+                <div class="style-pill" data-style="classical">Classical</div>
+                <div class="style-pill" data-style="country">Country</div>
+                <div class="style-pill" data-style="r&b">R&B</div>
+            </div>
+
+            <button class="generate-button" id="generateBtn">
+                <i class="fas fa-magic"></i>
+                Create My Song
+            </button>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading-container" id="loadingState">
+            <div class="spinner"></div>
+            <h2 class="loading-text">Creating your song...</h2>
+            <p class="loading-subtext">This usually takes 30-60 seconds</p>
+        </div>
+
+        <!-- Success State -->
+        <div class="success-container" id="successState">
+            <div class="success-icon">🎉</div>
+            <h2>Your song is ready!</h2>
+            
+            <div class="song-player">
+                <audio controls id="audioPlayer">
+                    <source src="" type="audio/mpeg">
+                </audio>
+                <h3 id="songTitle">Generated Song</h3>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-button" onclick="downloadSong()">
+                    <i class="fas fa-download"></i> Download
+                </button>
+                <button class="action-button primary" onclick="createAnother()">
+                    <i class="fas fa-plus"></i> Create Another
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Style pill selection
+        document.querySelectorAll('.style-pill').forEach(pill => {
+            pill.addEventListener('click', function() {
+                // Toggle selection
+                this.classList.toggle('selected');
+                
+                // Update textarea with selected styles
+                updateDescription();
+            });
+        });
+
+        function updateDescription() {
+            const selectedStyles = Array.from(document.querySelectorAll('.style-pill.selected'))
+                .map(pill => pill.dataset.style);
+            
+            if (selectedStyles.length > 0) {
+                const textarea = document.getElementById('description');
+                const currentText = textarea.value.trim();
+                
+                if (!currentText) {
+                    textarea.value = `A ${selectedStyles.join(' and ')} song`;
+                }
+            }
+        }
+
+        // Generate button
+        document.getElementById('generateBtn').addEventListener('click', async function() {
+            const description = document.getElementById('description').value.trim();
+            
+            if (!description) {
+                alert('Please describe what kind of song you want');
+                return;
+            }
+
+            // Update UI
+            document.getElementById('createForm').style.display = 'none';
+            document.getElementById('loadingState').classList.add('active');
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step2').classList.add('active');
+
+            // Disable button
+            this.disabled = true;
+
+            try {
+                // Call API
+                const response = await fetch('/webhook/generate-music-ai', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: description,
+                        customMode: false,
+                        model: 'chirp-v3-5'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Generation failed');
+                }
+
+                const result = await response.json();
+
+                // Simulate completion (in real app, you'd poll for status)
+                setTimeout(() => {
+                    showSuccess(result);
+                }, 3000);
+
+            } catch (error) {
+                console.error('Error:', error);
+                // Fallback to music-gen-fix
+                window.location.href = '/music-gen-fix.html';
+            }
+        });
+
+        function showSuccess(result) {
+            document.getElementById('loadingState').classList.remove('active');
+            document.getElementById('successState').classList.add('active');
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step3').classList.add('active');
+
+            // In real app, set the audio source from result
+            // document.getElementById('audioPlayer').src = result.audio_url;
+        }
+
+        function downloadSong() {
+            alert('Download feature coming soon!');
+        }
+
+        function createAnother() {
+            // Reset everything
+            location.reload();
+        }
+    </script>
+
+    <!-- Firebase Integration -->
+    <script type="module">
+        import { authManager } from './js/firebase-config-safe.js';
+
+        authManager.onAuthStateChange((user) => {
+            if (user) {
+                document.getElementById('userInfo').textContent = user.email;
+            } else {
+                // Redirect to auth if not logged in
+                window.location.href = '/auth?redirect=/create-simple';
+            }
+        });
+    </script>
+</body>
+</html>
