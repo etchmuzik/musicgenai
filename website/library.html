@@ -46,24 +46,6 @@
                         Library
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="/explore" class="nav-link">
-                        <span class="nav-icon"><i class="fas fa-compass"></i></span>
-                        Explore
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/achievements" class="nav-link">
-                        <span class="nav-icon"><i class="fas fa-trophy"></i></span>
-                        Achievements
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/profile" class="nav-link">
-                        <span class="nav-icon"><i class="fas fa-user"></i></span>
-                        Profile
-                    </a>
-                </li>
             </ul>
         </nav>
         
@@ -75,9 +57,9 @@
             </div>
             <div class="credits-value" id="userCredits">200</div>
             <div class="credits-subtitle">Monthly credits remaining</div>
-            <a href="/pricing" class="btn btn-secondary" style="width: 100%; margin-top: 1rem; justify-content: center;">
+            <button class="btn btn-secondary" style="width: 100%; margin-top: 1rem; justify-content: center;" onclick="alert('Pricing page coming soon!')">
                 Upgrade Plan
-            </a>
+            </button>
         </div>
     </aside>
 
@@ -202,7 +184,7 @@
 
     <!-- Firebase Integration -->
     <script type="module">
-        import { authManager } from './js/firebase-config-safe.js';
+        import { authManager } from '/js/firebase-config-safe.js';
         
         authManager.onAuthStateChange((user) => {
             if (user) {

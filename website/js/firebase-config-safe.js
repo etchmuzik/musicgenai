@@ -78,6 +78,65 @@ class MockAuthManager {
     }
 }
 
+// Real AuthManager class for Firebase
+class AuthManager {
+    constructor() {
+        this.currentUser = null;
+        this.authStateCallbacks = [];
+    }
+
+    onAuthStateChange(callback) {
+        this.authStateCallbacks.push(callback);
+        if (auth) {
+            auth.onAuthStateChanged((user) => {
+                this.currentUser = user;
+                callback(user);
+            });
+        }
+    }
+
+    async signInWithEmail(email, password) {
+        if (!auth) return { success: false, error: 'Firebase not configured' };
+        try {
+            const userCredential = await auth.signInWithEmailAndPassword(email, password);
+            return { success: true, user: userCredential.user };
+        } catch (error) {
+            return { success: false, error: error.message };
+        }
+    }
+
+    async signUpWithEmail(email, password, displayName) {
+        if (!auth) return { success: false, error: 'Firebase not configured' };
+        try {
+            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+            if (displayName) {
+                await userCredential.user.updateProfile({ displayName });
+            }
+            return { success: true, user: userCredential.user };
+        } catch (error) {
+            return { success: false, error: error.message };
+        }
+    }
+
+    async signOut() {
+        if (!auth) return { success: false };
+        try {
+            await auth.signOut();
+            return { success: true };
+        } catch (error) {
+            return { success: false, error: error.message };
+        }
+    }
+
+    isAuthenticated() {
+        return this.currentUser !== null;
+    }
+
+    getUser() {
+        return this.currentUser;
+    }
+}
+
 // Export based on configuration
 let authManager, auth, db;
 
@@ -92,9 +151,8 @@ if (isFirebaseConfigured) {
         auth = getAuth(app);
         db = getFirestore(app);
         
-        // Import the real AuthManager
-        const module = await import('./firebase-config.js');
-        authManager = module.authManager;
+        // Create real AuthManager
+        authManager = new AuthManager();
     } catch (error) {
         console.error('Firebase initialization failed:', error);
         authManager = new MockAuthManager();
