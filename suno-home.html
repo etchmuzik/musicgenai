@@ -575,19 +575,19 @@
         <nav>
             <ul class="nav-menu">
                 <li class="nav-item">
-                    <a href="/suno-home.html" class="nav-link active">
+                    <a href="/suno-home" class="nav-link active">
                         <span class="nav-icon"><i class="fas fa-home"></i></span>
                         Home
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/music-studio.html" class="nav-link">
+                    <a href="/music-studio" class="nav-link">
                         <span class="nav-icon"><i class="fas fa-music"></i></span>
                         Create
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/library.html" class="nav-link">
+                    <a href="/library" class="nav-link">
                         <span class="nav-icon"><i class="fas fa-folder"></i></span>
                         Library
                     </a>
@@ -599,7 +599,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/gamification.html" class="nav-link">
+                    <a href="/gamification" class="nav-link">
                         <span class="nav-icon"><i class="fas fa-trophy"></i></span>
                         Achievements
                     </a>
@@ -615,7 +615,7 @@
             </div>
             <div class="credits-value">200</div>
             <div class="credits-subtitle">Monthly credits remaining</div>
-            <a href="/pricing.html" class="btn btn-secondary" style="width: 100%; margin-top: 1rem; justify-content: center;">
+            <a href="/pricing" class="btn btn-secondary" style="width: 100%; margin-top: 1rem; justify-content: center;">
                 Upgrade Plan
             </a>
         </div>
@@ -632,11 +632,11 @@
                 Transform your ideas into professional songs in seconds
             </p>
             <div class="header-actions">
-                <a href="/music-studio.html" class="btn btn-primary">
+                <a href="/music-studio" class="btn btn-primary">
                     <i class="fas fa-plus"></i>
                     Start Creating
                 </a>
-                <a href="/ai-studio.html" class="btn btn-secondary">
+                <a href="/ai-studio" class="btn btn-secondary">
                     <i class="fas fa-wand-magic-sparkles"></i>
                     Explore AI Features
                 </a>
@@ -897,6 +897,40 @@
                 this.classList.add('active');
             });
         });
+    </script>
+
+    <!-- Firebase Integration -->
+    <script type="module">
+        import { authManager } from './js/firebase-config-safe.js';
+        
+        // Check authentication state
+        authManager.onAuthStateChange((user) => {
+            if (user) {
+                // Update UI for authenticated user
+                console.log('User is signed in:', user.email);
+                // Update credits based on user subscription
+                updateUserCredits(user);
+            } else {
+                // User is not signed in
+                console.log('User is not signed in');
+            }
+        });
+
+        // Update user credits display
+        function updateUserCredits(user) {
+            // This would fetch actual credits from Firebase
+            // For now, using mock data
+            const subscriptionCredits = {
+                'free': 10,
+                'starter': 500,
+                'pro': 2000,
+                'unlimited': 10000
+            };
+            
+            const subscription = user.subscription || 'free';
+            const credits = subscriptionCredits[subscription];
+            document.querySelector('.credits-value').textContent = credits;
+        }
     </script>
 </body>
 </html>
