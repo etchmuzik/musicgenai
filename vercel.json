@@ -2,18 +2,6 @@
   "version": 2,
   "cleanUrls": true,
   "trailingSlash": false,
-  "redirects": [
-    {
-      "source": "/lander",
-      "destination": "/",
-      "permanent": true
-    },
-    {
-      "source": "/lander.html",
-      "destination": "/",
-      "permanent": true
-    }
-  ],
   "rewrites": [
     {
       "source": "/suno-home",
