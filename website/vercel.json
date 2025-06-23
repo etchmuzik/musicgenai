@@ -10,38 +10,6 @@
     {
       "source": "/library",
       "destination": "/library.html"
-    },
-    {
-      "source": "/explore",
-      "destination": "/explore.html"
-    },
-    {
-      "source": "/achievements",
-      "destination": "/achievements.html"
-    },
-    {
-      "source": "/profile",
-      "destination": "/profile.html"
-    },
-    {
-      "source": "/pricing",
-      "destination": "/pricing.html"
-    },
-    {
-      "source": "/auth",
-      "destination": "/auth.html"
-    },
-    {
-      "source": "/about",
-      "destination": "/about.html"
-    },
-    {
-      "source": "/terms",
-      "destination": "/terms.html"
-    },
-    {
-      "source": "/privacy",
-      "destination": "/privacy.html"
     }
   ]
 }
