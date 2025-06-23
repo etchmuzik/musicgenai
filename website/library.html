@@ -4,912 +4,224 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Library - MusicGen AI</title>
-    <meta name="description" content="Manage your AI-generated music library. Organize, search, and play your tracks.">
+    <meta name="description" content="Your personal music library - manage your AI-generated songs">
+    <link rel="icon" type="image/png" href="/favicon.png">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <style>
-        :root {
-            /* Colors */
-            --primary: #ffffff;
-            --secondary: #1a1a1a;
-            --accent: #ffffff;
-            --text-primary: #ffffff;
-            --text-secondary: #a1a1aa;
-            --text-muted: #6b7280;
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #1a1a1a;
-            --bg-glass: rgba(255, 255, 255, 0.05);
-            --bg-glass-strong: rgba(255, 255, 255, 0.1);
-            --border-glass: rgba(255, 255, 255, 0.1);
-            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.3);
-            --success: #10b981;
-            --warning: #f59e0b;
-            --error: #ef4444;
-            
-            /* Gradients */
-            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-glass: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-            
-            /* Spacing */
-            --space-xs: 0.25rem;
-            --space-sm: 0.5rem;
-            --space-md: 1rem;
-            --space-lg: 1.5rem;
-            --space-xl: 2rem;
-            --space-2xl: 3rem;
-            --space-3xl: 4rem;
-            
-            /* Typography */
-            --font-size-xs: 0.75rem;
-            --font-size-sm: 0.875rem;
-            --font-size-md: 1rem;
-            --font-size-lg: 1.125rem;
-            --font-size-xl: 1.25rem;
-            --font-size-2xl: 1.5rem;
-            --font-size-3xl: 1.875rem;
-            --font-size-4xl: 2.25rem;
-            --font-size-5xl: 3rem;
-            
-            /* Borders */
-            --border-radius-sm: 0.375rem;
-            --border-radius-md: 0.5rem;
-            --border-radius-lg: 0.75rem;
-            --border-radius-xl: 1rem;
-            --border-radius-2xl: 1.5rem;
-            --border-radius-full: 9999px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* Layout */
-        .app-layout {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            min-height: 100vh;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            background: var(--bg-secondary);
-            border-right: 1px solid rgba(0, 0, 0, 0.1);
-            padding: var(--space-xl);
-            position: fixed;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 280px;
-            overflow-y: auto;
-        }
-
-        .sidebar-header {
-            margin-bottom: var(--space-2xl);
-        }
-
-        .logo {
-            font-size: var(--font-size-xl);
-            font-weight: 800;
-            color: var(--text-primary);
-            text-decoration: none;
-            letter-spacing: -0.025em;
-        }
-
-        .sidebar-nav {
-            list-style: none;
-        }
-
-        .nav-item {
-            margin-bottom: var(--space-sm);
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            padding: var(--space-md) var(--space-lg);
-            color: var(--text-secondary);
-            text-decoration: none;
-            border-radius: var(--border-radius-lg);
-            transition: all 0.2s ease;
-            font-weight: 500;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            background: var(--bg-glass-strong);
-            color: var(--text-primary);
-            backdrop-filter: blur(20px);
-        }
-
-        .nav-icon {
-            font-size: var(--font-size-lg);
-        }
-
-        /* Main Content */
-        .main-content {
-            margin-left: 280px;
-            padding: var(--space-xl);
-            min-height: 100vh;
-        }
-
-        /* Header */
-        .content-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-xl);
-            padding-bottom: var(--space-lg);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .page-title {
-            font-size: var(--font-size-3xl);
-            font-weight: 700;
-            letter-spacing: -0.025em;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: var(--space-md);
-            align-items: center;
-        }
-
-        /* Search and Filters */
-        .search-filters {
-            display: flex;
-            gap: var(--space-lg);
-            align-items: center;
-            margin-bottom: var(--space-xl);
-            padding: var(--space-lg);
-            background: var(--bg-glass-strong);
-            backdrop-filter: blur(30px);
-            border: 1px solid var(--border-glass);
-            border-radius: var(--border-radius-2xl);
-        }
-
-        .search-input {
-            flex: 1;
-            padding: var(--space-md) var(--space-lg);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: var(--border-radius-lg);
-            background: var(--bg-primary);
-            font-size: var(--font-size-md);
-            outline: none;
-        }
-
-        .search-input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .filter-select {
-            padding: var(--space-md) var(--space-lg);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: var(--border-radius-lg);
-            background: var(--bg-primary);
-            font-size: var(--font-size-sm);
-            cursor: pointer;
-        }
-
-        .view-toggle {
-            display: flex;
-            gap: var(--space-sm);
-        }
-
-        .view-btn {
-            padding: var(--space-sm);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: var(--border-radius-md);
-            background: transparent;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .view-btn.active {
-            background: var(--accent);
-            color: var(--primary);
-        }
-
-        /* Track Grid */
-        .tracks-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: var(--space-lg);
-            margin-bottom: var(--space-2xl);
-        }
-
-        .track-card {
-            background: var(--bg-primary);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: var(--border-radius-2xl);
-            overflow: hidden;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .track-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .track-artwork {
-            width: 100%;
-            height: 200px;
-            background: var(--gradient-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: var(--font-size-4xl);
-            position: relative;
-        }
-
-        .track-play-btn {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            border-radius: 50%;
-            font-size: var(--font-size-xl);
-            cursor: pointer;
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-
-        .track-card:hover .track-play-btn {
-            opacity: 1;
-        }
-
-        .track-info {
-            padding: var(--space-lg);
-        }
-
-        .track-title {
-            font-size: var(--font-size-lg);
-            font-weight: 600;
-            margin-bottom: var(--space-xs);
-        }
-
-        .track-meta {
-            color: var(--text-secondary);
-            font-size: var(--font-size-sm);
-            margin-bottom: var(--space-md);
-        }
-
-        .track-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .track-tags {
-            display: flex;
-            gap: var(--space-xs);
-        }
-
-        .track-tag {
-            padding: var(--space-xs) var(--space-sm);
-            background: var(--bg-secondary);
-            border-radius: var(--border-radius-sm);
-            font-size: var(--font-size-xs);
-            color: var(--text-secondary);
-        }
-
-        .track-menu {
-            position: relative;
-        }
-
-        .menu-btn {
-            width: 32px;
-            height: 32px;
-            border: none;
-            background: transparent;
-            border-radius: var(--border-radius-md);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-            transition: all 0.2s ease;
-        }
-
-        .menu-btn:hover {
-            background: var(--bg-secondary);
-        }
-
-        /* Track List View */
-        .tracks-list {
-            display: none;
-        }
-
-        .tracks-list.active {
-            display: block;
-        }
-
-        .tracks-grid.list-view {
-            display: none;
-        }
-
-        .list-header {
-            display: grid;
-            grid-template-columns: 50px 1fr 120px 100px 80px 40px;
-            gap: var(--space-md);
-            padding: var(--space-md) var(--space-lg);
-            background: var(--bg-secondary);
-            border-radius: var(--border-radius-lg);
-            margin-bottom: var(--space-md);
-            font-size: var(--font-size-sm);
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-
-        .list-item {
-            display: grid;
-            grid-template-columns: 50px 1fr 120px 100px 80px 40px;
-            gap: var(--space-md);
-            padding: var(--space-md) var(--space-lg);
-            align-items: center;
-            border-radius: var(--border-radius-lg);
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-
-        .list-item:hover {
-            background: var(--bg-secondary);
-        }
-
-        .list-artwork {
-            width: 40px;
-            height: 40px;
-            background: var(--gradient-primary);
-            border-radius: var(--border-radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: var(--font-size-lg);
-        }
-
-        .list-track-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .list-track-title {
-            font-weight: 600;
-            margin-bottom: var(--space-xs);
-        }
-
-        .list-track-meta {
-            font-size: var(--font-size-sm);
-            color: var(--text-secondary);
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: var(--space-3xl);
-        }
-
-        .empty-icon {
-            font-size: var(--font-size-5xl);
-            margin-bottom: var(--space-lg);
-        }
-
-        .empty-title {
-            font-size: var(--font-size-2xl);
-            font-weight: 600;
-            margin-bottom: var(--space-md);
-        }
-
-        .empty-description {
-            color: var(--text-secondary);
-            margin-bottom: var(--space-xl);
-        }
-
-        .btn {
-            padding: var(--space-sm) var(--space-lg);
-            border: none;
-            border-radius: var(--border-radius-lg);
-            font-weight: 600;
-            font-size: var(--font-size-sm);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            color: var(--primary);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .app-layout {
-                grid-template-columns: 1fr;
-            }
-
-            .sidebar {
-                position: static;
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .content-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: var(--space-lg);
-            }
-
-            .search-filters {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .tracks-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .list-header,
-            .list-item {
-                grid-template-columns: 40px 1fr 60px 40px;
-                gap: var(--space-sm);
-            }
-
-            .list-header :nth-child(3),
-            .list-header :nth-child(4),
-            .list-item :nth-child(3),
-            .list-item :nth-child(4) {
-                display: none;
-            }
-        }
-    </style>
+    <!-- Suno Design System -->
+    <link rel="stylesheet" href="/css/suno-design.css">
 </head>
 <body>
-    <div class="app-layout">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <a href="index.html" class="logo">MusicGen AI</a>
-            </div>
-            
-            <nav class="sidebar-nav">
-                <ul>
-                    <li class="nav-item">
-                        <a href="dashboard.html" class="nav-link">
-                            <span class="nav-icon">📊</span>
-                            Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="app-enhanced.html" class="nav-link">
-                            <span class="nav-icon">🎵</span>
-                            Create Music
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="library.html" class="nav-link active">
-                            <span class="nav-icon">📚</span>
-                            My Library
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/playlists" class="nav-link">
-                            <span class="nav-icon">🎧</span>
-                            Playlists
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/favorites" class="nav-link">
-                            <span class="nav-icon">❤️</span>
-                            Favorites
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/history" class="nav-link">
-                            <span class="nav-icon">🕒</span>
-                            History
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="settings.html" class="nav-link">
-                            <span class="nav-icon">⚙️</span>
-                            Settings
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </aside>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Header -->
-            <header class="content-header">
-                <h1 class="page-title">My Library</h1>
-                <div class="header-actions">
-                    <a href="app-enhanced.html" class="btn btn-primary">
-                        ✨ Create New Track
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <a href="/" class="logo">MusicGen AI</a>
+        
+        <nav>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-home"></i></span>
+                        Home
                     </a>
-                </div>
-            </header>
-
-            <!-- Search and Filters -->
-            <div class="search-filters">
-                <input type="text" class="search-input" placeholder="Search your music..." id="searchInput">
-                
-                <select class="filter-select" id="genreFilter">
-                    <option value="">All Genres</option>
-                    <option value="electronic">Electronic</option>
-                    <option value="jazz">Jazz</option>
-                    <option value="rock">Rock</option>
-                    <option value="pop">Pop</option>
-                    <option value="ambient">Ambient</option>
-                    <option value="classical">Classical</option>
-                </select>
-
-                <select class="filter-select" id="sortFilter">
-                    <option value="recent">Recently Created</option>
-                    <option value="name">Name A-Z</option>
-                    <option value="duration">Duration</option>
-                    <option value="plays">Most Played</option>
-                </select>
-
-                <div class="view-toggle">
-                    <button class="view-btn active" id="gridView">⊞</button>
-                    <button class="view-btn" id="listView">☰</button>
-                </div>
+                </li>
+                <li class="nav-item">
+                    <a href="/create" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-music"></i></span>
+                        Create
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/library" class="nav-link active">
+                        <span class="nav-icon"><i class="fas fa-folder"></i></span>
+                        Library
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/explore" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-compass"></i></span>
+                        Explore
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/achievements" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-trophy"></i></span>
+                        Achievements
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/profile" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-user"></i></span>
+                        Profile
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- Credits Display -->
+        <div class="credits-display">
+            <div class="credits-header">
+                <span class="credits-title">Credits</span>
+                <i class="fas fa-coins"></i>
             </div>
+            <div class="credits-value" id="userCredits">200</div>
+            <div class="credits-subtitle">Monthly credits remaining</div>
+            <a href="/pricing" class="btn btn-secondary" style="width: 100%; margin-top: 1rem; justify-content: center;">
+                Upgrade Plan
+            </a>
+        </div>
+    </aside>
 
-            <!-- Tracks Grid View -->
-            <div class="tracks-grid" id="tracksGrid">
-                <div class="track-card">
-                    <div class="track-artwork">
-                        🎵
-                        <button class="track-play-btn">▶️</button>
-                    </div>
-                    <div class="track-info">
-                        <h3 class="track-title">Desert Echoes</h3>
-                        <p class="track-meta">Electronic • 2:31 • Created 2 hours ago</p>
-                        <div class="track-actions">
-                            <div class="track-tags">
-                                <span class="track-tag">Techno</span>
-                                <span class="track-tag">Arabic</span>
-                            </div>
-                            <div class="track-menu">
-                                <button class="menu-btn">⋯</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="track-card">
-                    <div class="track-artwork">
-                        🎵
-                        <button class="track-play-btn">▶️</button>
-                    </div>
-                    <div class="track-info">
-                        <h3 class="track-title">Midnight Jazz</h3>
-                        <p class="track-meta">Jazz • 3:45 • Created yesterday</p>
-                        <div class="track-actions">
-                            <div class="track-tags">
-                                <span class="track-tag">Smooth</span>
-                                <span class="track-tag">Piano</span>
-                            </div>
-                            <div class="track-menu">
-                                <button class="menu-btn">⋯</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="track-card">
-                    <div class="track-artwork">
-                        🎵
-                        <button class="track-play-btn">▶️</button>
-                    </div>
-                    <div class="track-info">
-                        <h3 class="track-title">Summer Vibes</h3>
-                        <p class="track-meta">Pop • 2:58 • Created 3 days ago</p>
-                        <div class="track-actions">
-                            <div class="track-tags">
-                                <span class="track-tag">Upbeat</span>
-                                <span class="track-tag">Happy</span>
-                            </div>
-                            <div class="track-menu">
-                                <button class="menu-btn">⋯</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="track-card">
-                    <div class="track-artwork">
-                        🎵
-                        <button class="track-play-btn">▶️</button>
-                    </div>
-                    <div class="track-info">
-                        <h3 class="track-title">Ocean Dreams</h3>
-                        <p class="track-meta">Ambient • 4:12 • Created 1 week ago</p>
-                        <div class="track-actions">
-                            <div class="track-tags">
-                                <span class="track-tag">Relaxing</span>
-                                <span class="track-tag">Nature</span>
-                            </div>
-                            <div class="track-menu">
-                                <button class="menu-btn">⋯</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="track-card">
-                    <div class="track-artwork">
-                        🎵
-                        <button class="track-play-btn">▶️</button>
-                    </div>
-                    <div class="track-info">
-                        <h3 class="track-title">Rock Anthem</h3>
-                        <p class="track-meta">Rock • 3:22 • Created 1 week ago</p>
-                        <div class="track-actions">
-                            <div class="track-tags">
-                                <span class="track-tag">Heavy</span>
-                                <span class="track-tag">Guitar</span>
-                            </div>
-                            <div class="track-menu">
-                                <button class="menu-btn">⋯</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="track-card">
-                    <div class="track-artwork">
-                        🎵
-                        <button class="track-play-btn">▶️</button>
-                    </div>
-                    <div class="track-info">
-                        <h3 class="track-title">Peaceful Morning</h3>
-                        <p class="track-meta">Classical • 5:18 • Created 2 weeks ago</p>
-                        <div class="track-actions">
-                            <div class="track-tags">
-                                <span class="track-tag">Calm</span>
-                                <span class="track-tag">Strings</span>
-                            </div>
-                            <div class="track-menu">
-                                <button class="menu-btn">⋯</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="header-title">
+                My <span class="gradient-text">Library</span>
+            </h1>
+            <p class="header-subtitle">
+                All your AI-generated masterpieces in one place
+            </p>
+            <div class="header-actions">
+                <a href="/create" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Create New
+                </a>
             </div>
+        </header>
 
-            <!-- Tracks List View -->
-            <div class="tracks-list" id="tracksList">
-                <div class="list-header">
-                    <div></div>
-                    <div>Title</div>
-                    <div>Genre</div>
-                    <div>Duration</div>
-                    <div>Created</div>
-                    <div></div>
-                </div>
+        <!-- Songs Grid -->
+        <div class="songs-grid" id="songsGrid">
+            <!-- Songs will be loaded dynamically -->
+        </div>
+    </main>
 
-                <div class="list-item">
-                    <div class="list-artwork">🎵</div>
-                    <div class="list-track-info">
-                        <div class="list-track-title">Desert Echoes</div>
-                        <div class="list-track-meta">Techno • Arabic vibes</div>
-                    </div>
-                    <div>Electronic</div>
-                    <div>2:31</div>
-                    <div>2h ago</div>
-                    <button class="menu-btn">⋯</button>
-                </div>
-
-                <div class="list-item">
-                    <div class="list-artwork">🎵</div>
-                    <div class="list-track-info">
-                        <div class="list-track-title">Midnight Jazz</div>
-                        <div class="list-track-meta">Smooth • Piano</div>
-                    </div>
-                    <div>Jazz</div>
-                    <div>3:45</div>
-                    <div>1d ago</div>
-                    <button class="menu-btn">⋯</button>
-                </div>
-
-                <div class="list-item">
-                    <div class="list-artwork">🎵</div>
-                    <div class="list-track-info">
-                        <div class="list-track-title">Summer Vibes</div>
-                        <div class="list-track-meta">Upbeat • Happy</div>
-                    </div>
-                    <div>Pop</div>
-                    <div>2:58</div>
-                    <div>3d ago</div>
-                    <button class="menu-btn">⋯</button>
-                </div>
-
-                <div class="list-item">
-                    <div class="list-artwork">🎵</div>
-                    <div class="list-track-info">
-                        <div class="list-track-title">Ocean Dreams</div>
-                        <div class="list-track-meta">Relaxing • Nature</div>
-                    </div>
-                    <div>Ambient</div>
-                    <div>4:12</div>
-                    <div>1w ago</div>
-                    <button class="menu-btn">⋯</button>
-                </div>
-
-                <div class="list-item">
-                    <div class="list-artwork">🎵</div>
-                    <div class="list-track-info">
-                        <div class="list-track-title">Rock Anthem</div>
-                        <div class="list-track-meta">Heavy • Guitar</div>
-                    </div>
-                    <div>Rock</div>
-                    <div>3:22</div>
-                    <div>1w ago</div>
-                    <button class="menu-btn">⋯</button>
-                </div>
-
-                <div class="list-item">
-                    <div class="list-artwork">🎵</div>
-                    <div class="list-track-info">
-                        <div class="list-track-title">Peaceful Morning</div>
-                        <div class="list-track-meta">Calm • Strings</div>
-                    </div>
-                    <div>Classical</div>
-                    <div>5:18</div>
-                    <div>2w ago</div>
-                    <button class="menu-btn">⋯</button>
-                </div>
+    <!-- Player Bar -->
+    <div class="player-bar">
+        <div class="player-track">
+            <div class="player-cover" id="playerCover"></div>
+            <div class="player-info">
+                <div class="player-title" id="playerTitle">No track playing</div>
+                <div class="player-artist" id="playerArtist">Select a track to play</div>
             </div>
-        </main>
+        </div>
+        
+        <div class="player-controls">
+            <button class="player-btn" id="prevBtn">
+                <i class="fas fa-backward"></i>
+            </button>
+            <button class="player-btn play" id="playBtn">
+                <i class="fas fa-play"></i>
+            </button>
+            <button class="player-btn" id="nextBtn">
+                <i class="fas fa-forward"></i>
+            </button>
+        </div>
+        
+        <div class="player-progress">
+            <span class="player-time" id="currentTime">0:00</span>
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="player-time" id="totalTime">0:00</span>
+        </div>
     </div>
 
+    <!-- JavaScript -->
+    <script src="/js/suno-core.js"></script>
+    
     <script>
-        // View toggle functionality
-        const gridViewBtn = document.getElementById('gridView');
-        const listViewBtn = document.getElementById('listView');
-        const tracksGrid = document.getElementById('tracksGrid');
-        const tracksList = document.getElementById('tracksList');
-
-        gridViewBtn.addEventListener('click', () => {
-            gridViewBtn.classList.add('active');
-            listViewBtn.classList.remove('active');
-            tracksGrid.style.display = 'grid';
-            tracksList.classList.remove('active');
-        });
-
-        listViewBtn.addEventListener('click', () => {
-            listViewBtn.classList.add('active');
-            gridViewBtn.classList.remove('active');
-            tracksGrid.style.display = 'none';
-            tracksList.classList.add('active');
-        });
-
-        // Search functionality
-        const searchInput = document.getElementById('searchInput');
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            filterTracks(query);
-        });
-
-        function filterTracks(query) {
-            const trackCards = document.querySelectorAll('.track-card');
-            const listItems = document.querySelectorAll('.list-item');
-            
-            trackCards.forEach(card => {
-                const title = card.querySelector('.track-title').textContent.toLowerCase();
-                const meta = card.querySelector('.track-meta').textContent.toLowerCase();
-                if (title.includes(query) || meta.includes(query)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
+        // Library functionality
+        function loadLibrarySongs() {
+            const mockSongs = [
+                {
+                    id: '1',
+                    title: 'My Electric Dreams',
+                    genre: 'Electronic',
+                    duration: '3:24',
+                    gradient: 'linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)',
+                    tag: 'Mine'
+                },
+                {
+                    id: '2',
+                    title: 'Jazz Cafe Nights',
+                    genre: 'Jazz',
+                    duration: '4:12',
+                    gradient: 'linear-gradient(135deg, #ec4899 0%, #f59e0b 100%)',
+                    tag: 'Mine'
+                },
+                {
+                    id: '3',
+                    title: 'Summer Road Trip',
+                    genre: 'Pop',
+                    duration: '2:58',
+                    gradient: 'linear-gradient(135deg, #f59e0b 0%, #10b981 100%)',
+                    tag: 'Mine'
                 }
-            });
+            ];
 
-            listItems.forEach(item => {
-                const title = item.querySelector('.list-track-title').textContent.toLowerCase();
-                const meta = item.querySelector('.list-track-meta').textContent.toLowerCase();
-                if (title.includes(query) || meta.includes(query)) {
-                    item.style.display = 'grid';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
+            const songsGrid = document.getElementById('songsGrid');
+            songsGrid.innerHTML = mockSongs.map(song => `
+                <div class="song-card" data-song-id="${song.id}">
+                    <div class="song-cover" style="background: ${song.gradient};">
+                        <div class="play-overlay">
+                            <button class="play-button" onclick="SunoCore.playSong('${song.id}')">
+                                <i class="fas fa-play"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="song-info">
+                        <h3 class="song-title">${song.title}</h3>
+                        <div class="song-meta">
+                            <span class="song-tag">${song.tag}</span>
+                            <span>${song.genre}</span>
+                            <span class="song-duration">${song.duration}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        // Play button interactions
-        document.querySelectorAll('.track-play-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                btn.textContent = btn.textContent === '▶️' ? '⏸️' : '▶️';
-            });
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Load songs when page loads
+        document.addEventListener('DOMContentLoaded', loadLibrarySongs);
+    </script>
+
+    <!-- Firebase Integration -->
+    <script type="module">
+        import { authManager } from './js/firebase-config-safe.js';
+        
+        authManager.onAuthStateChange((user) => {
+            if (user) {
+                updateUserCredits(user);
+            }
         });
 
-        // Track card interactions
-        document.querySelectorAll('.track-card').forEach(card => {
-            card.addEventListener('click', (e) => {
-                if (e.target.classList.contains('track-play-btn') || e.target.classList.contains('menu-btn')) {
-                    return;
-                }
-                // Open track details or play
-                const title = card.querySelector('.track-title').textContent;
-                console.log(`Opening track: ${title}`);
-            });
-        });
-
-        // List item interactions
-        document.querySelectorAll('.list-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                if (e.target.classList.contains('menu-btn')) {
-                    return;
-                }
-                const title = item.querySelector('.list-track-title').textContent;
-                console.log(`Playing track: ${title}`);
-            });
-        });
-
-        // Menu interactions
-        document.querySelectorAll('.menu-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                console.log('Track menu clicked');
-                // Here you would show a context menu
-            });
-        });
-
-        // Filter functionality
-        const genreFilter = document.getElementById('genreFilter');
-        const sortFilter = document.getElementById('sortFilter');
-
-        genreFilter.addEventListener('change', (e) => {
-            // Implement genre filtering
-            console.log('Genre filter:', e.target.value);
-        });
-
-        sortFilter.addEventListener('change', (e) => {
-            // Implement sorting
-            console.log('Sort by:', e.target.value);
-        });
+        function updateUserCredits(user) {
+            const subscriptionCredits = {
+                'free': 10,
+                'starter': 500,
+                'pro': 2000,
+                'unlimited': 10000
+            };
+            
+            const subscription = user.subscription || 'free';
+            const credits = subscriptionCredits[subscription];
+            document.getElementById('userCredits').textContent = credits;
+        }
     </script>
 </body>
 </html>
