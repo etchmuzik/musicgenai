@@ -1,4 +1,15 @@
 {
   "version": 2,
-  "outputDirectory": "website"
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/create",
+      "destination": "/create.html"
+    },
+    {
+      "source": "/library",
+      "destination": "/library.html"
+    }
+  ]
 }
