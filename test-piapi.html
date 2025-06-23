@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test PiAPI Integration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        button {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #7c3aed;
+        }
+        .output {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success { background: #10b981; }
+        .error { background: #ef4444; }
+        .processing { background: #f59e0b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PiAPI Integration Test</h1>
+        
+        <div>
+            <h2>Quick Tests</h2>
+            <button onclick="testBasicGeneration()">Test Basic Generation</button>
+            <button onclick="testWithLyrics()">Test With Lyrics</button>
+            <button onclick="testInstrumental()">Test Instrumental</button>
+            <button onclick="testSunoV45()">Test Suno v4.5</button>
+        </div>
+
+        <div id="status" class="status" style="display: none;"></div>
+        
+        <div class="output" id="output">
+            Ready to test PiAPI integration...
+        </div>
+    </div>
+
+    <script src="/js/piapi-music.js"></script>
+    <script>
+        const piapi = new PiAPIMusic();
+        const output = document.getElementById('output');
+        const status = document.getElementById('status');
+
+        function log(message) {
+            output.innerHTML += `\n${new Date().toISOString()} - ${message}`;
+            output.scrollTop = output.scrollHeight;
+            console.log(message);
+        }
+
+        function setStatus(message, type = 'processing') {
+            status.style.display = 'block';
+            status.className = `status ${type}`;
+            status.textContent = message;
+        }
+
+        async function testBasicGeneration() {
+            log('\n=== TESTING BASIC GENERATION ===');
+            setStatus('Starting basic generation test...');
+
+            try {
+                const result = await piapi.createMusic({
+                    prompt: 'Happy electronic music',
+                    make_instrumental: true,
+                    song_style: 'Electronic',
+                    model: 'music-u'
+                });
+
+                if (result.success) {
+                    log(`✅ Task created: ${result.taskId}`);
+                    setStatus(`Task created: ${result.taskId} - Polling for completion...`);
+                    
+                    // Poll for result
+                    const finalResult = await piapi.waitForCompletion(result.taskId);
+                    log(`✅ Generation completed!`);
+                    log(`Result: ${JSON.stringify(finalResult, null, 2)}`);
+                    
+                    const audioUrl = piapi.extractAudioUrl(finalResult);
+                    if (audioUrl) {
+                        log(`✅ Audio URL: ${audioUrl}`);
+                        setStatus('Success! Audio generated.', 'success');
+                        
+                        // Try to play the audio
+                        const audio = new Audio(audioUrl);
+                        audio.play().catch(e => log(`⚠️ Cannot autoplay: ${e.message}`));
+                    } else {
+                        throw new Error('No audio URL found');
+                    }
+                } else {
+                    throw new Error(result.error || 'Failed to create task');
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+                setStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testWithLyrics() {
+            log('\n=== TESTING WITH LYRICS ===');
+            setStatus('Starting lyrics generation test...');
+
+            try {
+                const result = await piapi.createMusic({
+                    prompt: 'Pop song about summer',
+                    make_instrumental: false,
+                    song_style: 'Pop',
+                    custom_lyrics: 'Verse 1:\nSummer days are here again\nSunshine on my face\n\nChorus:\nFeeling free, feeling alive\nSummer vibes, we thrive',
+                    model: 'music-u'
+                });
+
+                if (result.success) {
+                    log(`✅ Task created: ${result.taskId}`);
+                    setStatus(`Task created: ${result.taskId} - Polling...`);
+                    
+                    const finalResult = await piapi.waitForCompletion(result.taskId);
+                    log(`✅ Generation completed!`);
+                    log(`Result: ${JSON.stringify(finalResult, null, 2)}`);
+                    setStatus('Success! Song with lyrics generated.', 'success');
+                } else {
+                    throw new Error(result.error || 'Failed to create task');
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+                setStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testInstrumental() {
+            log('\n=== TESTING INSTRUMENTAL ===');
+            setStatus('Starting instrumental generation test...');
+
+            try {
+                const result = await piapi.createMusic({
+                    prompt: 'Ambient relaxing piano music',
+                    make_instrumental: true,
+                    song_style: 'Ambient',
+                    model: 'music-u'
+                });
+
+                if (result.success) {
+                    log(`✅ Task created: ${result.taskId}`);
+                    setStatus(`Task created: ${result.taskId} - Polling...`);
+                    
+                    const finalResult = await piapi.waitForCompletion(result.taskId);
+                    log(`✅ Generation completed!`);
+                    log(`Result: ${JSON.stringify(finalResult, null, 2)}`);
+                    setStatus('Success! Instrumental generated.', 'success');
+                } else {
+                    throw new Error(result.error || 'Failed to create task');
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+                setStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSunoV45() {
+            log('\n=== TESTING SUNO V4.5 ===');
+            setStatus('Starting Suno v4.5 test...');
+
+            try {
+                // Try different model names for Suno v4.5
+                const modelNames = ['suno-v4.5', 'suno-4.5', 'suno'];
+                let success = false;
+
+                for (const modelName of modelNames) {
+                    log(`Trying model: ${modelName}`);
+                    
+                    try {
+                        const result = await piapi.createMusic({
+                            prompt: 'Epic orchestral music',
+                            make_instrumental: true,
+                            song_style: 'Orchestral',
+                            model: modelName
+                        });
+
+                        if (result.success) {
+                            log(`✅ Task created with model ${modelName}: ${result.taskId}`);
+                            setStatus(`Success with ${modelName}!`, 'success');
+                            success = true;
+                            break;
+                        }
+                    } catch (e) {
+                        log(`❌ Model ${modelName} failed: ${e.message}`);
+                    }
+                }
+
+                if (!success) {
+                    throw new Error('All Suno v4.5 model names failed');
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+                setStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Log initial state
+        log('PiAPI Test Page Loaded');
+        log(`API Key: ${piapi.apiKey.substring(0, 10)}...`);
+        log(`Base URL: ${piapi.baseURL}`);
+        log('Available models:');
+        const models = piapi.getAvailableModels();
+        Object.entries(models).forEach(([category, modelList]) => {
+            log(`  ${category}: ${modelList.join(', ')}`);
+        });
+    </script>
+</body>
+</html>

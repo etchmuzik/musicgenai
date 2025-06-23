@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - MusicGen AI</title>
+    <meta name="description" content="Choose the perfect plan for your music creation needs">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Suno Design System -->
+    <link rel="stylesheet" href="/css/suno-design.css">
+    
+    <style>
+        /* Pricing specific styles */
+        .pricing-hero {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .pricing-toggle {
+            display: inline-flex;
+            background: var(--bg-secondary);
+            border-radius: 2rem;
+            padding: 0.25rem;
+            margin-top: 2rem;
+        }
+
+        .toggle-option {
+            padding: 0.75rem 2rem;
+            border-radius: 2rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-option.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .savings-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .pricing-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .pricing-card.popular {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-description {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .plan-price {
+            margin-bottom: 2rem;
+        }
+
+        .price-amount {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .price-currency {
+            font-size: 1.5rem;
+            vertical-align: super;
+        }
+
+        .price-period {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .price-yearly {
+            display: none;
+        }
+
+        .yearly-active .price-monthly {
+            display: none;
+        }
+
+        .yearly-active .price-yearly {
+            display: block;
+        }
+
+        .plan-credits {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 2rem;
+        }
+
+        .plan-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 2rem 0;
+        }
+
+        .plan-features li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .plan-features li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-icon {
+            color: var(--success);
+            font-size: 1.125rem;
+            flex-shrink: 0;
+        }
+
+        .feature-icon.minus {
+            color: var(--text-secondary);
+        }
+
+        .plan-cta {
+            width: 100%;
+            justify-content: center;
+            font-size: 1.125rem;
+            padding: 1rem;
+        }
+
+        .comparison-section {
+            margin-bottom: 4rem;
+        }
+
+        .comparison-table {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .comparison-table th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .check-icon {
+            color: var(--success);
+        }
+
+        .x-icon {
+            color: var(--text-secondary);
+        }
+
+        .faq-section {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            padding: 3rem;
+            border: 1px solid var(--border);
+        }
+
+        .faq-title {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .faq-item {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .faq-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .faq-question {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+
+        .faq-answer {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            padding-left: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .price-amount {
+                font-size: 2.5rem;
+            }
+
+            .comparison-table {
+                overflow-x: auto;
+            }
+
+            .comparison-table table {
+                min-width: 600px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <a href="/" class="logo">MusicGen AI</a>
+        
+        <nav>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-home"></i></span>
+                        Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/create" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-music"></i></span>
+                        Create
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/library" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-folder"></i></span>
+                        Library
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/remix" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-sync"></i></span>
+                        Remix
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/lyrics" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-pen"></i></span>
+                        Lyrics
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/explore" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-compass"></i></span>
+                        Explore
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/pricing" class="nav-link active">
+                        <span class="nav-icon"><i class="fas fa-tag"></i></span>
+                        Pricing
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- Credits Display -->
+        <div class="credits-display">
+            <div class="credits-header">
+                <span class="credits-title">Credits</span>
+                <i class="fas fa-coins"></i>
+            </div>
+            <div class="credits-value" id="userCredits">200</div>
+            <div class="credits-subtitle">Monthly credits remaining</div>
+            <button class="btn btn-secondary" style="width: 100%; margin-top: 1rem; justify-content: center;" onclick="alert('Already on pricing page!')">
+                Upgrade Plan
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Pricing Hero -->
+        <section class="pricing-hero">
+            <h1 class="header-title">
+                Choose Your <span class="gradient-text">Plan</span>
+            </h1>
+            <p class="header-subtitle">
+                Start creating amazing AI music with credits that refresh monthly
+            </p>
+            
+            <div class="pricing-toggle">
+                <button class="toggle-option active" onclick="toggleBilling('monthly')">
+                    Monthly
+                </button>
+                <button class="toggle-option" onclick="toggleBilling('yearly')">
+                    Yearly
+                    <span class="savings-badge">Save 20%</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Pricing Cards -->
+        <section class="pricing-grid" id="pricingGrid">
+            <!-- Free Plan -->
+            <div class="pricing-card">
+                <h3 class="plan-name">Free</h3>
+                <p class="plan-description">Perfect for trying out AI music generation</p>
+                
+                <div class="plan-price">
+                    <div class="price-monthly">
+                        <span class="price-currency">$</span>
+                        <span class="price-amount">0</span>
+                        <span class="price-period">/month</span>
+                    </div>
+                    <div class="price-yearly">
+                        <span class="price-currency">$</span>
+                        <span class="price-amount">0</span>
+                        <span class="price-period">/year</span>
+                    </div>
+                </div>
+                
+                <div class="plan-credits">10 credits/month</div>
+                
+                <ul class="plan-features">
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>2 songs per month</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>Basic AI models</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>30-second duration</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>Standard quality</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-minus feature-icon minus"></i>
+                        <span>No remix features</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-minus feature-icon minus"></i>
+                        <span>Limited downloads</span>
+                    </li>
+                </ul>
+                
+                <button class="btn btn-secondary plan-cta" onclick="selectPlan('free')">
+                    Current Plan
+                </button>
+            </div>
+
+            <!-- Starter Plan -->
+            <div class="pricing-card">
+                <h3 class="plan-name">Starter</h3>
+                <p class="plan-description">For regular music creators</p>
+                
+                <div class="plan-price">
+                    <div class="price-monthly">
+                        <span class="price-currency">$</span>
+                        <span class="price-amount">9</span>
+                        <span class="price-period">/month</span>
+                    </div>
+                    <div class="price-yearly">
+                        <span class="price-currency">$</span>
+                        <span class="price-amount">86</span>
+                        <span class="price-period">/year</span>
+                    </div>
+                </div>
+                
+                <div class="plan-credits">500 credits/month</div>
+                
+                <ul class="plan-features">
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>100 songs per month</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>All AI models</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>Up to 2 minutes</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>High quality audio</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>Basic remix features</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>Unlimited downloads</span>
+                    </li>
+                </ul>
+                
+                <button class="btn btn-primary plan-cta" onclick="selectPlan('starter')">
+                    Get Started
+                </button>
+            </div>
+
+            <!-- Pro Plan -->
+            <div class="pricing-card popular">
+                <span class="popular-badge">Most Popular</span>
+                <h3 class="plan-name">Pro</h3>
+                <p class="plan-description">For professionals and power users</p>
+                
+                <div class="plan-price">
+                    <div class="price-monthly">
+                        <span class="price-currency">$</span>
+                        <span class="price-amount">29</span>
+                        <span class="price-period">/month</span>
+                    </div>
+                    <div class="price-yearly">
+                        <span class="price-currency">$</span>
+                        <span class="price-amount">278</span>
+                        <span class="price-period">/year</span>
+                    </div>
+                </div>
+                
+                <div class="plan-credits">2,000 credits/month</div>
+                
+                <ul class="plan-features">
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>400 songs per month</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>Premium AI models</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>Up to 4 minutes</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>Studio quality audio</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>Advanced remix & extend</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>Priority generation</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>Commercial license</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>API access</span>
+                    </li>
+                </ul>
+                
+                <button class="btn btn-primary plan-cta" onclick="selectPlan('pro')">
+                    Upgrade to Pro
+                </button>
+            </div>
+
+            <!-- Unlimited Plan -->
+            <div class="pricing-card">
+                <h3 class="plan-name">Unlimited</h3>
+                <p class="plan-description">For studios and enterprises</p>
+                
+                <div class="plan-price">
+                    <div class="price-monthly">
+                        <span class="price-currency">$</span>
+                        <span class="price-amount">79</span>
+                        <span class="price-period">/month</span>
+                    </div>
+                    <div class="price-yearly">
+                        <span class="price-currency">$</span>
+                        <span class="price-amount">758</span>
+                        <span class="price-period">/year</span>
+                    </div>
+                </div>
+                
+                <div class="plan-credits">10,000 credits/month</div>
+                
+                <ul class="plan-features">
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>2000+ songs per month</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>All features included</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>Unlimited duration</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>Lossless quality</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>Custom AI training</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>Dedicated support</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>White label options</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check feature-icon"></i>
+                        <span>Advanced analytics</span>
+                    </li>
+                </ul>
+                
+                <button class="btn btn-primary plan-cta" onclick="selectPlan('unlimited')">
+                    Go Unlimited
+                </button>
+            </div>
+        </section>
+
+        <!-- Feature Comparison -->
+        <section class="comparison-section">
+            <h2 class="section-title" style="text-align: center; margin-bottom: 2rem;">
+                Feature Comparison
+            </h2>
+            
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Features</th>
+                            <th>Free</th>
+                            <th>Starter</th>
+                            <th>Pro</th>
+                            <th>Unlimited</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Monthly Credits</td>
+                            <td>10</td>
+                            <td>500</td>
+                            <td>2,000</td>
+                            <td>10,000</td>
+                        </tr>
+                        <tr>
+                            <td>Song Duration</td>
+                            <td>30 seconds</td>
+                            <td>2 minutes</td>
+                            <td>4 minutes</td>
+                            <td>Unlimited</td>
+                        </tr>
+                        <tr>
+                            <td>AI Models</td>
+                            <td>Basic</td>
+                            <td>All Models</td>
+                            <td>Premium Models</td>
+                            <td>All + Custom</td>
+                        </tr>
+                        <tr>
+                            <td>Audio Quality</td>
+                            <td>Standard</td>
+                            <td>High</td>
+                            <td>Studio</td>
+                            <td>Lossless</td>
+                        </tr>
+                        <tr>
+                            <td>Remix & Extend</td>
+                            <td><i class="fas fa-times x-icon"></i></td>
+                            <td>Basic</td>
+                            <td>Advanced</td>
+                            <td>Full Access</td>
+                        </tr>
+                        <tr>
+                            <td>Downloads</td>
+                            <td>5/month</td>
+                            <td>Unlimited</td>
+                            <td>Unlimited</td>
+                            <td>Unlimited</td>
+                        </tr>
+                        <tr>
+                            <td>Commercial Use</td>
+                            <td><i class="fas fa-times x-icon"></i></td>
+                            <td><i class="fas fa-times x-icon"></i></td>
+                            <td><i class="fas fa-check check-icon"></i></td>
+                            <td><i class="fas fa-check check-icon"></i></td>
+                        </tr>
+                        <tr>
+                            <td>API Access</td>
+                            <td><i class="fas fa-times x-icon"></i></td>
+                            <td><i class="fas fa-times x-icon"></i></td>
+                            <td><i class="fas fa-check check-icon"></i></td>
+                            <td><i class="fas fa-check check-icon"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Priority Support</td>
+                            <td><i class="fas fa-times x-icon"></i></td>
+                            <td>Email</td>
+                            <td>Priority Email</td>
+                            <td>Dedicated</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <h2 class="faq-title">Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <i class="fas fa-question-circle"></i>
+                    How do credits work?
+                </div>
+                <div class="faq-answer">
+                    Each song generation uses 5 credits. Credits refresh monthly on your billing date. 
+                    Unused credits don't roll over to the next month. Remix and extend features use 3 credits each.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <i class="fas fa-question-circle"></i>
+                    Can I change plans anytime?
+                </div>
+                <div class="faq-answer">
+                    Yes! You can upgrade or downgrade your plan at any time. When upgrading, you'll be 
+                    prorated for the remainder of your billing cycle. Downgrades take effect at the next billing cycle.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <i class="fas fa-question-circle"></i>
+                    What AI models are available?
+                </div>
+                <div class="faq-answer">
+                    We offer multiple AI models including Suno (v3, v3.5, v4, v4.5), Udio, DiffRhythm, 
+                    Ace Step, and Mmaudio. Premium plans get access to the latest and most advanced models first.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <i class="fas fa-question-circle"></i>
+                    Do I own the music I create?
+                </div>
+                <div class="faq-answer">
+                    Yes! With Pro and Unlimited plans, you own full commercial rights to all music you generate. 
+                    Free and Starter plans include personal use rights only.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <i class="fas fa-question-circle"></i>
+                    Is there a free trial?
+                </div>
+                <div class="faq-answer">
+                    We offer a generous free plan with 10 credits per month so you can try the platform. 
+                    Additionally, new users get 50 bonus credits on signup to explore all features.
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="/js/suno-core.js"></script>
+    
+    <script>
+        // Toggle billing period
+        function toggleBilling(period) {
+            const buttons = document.querySelectorAll('.toggle-option');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            if (period === 'yearly') {
+                buttons[1].classList.add('active');
+                document.getElementById('pricingGrid').classList.add('yearly-active');
+            } else {
+                buttons[0].classList.add('active');
+                document.getElementById('pricingGrid').classList.remove('yearly-active');
+            }
+        }
+
+        // Select plan
+        function selectPlan(plan) {
+            // Store selected plan
+            localStorage.setItem('selectedPlan', plan);
+            
+            // Redirect to auth/payment
+            if (plan !== 'free') {
+                window.location.href = `/auth?plan=${plan}&redirect=/payment`;
+            }
+        }
+
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+    </script>
+
+    <!-- Firebase Integration -->
+    <script type="module">
+        import { authManager } from '/js/firebase-config-safe.js';
+        
+        authManager.onAuthStateChange((user) => {
+            if (user) {
+                // Update current plan display
+                const currentPlan = user.subscription || 'free';
+                const planButtons = document.querySelectorAll('.plan-cta');
+                
+                planButtons.forEach((btn, index) => {
+                    const plans = ['free', 'starter', 'pro', 'unlimited'];
+                    if (plans[index] === currentPlan) {
+                        btn.textContent = 'Current Plan';
+                        btn.classList.remove('btn-primary');
+                        btn.classList.add('btn-secondary');
+                    }
+                });
+                
+                // Update credits display
+                const subscriptionCredits = {
+                    'free': 10,
+                    'starter': 500,
+                    'pro': 2000,
+                    'unlimited': 10000
+                };
+                
+                const credits = subscriptionCredits[currentPlan];
+                document.getElementById('userCredits').textContent = credits;
+            }
+        });
+    </script>
+</body>
+</html>

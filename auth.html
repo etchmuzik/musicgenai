@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - MusicGen AI</title>
+    <meta name="description" content="Sign in or create an account to start creating AI music">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Suno Design System -->
+    <link rel="stylesheet" href="/css/suno-design.css">
+    
+    <style>
+        /* Auth specific styles */
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: var(--bg-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated background */
+        .auth-background {
+            position: absolute;
+            inset: 0;
+            background: var(--bg-primary);
+            z-index: 0;
+        }
+
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.3;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .gradient-orb:nth-child(1) {
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            top: -200px;
+            left: -200px;
+            animation-duration: 25s;
+        }
+
+        .gradient-orb:nth-child(2) {
+            width: 600px;
+            height: 600px;
+            background: var(--accent);
+            bottom: -300px;
+            right: -300px;
+            animation-duration: 30s;
+            animation-delay: -5s;
+        }
+
+        .gradient-orb:nth-child(3) {
+            width: 300px;
+            height: 300px;
+            background: var(--secondary);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-duration: 20s;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        .auth-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 480px;
+            padding: 2rem;
+        }
+
+        .auth-card {
+            background: rgba(var(--bg-card-rgb), 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 1.5rem;
+            padding: 3rem 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-logo a {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            color: var(--text-secondary);
+        }
+
+        .auth-form {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .auth-divider {
+            text-align: center;
+            position: relative;
+            margin: 2rem 0;
+        }
+
+        .auth-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .auth-divider span {
+            background: var(--bg-card);
+            padding: 0 1rem;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .social-buttons {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .social-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 0.875rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .social-button:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+        }
+
+        .social-button img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .form-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: var(--bg-secondary);
+            border-radius: 0.5rem;
+            padding: 0.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 0.75rem;
+            background: transparent;
+            border: none;
+            border-radius: 0.375rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .auth-tab.active {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .password-field {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .password-toggle:hover {
+            color: var(--text-primary);
+        }
+
+        .form-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            color: var(--danger);
+            font-size: 0.875rem;
+            display: none;
+        }
+
+        .form-error.active {
+            display: block;
+        }
+
+        .form-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            color: var(--success);
+            font-size: 0.875rem;
+            display: none;
+        }
+
+        .form-success.active {
+            display: block;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading .loading-spinner {
+            display: inline-block;
+        }
+
+        .loading .btn-text {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .auth-card {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="auth-background">
+        <div class="gradient-orb"></div>
+        <div class="gradient-orb"></div>
+        <div class="gradient-orb"></div>
+    </div>
+
+    <!-- Auth Container -->
+    <div class="auth-container">
+        <div class="auth-card">
+            <!-- Logo -->
+            <div class="auth-logo">
+                <a href="/">MusicGen AI</a>
+            </div>
+
+            <!-- Header -->
+            <div class="auth-header">
+                <h1 class="auth-title">Welcome Back</h1>
+                <p class="auth-subtitle">Sign in to continue creating amazing music</p>
+            </div>
+
+            <!-- Auth Tabs -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchTab('signin')">Sign In</button>
+                <button class="auth-tab" onclick="switchTab('signup')">Sign Up</button>
+            </div>
+
+            <!-- Error/Success Messages -->
+            <div class="form-error" id="errorMessage"></div>
+            <div class="form-success" id="successMessage"></div>
+
+            <!-- Sign In Form -->
+            <form class="auth-form" id="signinForm">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input 
+                        type="email" 
+                        class="form-input" 
+                        id="signinEmail"
+                        placeholder="Enter your email"
+                        required
+                    />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="password-field">
+                        <input 
+                            type="password" 
+                            class="form-input" 
+                            id="signinPassword"
+                            placeholder="Enter your password"
+                            required
+                        />
+                        <button type="button" class="password-toggle" onclick="togglePassword('signinPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <label class="form-checkbox">
+                        <input type="checkbox" id="rememberMe" />
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" onclick="showForgotPassword()" style="color: var(--primary); text-decoration: none; font-size: 0.875rem;">
+                        Forgot password?
+                    </a>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                    <span class="btn-text">Sign In</span>
+                    <span class="loading-spinner"></span>
+                </button>
+            </form>
+
+            <!-- Sign Up Form -->
+            <form class="auth-form" id="signupForm" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input 
+                        type="text" 
+                        class="form-input" 
+                        id="signupName"
+                        placeholder="Enter your full name"
+                        required
+                    />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input 
+                        type="email" 
+                        class="form-input" 
+                        id="signupEmail"
+                        placeholder="Enter your email"
+                        required
+                    />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="password-field">
+                        <input 
+                            type="password" 
+                            class="form-input" 
+                            id="signupPassword"
+                            placeholder="Create a password"
+                            minlength="8"
+                            required
+                        />
+                        <button type="button" class="password-toggle" onclick="togglePassword('signupPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <p class="form-hint">Must be at least 8 characters</p>
+                </div>
+
+                <label class="form-checkbox">
+                    <input type="checkbox" id="agreeTerms" required />
+                    <span>I agree to the <a href="/terms" target="_blank">Terms of Service</a> and <a href="/privacy" target="_blank">Privacy Policy</a></span>
+                </label>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                    <span class="btn-text">Create Account</span>
+                    <span class="loading-spinner"></span>
+                </button>
+            </form>
+
+            <!-- Social Login -->
+            <div class="auth-divider">
+                <span>Or continue with</span>
+            </div>
+
+            <div class="social-buttons">
+                <button class="social-button" onclick="signInWithGoogle()">
+                    <i class="fab fa-google"></i>
+                    Continue with Google
+                </button>
+                <button class="social-button" onclick="signInWithGitHub()">
+                    <i class="fab fa-github"></i>
+                    Continue with GitHub
+                </button>
+            </div>
+
+            <!-- Footer -->
+            <div class="form-footer">
+                <p id="signinFooter">
+                    Don't have an account? <a href="#" onclick="switchTab('signup')">Sign up</a>
+                </p>
+                <p id="signupFooter" style="display: none;">
+                    Already have an account? <a href="#" onclick="switchTab('signin')">Sign in</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Get redirect URL from query params
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectUrl = urlParams.get('redirect') || '/';
+        const selectedPlan = urlParams.get('plan');
+
+        // Switch between sign in and sign up
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.auth-tab');
+            const signinForm = document.getElementById('signinForm');
+            const signupForm = document.getElementById('signupForm');
+            const signinFooter = document.getElementById('signinFooter');
+            const signupFooter = document.getElementById('signupFooter');
+            const title = document.querySelector('.auth-title');
+            const subtitle = document.querySelector('.auth-subtitle');
+            
+            if (tab === 'signin') {
+                tabs[0].classList.add('active');
+                tabs[1].classList.remove('active');
+                signinForm.style.display = 'grid';
+                signupForm.style.display = 'none';
+                signinFooter.style.display = 'block';
+                signupFooter.style.display = 'none';
+                title.textContent = 'Welcome Back';
+                subtitle.textContent = 'Sign in to continue creating amazing music';
+            } else {
+                tabs[1].classList.add('active');
+                tabs[0].classList.remove('active');
+                signupForm.style.display = 'grid';
+                signinForm.style.display = 'none';
+                signupFooter.style.display = 'block';
+                signinFooter.style.display = 'none';
+                title.textContent = 'Get Started';
+                subtitle.textContent = 'Create an account to start making AI music';
+            }
+            
+            // Clear messages
+            clearMessages();
+        }
+
+        // Toggle password visibility
+        function togglePassword(fieldId) {
+            const field = document.getElementById(fieldId);
+            const button = field.nextElementSibling;
+            const icon = button.querySelector('i');
+            
+            if (field.type === 'password') {
+                field.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                field.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.classList.add('active');
+            setTimeout(() => errorEl.classList.remove('active'), 5000);
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            const successEl = document.getElementById('successMessage');
+            successEl.textContent = message;
+            successEl.classList.add('active');
+        }
+
+        // Clear messages
+        function clearMessages() {
+            document.getElementById('errorMessage').classList.remove('active');
+            document.getElementById('successMessage').classList.remove('active');
+        }
+
+        // Sign in form handler
+        document.getElementById('signinForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearMessages();
+            
+            const button = e.target.querySelector('button[type="submit"]');
+            button.classList.add('loading');
+            
+            const email = document.getElementById('signinEmail').value;
+            const password = document.getElementById('signinPassword').value;
+            const remember = document.getElementById('rememberMe').checked;
+            
+            try {
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Save to localStorage for demo
+                const user = {
+                    email: email,
+                    name: email.split('@')[0],
+                    subscription: selectedPlan || 'free'
+                };
+                
+                if (remember) {
+                    localStorage.setItem('user', JSON.stringify(user));
+                } else {
+                    sessionStorage.setItem('user', JSON.stringify(user));
+                }
+                
+                showSuccess('Sign in successful! Redirecting...');
+                
+                setTimeout(() => {
+                    window.location.href = redirectUrl;
+                }, 1000);
+                
+            } catch (error) {
+                showError('Invalid email or password. Please try again.');
+                button.classList.remove('loading');
+            }
+        });
+
+        // Sign up form handler
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearMessages();
+            
+            const button = e.target.querySelector('button[type="submit"]');
+            button.classList.add('loading');
+            
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const agreeTerms = document.getElementById('agreeTerms').checked;
+            
+            if (!agreeTerms) {
+                showError('Please agree to the terms and conditions');
+                button.classList.remove('loading');
+                return;
+            }
+            
+            try {
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Save to localStorage for demo
+                const user = {
+                    email: email,
+                    name: name,
+                    subscription: 'free',
+                    songsCreated: 0,
+                    totalPlays: 0,
+                    totalLikes: 0
+                };
+                
+                localStorage.setItem('user', JSON.stringify(user));
+                localStorage.setItem('userProfile', JSON.stringify(user));
+                
+                showSuccess('Account created successfully! Redirecting...');
+                
+                setTimeout(() => {
+                    window.location.href = redirectUrl;
+                }, 1000);
+                
+            } catch (error) {
+                showError('Email already exists. Please try another.');
+                button.classList.remove('loading');
+            }
+        });
+
+        // Social login handlers
+        function signInWithGoogle() {
+            showError('Google sign-in coming soon!');
+        }
+
+        function signInWithGitHub() {
+            showError('GitHub sign-in coming soon!');
+        }
+
+        function showForgotPassword() {
+            showError('Password reset functionality coming soon!');
+        }
+
+        // Check if already logged in
+        const existingUser = localStorage.getItem('user') || sessionStorage.getItem('user');
+        if (existingUser) {
+            window.location.href = redirectUrl;
+        }
+    </script>
+
+    <!-- Firebase Integration -->
+    <script type="module">
+        import { authManager } from '/js/firebase-config-safe.js';
+        
+        // Override form handlers with Firebase auth
+        window.handleFirebaseSignIn = async (email, password) => {
+            try {
+                const user = await authManager.signIn(email, password);
+                if (user) {
+                    window.location.href = redirectUrl;
+                }
+            } catch (error) {
+                showError(error.message);
+            }
+        };
+        
+        window.handleFirebaseSignUp = async (email, password, displayName) => {
+            try {
+                const user = await authManager.signUp(email, password, { displayName });
+                if (user) {
+                    window.location.href = redirectUrl;
+                }
+            } catch (error) {
+                showError(error.message);
+            }
+        };
+    </script>
+</body>
+</html>

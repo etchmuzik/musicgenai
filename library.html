@@ -161,7 +161,7 @@
             } else {
                 songsGrid.innerHTML = songs.map(song => `
                     <div class="song-card" data-song-id="${song.id}" data-audio-url="${song.audio_url || ''}">
-                        <div class="song-cover" style="background: ${song.gradient};">
+                        <div class="song-cover" style="${song.image_url ? `background-image: url(${song.image_url}); background-size: cover; background-position: center;` : `background: ${song.gradient};`}">
                             <div class="play-overlay">
                                 <button class="play-button" onclick="playLibrarySong('${song.id}')">
                                     <i class="fas fa-play"></i>

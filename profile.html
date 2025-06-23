@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - MusicGen AI</title>
+    <meta name="description" content="Manage your account settings and preferences">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Suno Design System -->
+    <link rel="stylesheet" href="/css/suno-design.css">
+    
+    <style>
+        /* Profile specific styles */
+        .profile-header {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-upload {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 0.5rem;
+            text-align: center;
+            font-size: 0.875rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .profile-avatar:hover .avatar-upload {
+            opacity: 1;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-email {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .profile-stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .settings-section {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .settings-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .settings-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .setting-item:last-child {
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-label {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .setting-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--primary);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.2s ease;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(24px);
+        }
+
+        .subscription-card {
+            background: var(--primary-gradient);
+            border-radius: 1rem;
+            padding: 2rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .subscription-info {
+            flex: 1;
+        }
+
+        .subscription-plan {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .subscription-details {
+            opacity: 0.9;
+        }
+
+        .danger-zone {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .danger-zone .settings-title {
+            color: var(--danger);
+        }
+
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-stats {
+                justify-content: center;
+            }
+
+            .setting-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .subscription-card {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <a href="/" class="logo">MusicGen AI</a>
+        
+        <nav>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-home"></i></span>
+                        Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/create" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-music"></i></span>
+                        Create
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/library" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-folder"></i></span>
+                        Library
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/remix" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-sync"></i></span>
+                        Remix
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/lyrics" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-pen"></i></span>
+                        Lyrics
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/explore" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-compass"></i></span>
+                        Explore
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/profile" class="nav-link active">
+                        <span class="nav-icon"><i class="fas fa-user"></i></span>
+                        Profile
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- Credits Display -->
+        <div class="credits-display">
+            <div class="credits-header">
+                <span class="credits-title">Credits</span>
+                <i class="fas fa-coins"></i>
+            </div>
+            <div class="credits-value" id="userCredits">200</div>
+            <div class="credits-subtitle">Monthly credits remaining</div>
+            <a href="/pricing" class="btn btn-secondary" style="width: 100%; margin-top: 1rem; justify-content: center;">
+                Upgrade Plan
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="header-title">
+                My <span class="gradient-text">Profile</span>
+            </h1>
+            <p class="header-subtitle">
+                Manage your account settings and preferences
+            </p>
+        </header>
+
+        <!-- Profile Header -->
+        <section class="profile-header">
+            <div class="profile-avatar" id="profileAvatar">
+                <span id="avatarInitials">JD</span>
+                <div class="avatar-upload" onclick="uploadAvatar()">
+                    <i class="fas fa-camera"></i> Change
+                </div>
+            </div>
+            
+            <div class="profile-info">
+                <h2 class="profile-name" id="profileName">John Doe</h2>
+                <p class="profile-email" id="profileEmail">john.doe@example.com</p>
+                
+                <div class="profile-stats">
+                    <div class="profile-stat">
+                        <div class="stat-value" id="songsCreated">127</div>
+                        <div class="stat-label">Songs Created</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="stat-value" id="totalPlays">45.2K</div>
+                        <div class="stat-label">Total Plays</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="stat-value" id="totalLikes">1.8K</div>
+                        <div class="stat-label">Total Likes</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Subscription Status -->
+        <section class="subscription-card">
+            <div class="subscription-info">
+                <h3 class="subscription-plan" id="subscriptionPlan">Pro Plan</h3>
+                <p class="subscription-details">
+                    <span id="creditsUsed">1,234</span> / <span id="creditsTotal">2,000</span> credits used this month
+                    <br>
+                    Renews on <span id="renewalDate">Jan 15, 2025</span>
+                </p>
+            </div>
+            <a href="/pricing" class="btn btn-secondary">
+                Manage Subscription
+            </a>
+        </section>
+
+        <!-- Account Settings -->
+        <section class="settings-section">
+            <h3 class="settings-title">Account Settings</h3>
+            
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Display Name</div>
+                        <div class="setting-description">This is how your name appears to others</div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="editDisplayName()">
+                        Edit
+                    </button>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Email Address</div>
+                        <div class="setting-description" id="emailDisplay">john.doe@example.com</div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="editEmail()">
+                        Change
+                    </button>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Password</div>
+                        <div class="setting-description">Last changed 30 days ago</div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="changePassword()">
+                        Update
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Preferences -->
+        <section class="settings-section">
+            <h3 class="settings-title">Preferences</h3>
+            
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Email Notifications</div>
+                        <div class="setting-description">Receive updates about new features and your creations</div>
+                    </div>
+                    <div class="toggle-switch active" id="emailNotifications" onclick="toggleSetting('emailNotifications')">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Auto-save to Library</div>
+                        <div class="setting-description">Automatically save all generated tracks to your library</div>
+                    </div>
+                    <div class="toggle-switch active" id="autoSave" onclick="toggleSetting('autoSave')">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Public Profile</div>
+                        <div class="setting-description">Allow others to see your profile and creations</div>
+                    </div>
+                    <div class="toggle-switch" id="publicProfile" onclick="toggleSetting('publicProfile')">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">High Quality Downloads</div>
+                        <div class="setting-description">Download tracks in highest available quality (uses more credits)</div>
+                    </div>
+                    <div class="toggle-switch" id="hqDownloads" onclick="toggleSetting('hqDownloads')">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- API Access -->
+        <section class="settings-section">
+            <h3 class="settings-title">API Access</h3>
+            
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">API Key</div>
+                        <div class="setting-description">Use this key to access MusicGen AI programmatically</div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="viewApiKey()">
+                        View Key
+                    </button>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Webhooks</div>
+                        <div class="setting-description">Configure webhooks for generation events</div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="configureWebhooks()">
+                        Configure
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Danger Zone -->
+        <section class="settings-section danger-zone">
+            <h3 class="settings-title">Danger Zone</h3>
+            
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Export All Data</div>
+                        <div class="setting-description">Download all your tracks, settings, and account data</div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="exportData()">
+                        Export
+                    </button>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Delete Account</div>
+                        <div class="setting-description">Permanently delete your account and all associated data</div>
+                    </div>
+                    <button class="btn btn-danger" onclick="deleteAccount()">
+                        Delete Account
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="/js/suno-core.js"></script>
+    
+    <script>
+        // Load user data
+        function loadUserProfile() {
+            // In production, this would load from Firebase/backend
+            const savedProfile = localStorage.getItem('userProfile');
+            if (savedProfile) {
+                const profile = JSON.parse(savedProfile);
+                updateProfileDisplay(profile);
+            } else {
+                // Default profile
+                const defaultProfile = {
+                    name: 'Music Creator',
+                    email: 'user@example.com',
+                    subscription: 'free',
+                    songsCreated: 0,
+                    totalPlays: 0,
+                    totalLikes: 0,
+                    settings: {
+                        emailNotifications: true,
+                        autoSave: true,
+                        publicProfile: false,
+                        hqDownloads: false
+                    }
+                };
+                updateProfileDisplay(defaultProfile);
+            }
+        }
+
+        // Update profile display
+        function updateProfileDisplay(profile) {
+            // Update name and email
+            document.getElementById('profileName').textContent = profile.name;
+            document.getElementById('profileEmail').textContent = profile.email;
+            document.getElementById('emailDisplay').textContent = profile.email;
+            
+            // Update initials
+            const initials = profile.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('avatarInitials').textContent = initials;
+            
+            // Update stats
+            document.getElementById('songsCreated').textContent = formatNumber(profile.songsCreated);
+            document.getElementById('totalPlays').textContent = formatNumber(profile.totalPlays);
+            document.getElementById('totalLikes').textContent = formatNumber(profile.totalLikes);
+            
+            // Update subscription
+            updateSubscriptionDisplay(profile.subscription);
+            
+            // Update settings toggles
+            if (profile.settings) {
+                Object.keys(profile.settings).forEach(key => {
+                    const toggle = document.getElementById(key);
+                    if (toggle) {
+                        if (profile.settings[key]) {
+                            toggle.classList.add('active');
+                        } else {
+                            toggle.classList.remove('active');
+                        }
+                    }
+                });
+            }
+        }
+
+        // Update subscription display
+        function updateSubscriptionDisplay(subscription) {
+            const plans = {
+                free: { name: 'Free Plan', credits: 10 },
+                starter: { name: 'Starter Plan', credits: 500 },
+                pro: { name: 'Pro Plan', credits: 2000 },
+                unlimited: { name: 'Unlimited Plan', credits: 10000 }
+            };
+            
+            const plan = plans[subscription] || plans.free;
+            document.getElementById('subscriptionPlan').textContent = plan.name;
+            document.getElementById('creditsTotal').textContent = formatNumber(plan.credits);
+            document.getElementById('userCredits').textContent = plan.credits;
+            
+            // Mock used credits
+            const usedCredits = Math.floor(Math.random() * plan.credits * 0.7);
+            document.getElementById('creditsUsed').textContent = formatNumber(usedCredits);
+            
+            // Mock renewal date
+            const renewalDate = new Date();
+            renewalDate.setMonth(renewalDate.getMonth() + 1);
+            document.getElementById('renewalDate').textContent = renewalDate.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric' 
+            });
+        }
+
+        // Format numbers
+        function formatNumber(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString();
+        }
+
+        // Toggle settings
+        function toggleSetting(settingId) {
+            const toggle = document.getElementById(settingId);
+            toggle.classList.toggle('active');
+            
+            // Save to localStorage
+            const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+            if (!profile.settings) profile.settings = {};
+            profile.settings[settingId] = toggle.classList.contains('active');
+            localStorage.setItem('userProfile', JSON.stringify(profile));
+        }
+
+        // Edit functions
+        function editDisplayName() {
+            const newName = prompt('Enter your new display name:');
+            if (newName && newName.trim()) {
+                const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                profile.name = newName.trim();
+                localStorage.setItem('userProfile', JSON.stringify(profile));
+                updateProfileDisplay(profile);
+            }
+        }
+
+        function editEmail() {
+            const newEmail = prompt('Enter your new email address:');
+            if (newEmail && newEmail.includes('@')) {
+                const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                profile.email = newEmail.trim();
+                localStorage.setItem('userProfile', JSON.stringify(profile));
+                updateProfileDisplay(profile);
+            }
+        }
+
+        function changePassword() {
+            alert('Password change functionality would be implemented here');
+        }
+
+        function uploadAvatar() {
+            alert('Avatar upload functionality would be implemented here');
+        }
+
+        function viewApiKey() {
+            alert('Your API Key: piapi_' + Math.random().toString(36).substring(2, 15));
+        }
+
+        function configureWebhooks() {
+            alert('Webhook configuration would be implemented here');
+        }
+
+        function exportData() {
+            alert('Data export functionality would be implemented here');
+        }
+
+        function deleteAccount() {
+            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                if (confirm('This will permanently delete all your data. Are you absolutely sure?')) {
+                    alert('Account deletion would be implemented here');
+                }
+            }
+        }
+
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Initialize
+        loadUserProfile();
+    </script>
+
+    <!-- Firebase Integration -->
+    <script type="module">
+        import { authManager } from '/js/firebase-config-safe.js';
+        
+        authManager.onAuthStateChange((user) => {
+            if (user) {
+                // Update profile with Firebase user data
+                const profile = {
+                    name: user.displayName || 'Music Creator',
+                    email: user.email,
+                    subscription: user.subscription || 'free',
+                    songsCreated: user.songsCreated || 0,
+                    totalPlays: user.totalPlays || 0,
+                    totalLikes: user.totalLikes || 0,
+                    settings: user.settings || {
+                        emailNotifications: true,
+                        autoSave: true,
+                        publicProfile: false,
+                        hqDownloads: false
+                    }
+                };
+                updateProfileDisplay(profile);
+                localStorage.setItem('userProfile', JSON.stringify(profile));
+            } else {
+                // Redirect to auth if not logged in
+                // window.location.href = '/auth?redirect=/profile';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -11,9 +11,9 @@ class PiAPIMusic {
             // Suno Models - Check PiAPI docs for exact model names
             suno: 'suno',  // Try without version
             suno3: 'suno-v3',
-            suno35: 'suno-3.5',
+            suno35: 'suno-v3.5',  // Fixed version format
             suno4: 'suno-v4',
-            suno45: 'suno-4.5',
+            suno45: 'suno-v4.5',  // Added v4.5
             
             // Udio Model
             udio: 'udio',
@@ -37,8 +37,8 @@ class PiAPIMusic {
         };
     }
 
-    // ========== SUNO API ==========
-    // Create music with Suno (EXACT as per PiAPI docs)
+    // ========== MUSIC API (Following Swift Implementation) ==========
+    // Create music using the exact format from working Swift code
     async createMusic(params) {
         const {
             prompt,
@@ -46,26 +46,141 @@ class PiAPIMusic {
             song_style = '',
             custom_lyrics = '',
             title = '',
-            model = 'suno'
+            model = 'music-u'  // Use music-u model like Swift
         } = params;
+
+        // Build the prompt exactly like Swift does
+        let gptDescriptionPrompt = prompt;
+        if (song_style) {
+            gptDescriptionPrompt += `. Genre: ${song_style}`;
+        }
+
+        // Determine lyrics type exactly like Swift
+        let lyricsType;
+        if (make_instrumental) {
+            lyricsType = 'instrumental';
+        } else if (custom_lyrics && custom_lyrics.trim() !== '') {
+            lyricsType = 'user';
+        } else {
+            lyricsType = 'generate';
+        }
 
         const payload = {
             model: model,
-            task_type: 'generate_music',
+            task_type: 'generate_music',  // Use exact task type from Swift
             input: {
-                gpt_description_prompt: prompt,
-                make_instrumental: make_instrumental,
-                song_style: song_style,
-                custom_lyrics: custom_lyrics,
-                title: title
+                gpt_description_prompt: gptDescriptionPrompt,  // Use exact field name
+                negative_tags: '',
+                lyrics_type: lyricsType,  // Use underscore
+                seed: -1,
+                lyrics: custom_lyrics || undefined  // Only include if provided
+            },
+            config: {
+                service_mode: 'public',  // Use underscore
+                webhook_config: {
+                    endpoint: '',
+                    secret: ''
+                }
             }
         };
 
-        return this.createTask(payload);
+        // Try the new music endpoint if the error suggests it
+        return this.createTaskWithMusicEndpoint(payload);
+    }
+
+    // Try using a potential new music endpoint
+    async createTaskWithMusicEndpoint(payload) {
+        console.log('PiAPI Music Request:', JSON.stringify(payload, null, 2));
+        
+        try {
+            // First try the standard endpoint
+            const response = await fetch(`${this.baseURL}/api/v1/task`, {
+                method: 'POST',
+                headers: {
+                    'x-api-key': this.apiKey,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const responseText = await response.text();
+            console.log('PiAPI Response:', responseText);
+
+            // If we get the "use new music endpoint" error, try the music endpoint
+            if (responseText.includes('use the new \'music\' endpoint') || responseText.includes('music endpoint')) {
+                console.log('Trying /api/v1/music endpoint...');
+                
+                // Try the music-specific endpoint
+                const musicResponse = await fetch(`${this.baseURL}/api/v1/music`, {
+                    method: 'POST',
+                    headers: {
+                        'x-api-key': this.apiKey,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const musicResponseText = await musicResponse.text();
+                console.log('Music Endpoint Response:', musicResponseText);
+
+                if (!musicResponse.ok) {
+                    throw new Error(musicResponseText || `API Error: ${musicResponse.status}`);
+                }
+
+                const musicResult = JSON.parse(musicResponseText);
+                
+                // Check if we got a task_id in the response
+                if (musicResult.data && musicResult.data.task_id) {
+                    return {
+                        success: true,
+                        taskId: musicResult.data.task_id,
+                        status: 'processing'
+                    };
+                } else if (musicResult.task_id) {
+                    return {
+                        success: true,
+                        taskId: musicResult.task_id,
+                        status: 'processing'
+                    };
+                } else {
+                    throw new Error('No task ID in response');
+                }
+            }
+
+            // If no special error, process normal response
+            if (!response.ok) {
+                throw new Error(responseText || `API Error: ${response.status}`);
+            }
+
+            const result = JSON.parse(responseText);
+            
+            // Check if we got a task_id in the response
+            if (result.data && result.data.task_id) {
+                return {
+                    success: true,
+                    taskId: result.data.task_id,
+                    status: 'processing'
+                };
+            } else if (result.task_id) {
+                return {
+                    success: true,
+                    taskId: result.task_id,
+                    status: 'processing'
+                };
+            } else {
+                throw new Error('No task ID in response');
+            }
+        } catch (error) {
+            console.error('PiAPI Error:', error);
+            return {
+                success: false,
+                error: error.message
+            };
+        }
     }
 
     // ========== UDIO API ==========
-    // Generate song with Udio
+    // Generate song with Udio using exact Swift format
     async generateSongUdio(params) {
         const {
             prompt,
@@ -74,14 +189,25 @@ class PiAPIMusic {
             duration = 60
         } = params;
 
+        // Build prompt like Swift
+        const gptDescriptionPrompt = `${prompt}. Genre: ${style || 'Electronic'}, Mood: Energetic`;
+
         const payload = {
-            model: this.models.udio,
-            task_type: 'generate_song',
+            model: 'music-u',
+            task_type: 'generate_music',
             input: {
-                prompt: prompt,
-                lyrics: lyrics,
-                style: style,
-                duration: duration
+                gpt_description_prompt: gptDescriptionPrompt,
+                negative_tags: '',
+                lyrics_type: lyrics ? 'user' : 'instrumental',
+                seed: -1,
+                lyrics: lyrics || undefined
+            },
+            config: {
+                service_mode: 'public',
+                webhook_config: {
+                    endpoint: '',
+                    secret: ''
+                }
             }
         };
 
@@ -93,16 +219,29 @@ class PiAPIMusic {
         const {
             audio_url,
             prompt = '',
-            continuation_seconds = 30
+            continuation_seconds = 30,
+            extend_from = 'end' // 'end', 'beginning', or specific timestamp
         } = params;
 
+        // For Udio extend, we need to specify the continuation point
         const payload = {
-            model: this.models.udio,
-            task_type: 'song_extend',
+            model: 'music-u',
+            task_type: 'generate_music_custom', // Use custom task for extensions
             input: {
-                audio_url: audio_url,
-                prompt: prompt,
-                continuation_seconds: continuation_seconds
+                gpt_description_prompt: prompt || 'Continue and extend this music',
+                negative_tags: '',
+                lyrics_type: 'instrumental',
+                seed: -1,
+                // Extension specific parameters
+                continue_clip_id: audio_url, // Reference to original
+                continue_at: extend_from === 'beginning' ? 0 : -1 // -1 for end
+            },
+            config: {
+                service_mode: 'public',
+                webhook_config: {
+                    endpoint: '',
+                    secret: ''
+                }
             }
         };
 
@@ -290,7 +429,7 @@ class PiAPIMusic {
             const response = await fetch(`${this.baseURL}/api/v1/task`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${this.apiKey}`,
+                    'x-api-key': this.apiKey,  // Use x-api-key like Swift
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(payload)
@@ -312,11 +451,22 @@ class PiAPIMusic {
 
             const result = JSON.parse(responseText);
             
-            return {
-                success: true,
-                taskId: result.task_id,
-                status: 'processing'
-            };
+            // Check if we got a task_id in the response
+            if (result.data && result.data.task_id) {
+                return {
+                    success: true,
+                    taskId: result.data.task_id,
+                    status: 'processing'
+                };
+            } else if (result.task_id) {
+                return {
+                    success: true,
+                    taskId: result.task_id,
+                    status: 'processing'
+                };
+            } else {
+                throw new Error('No task ID in response');
+            }
         } catch (error) {
             console.error('PiAPI Error:', error);
             return {
@@ -332,7 +482,7 @@ class PiAPIMusic {
             const response = await fetch(`${this.baseURL}/api/v1/task/${taskId}`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${this.apiKey}`
+                    'x-api-key': this.apiKey  // Use x-api-key like Swift
                 }
             });
 
@@ -345,6 +495,10 @@ class PiAPIMusic {
 
             const result = JSON.parse(responseText);
             
+            // Handle nested data structure like Swift
+            if (result.data) {
+                return result.data;
+            }
             return result;
         } catch (error) {
             console.error('PiAPI Get Task Error:', error);
@@ -355,21 +509,37 @@ class PiAPIMusic {
         }
     }
 
-    // Poll for completion
-    async waitForCompletion(taskId, maxAttempts = 120, interval = 2000) {
+    // Poll for completion - matching Swift logic exactly
+    async waitForCompletion(taskId, maxAttempts = 60, interval = 3000) {
+        console.log(`🔄 Starting polling for task ${taskId}`);
+        console.log(`   Max attempts: ${maxAttempts}`);
+        console.log(`   Polling interval: ${interval}ms`);
+        
         for (let i = 0; i < maxAttempts; i++) {
+            await new Promise(resolve => setTimeout(resolve, interval));
+            console.log(`🔄 Polling attempt ${i + 1}/${maxAttempts}...`);
+            
             const result = await this.getTask(taskId);
             
-            if (result.status === 'completed') {
-                return result;
-            } else if (result.status === 'failed' || result.status === 'error') {
+            console.log(`   Status: ${result.status}`);
+            console.log(`   Output songs count: ${result.output?.songs?.length || 0}`);
+            
+            // Check for completion - matching Swift's status checks
+            const status = result.status.toLowerCase();
+            if (['completed', 'success', 'finished'].includes(status)) {
+                if (result.output?.songs && result.output.songs.length > 0) {
+                    console.log('✅ Generation completed!');
+                    return result;
+                } else {
+                    console.log('⚠️ Completed but no songs in output');
+                }
+            } else if (['failed', 'error'].includes(status)) {
+                console.log('❌ Generation failed according to API');
                 throw new Error(result.error || result.message || 'Task failed');
             }
-            
-            await new Promise(resolve => setTimeout(resolve, interval));
         }
         
-        throw new Error('Task timeout');
+        throw new Error('Task timeout after ' + maxAttempts + ' attempts');
     }
 
     // Cancel task
@@ -378,7 +548,7 @@ class PiAPIMusic {
             const response = await fetch(`${this.baseURL}/api/v1/task/${taskId}/cancel`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${this.apiKey}`
+                    'x-api-key': this.apiKey  // Use x-api-key like Swift
                 }
             });
 
@@ -392,7 +562,7 @@ class PiAPIMusic {
     // Get available models
     getAvailableModels() {
         return {
-            suno: ['suno', 'suno-v3', 'suno-3.5', 'suno-v4', 'suno-4.5'],
+            suno: ['suno', 'suno-v3', 'suno-v3.5', 'suno-v4', 'suno-v4.5'],
             udio: ['udio'],
             diffrhythm: ['Qubico/diffrhythm'],
             aceStep: ['ace-step'],
@@ -425,11 +595,22 @@ class PiAPIMusic {
         return 'unknown';
     }
 
-    // Extract audio URL from result
+    // Extract audio URL from result - matching Swift's song extraction
     extractAudioUrl(result) {
         if (!result.output) return null;
         
-        // Single audio URL
+        // Check for songs array first (like Swift)
+        if (result.output.songs && result.output.songs.length > 0) {
+            const firstSong = result.output.songs[0];
+            // Try song_path first (PiAPI's actual field), then fallback to audio_url
+            const url = firstSong.song_path || firstSong.audio_url;
+            if (url) {
+                console.log(`✅ Found audio URL: ${url}`);
+                return url;
+            }
+        }
+        
+        // Fallback to other possible fields
         if (result.output.audio_url) return result.output.audio_url;
         if (result.output.url) return result.output.url;
         

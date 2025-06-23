@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remix & Extend - MusicGen AI</title>
+    <meta name="description" content="Remix, extend, and transform your tracks with AI">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Suno Design System -->
+    <link rel="stylesheet" href="/css/suno-design.css">
+    
+    <style>
+        /* Remix specific styles */
+        .remix-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .track-selector {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .track-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .track-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .track-item:hover {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .track-item.selected {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .track-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-gradient);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .track-info {
+            flex: 1;
+        }
+
+        .track-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .track-meta {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .remix-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .option-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .option-card.active {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .option-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .option-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .option-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .preview-section {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .waveform-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 0.5rem;
+            height: 100px;
+            margin: 1rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .waveform {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .waveform-bar {
+            width: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+            animation: wave 1s ease-in-out infinite;
+        }
+
+        @keyframes wave {
+            0%, 100% { height: 20%; }
+            50% { height: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <a href="/" class="logo">MusicGen AI</a>
+        
+        <nav>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-home"></i></span>
+                        Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/create" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-music"></i></span>
+                        Create
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/library" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-folder"></i></span>
+                        Library
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/remix" class="nav-link active">
+                        <span class="nav-icon"><i class="fas fa-sync"></i></span>
+                        Remix
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- Credits Display -->
+        <div class="credits-display">
+            <div class="credits-header">
+                <span class="credits-title">Credits</span>
+                <i class="fas fa-coins"></i>
+            </div>
+            <div class="credits-value" id="userCredits">200</div>
+            <div class="credits-subtitle">Monthly credits remaining</div>
+            <button class="btn btn-secondary" style="width: 100%; margin-top: 1rem; justify-content: center;" onclick="alert('Pricing page coming soon!')">
+                Upgrade Plan
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="remix-container">
+            <!-- Header -->
+            <header class="header">
+                <h1 class="header-title">
+                    Remix & <span class="gradient-text">Extend</span>
+                </h1>
+                <p class="header-subtitle">
+                    Transform your tracks with AI-powered remixing and extension
+                </p>
+            </header>
+
+            <!-- Track Selection -->
+            <section class="track-selector">
+                <h2 class="create-title">Select a Track</h2>
+                <p class="create-subtitle">Choose from your library or upload a new track</p>
+                
+                <div class="header-actions" style="margin: 1rem 0;">
+                    <button class="btn btn-secondary" onclick="showUploadDialog()">
+                        <i class="fas fa-upload"></i>
+                        Upload Track
+                    </button>
+                </div>
+
+                <div class="track-list" id="trackList">
+                    <!-- Tracks will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Remix Options -->
+            <section id="remixOptions" style="display: none;">
+                <h2 class="create-title">Choose Transformation</h2>
+                <div class="remix-options">
+                    <div class="option-card" data-action="extend">
+                        <span class="option-icon">🎵</span>
+                        <h3 class="option-title">Extend Track</h3>
+                        <p class="option-description">Add more to the beginning or end</p>
+                    </div>
+                    <div class="option-card" data-action="remix">
+                        <span class="option-icon">🔄</span>
+                        <h3 class="option-title">Remix Style</h3>
+                        <p class="option-description">Change genre and mood</p>
+                    </div>
+                    <div class="option-card" data-action="mashup">
+                        <span class="option-icon">🎛️</span>
+                        <h3 class="option-title">Mashup</h3>
+                        <p class="option-description">Combine with another track</p>
+                    </div>
+                    <div class="option-card" data-action="variation">
+                        <span class="option-icon">🎨</span>
+                        <h3 class="option-title">Create Variation</h3>
+                        <p class="option-description">Generate similar versions</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Preview Section -->
+            <section class="preview-section" id="previewSection" style="display: none;">
+                <h3 class="create-title" id="previewTitle">Original Track</h3>
+                <div class="waveform-container">
+                    <div class="waveform" id="waveform">
+                        <!-- Dynamic waveform bars -->
+                    </div>
+                </div>
+                <audio controls style="width: 100%; margin-top: 1rem;" id="previewAudio">
+                    <source src="" type="audio/mpeg">
+                </audio>
+            </section>
+
+            <!-- Transformation Settings -->
+            <section class="create-section" id="transformSettings" style="display: none;">
+                <div class="create-header">
+                    <h2 class="create-title">Transformation Settings</h2>
+                    <p class="create-subtitle">Customize how you want to transform your track</p>
+                </div>
+
+                <form class="generation-form" id="transformForm">
+                    <!-- Dynamic form content based on selected action -->
+                </form>
+            </section>
+
+            <!-- Generation Progress -->
+            <section class="create-section generation-progress" id="generationProgress">
+                <div class="progress-spinner"></div>
+                <h3 class="progress-text">Transforming your track...</h3>
+                <p class="progress-subtext">This usually takes 30-60 seconds</p>
+            </section>
+
+            <!-- Generation Result -->
+            <section class="create-section generation-result" id="generationResult">
+                <div class="result-icon">🎉</div>
+                <h3 class="progress-text">Transformation complete!</h3>
+                
+                <div class="result-player">
+                    <h4>Original</h4>
+                    <audio controls style="width: 100%; margin-bottom: 1rem;" id="originalAudio">
+                        <source src="" type="audio/mpeg">
+                    </audio>
+                    
+                    <h4>Transformed</h4>
+                    <audio controls style="width: 100%;" id="resultAudio">
+                        <source src="" type="audio/mpeg">
+                    </audio>
+                </div>
+
+                <div class="result-actions">
+                    <button class="btn btn-secondary" onclick="downloadTransformed()">
+                        <i class="fas fa-download"></i>
+                        Download
+                    </button>
+                    <button class="btn btn-accent" onclick="saveToLibrary()">
+                        <i class="fas fa-plus"></i>
+                        Save to Library
+                    </button>
+                    <button class="btn btn-primary" onclick="transformAnother()">
+                        <i class="fas fa-sync"></i>
+                        Transform Another
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Player Bar -->
+    <div class="player-bar">
+        <div class="player-track">
+            <div class="player-cover" id="playerCover"></div>
+            <div class="player-info">
+                <div class="player-title" id="playerTitle">No track playing</div>
+                <div class="player-artist" id="playerArtist">Select a track to play</div>
+            </div>
+        </div>
+        
+        <div class="player-controls">
+            <button class="player-btn" id="prevBtn">
+                <i class="fas fa-backward"></i>
+            </button>
+            <button class="player-btn play" id="playBtn">
+                <i class="fas fa-play"></i>
+            </button>
+            <button class="player-btn" id="nextBtn">
+                <i class="fas fa-forward"></i>
+            </button>
+        </div>
+        
+        <div class="player-progress">
+            <span class="player-time" id="currentTime">0:00</span>
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="player-time" id="totalTime">0:00</span>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/js/suno-core.js"></script>
+    <script src="/js/piapi-music.js"></script>
+    <script src="/js/remix-handler.js"></script>
+    
+    <script>
+        // Initialize
+        const piapi = new PiAPIMusic();
+        let selectedTrack = null;
+        let selectedAction = null;
+
+        // Load tracks from library
+        function loadTracks() {
+            const library = JSON.parse(localStorage.getItem('musicLibrary') || '[]');
+            const trackList = document.getElementById('trackList');
+            
+            if (library.length === 0) {
+                trackList.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+                        <p style="color: var(--text-secondary);">No tracks in your library yet.</p>
+                        <p style="color: var(--text-secondary);">Create some tracks first or upload a file.</p>
+                    </div>
+                `;
+            } else {
+                trackList.innerHTML = library.map((track, index) => `
+                    <div class="track-item" data-track-index="${index}">
+                        <div class="track-icon">🎵</div>
+                        <div class="track-info">
+                            <div class="track-title">${track.title}</div>
+                            <div class="track-meta">${track.genre || 'Unknown'} • ${formatDuration(track.duration)}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Track selection
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.track-item')) {
+                const trackItem = e.target.closest('.track-item');
+                const index = parseInt(trackItem.dataset.trackIndex);
+                const library = JSON.parse(localStorage.getItem('musicLibrary') || '[]');
+                
+                // Update selection UI
+                document.querySelectorAll('.track-item').forEach(item => {
+                    item.classList.remove('selected');
+                });
+                trackItem.classList.add('selected');
+                
+                // Set selected track
+                selectedTrack = library[index];
+                
+                // Show options and preview
+                document.getElementById('remixOptions').style.display = 'block';
+                showPreview(selectedTrack);
+            }
+            
+            if (e.target.closest('.option-card')) {
+                const card = e.target.closest('.option-card');
+                selectedAction = card.dataset.action;
+                
+                // Update UI
+                document.querySelectorAll('.option-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                
+                // Show settings for selected action
+                showTransformSettings(selectedAction);
+            }
+        });
+
+        function showPreview(track) {
+            const previewSection = document.getElementById('previewSection');
+            const previewAudio = document.getElementById('previewAudio');
+            
+            previewSection.style.display = 'block';
+            if (track.audio_url) {
+                previewAudio.src = track.audio_url;
+            }
+            
+            // Generate waveform visualization
+            generateWaveform();
+        }
+
+        function generateWaveform() {
+            const waveform = document.getElementById('waveform');
+            const barCount = 50;
+            let bars = '';
+            
+            for (let i = 0; i < barCount; i++) {
+                const height = Math.random() * 80 + 20;
+                const delay = i * 0.02;
+                bars += `<div class="waveform-bar" style="height: ${height}%; animation-delay: ${delay}s;"></div>`;
+            }
+            
+            waveform.innerHTML = bars;
+        }
+
+        function showTransformSettings(action) {
+            const settings = document.getElementById('transformSettings');
+            const form = document.getElementById('transformForm');
+            
+            settings.style.display = 'block';
+            
+            // Generate form based on action
+            switch(action) {
+                case 'extend':
+                    form.innerHTML = `
+                        <div class="form-group">
+                            <label class="form-label">Extend Direction</label>
+                            <select class="form-select" id="extendDirection">
+                                <option value="end">Add to End</option>
+                                <option value="beginning">Add to Beginning</option>
+                                <option value="both">Extend Both Sides</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Additional Duration</label>
+                            <select class="form-select" id="extendDuration">
+                                <option value="30">30 seconds</option>
+                                <option value="60">1 minute</option>
+                                <option value="120">2 minutes</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Style Instructions (Optional)</label>
+                            <textarea class="form-textarea" id="extendPrompt" placeholder="E.g., 'Build up to an epic climax' or 'Add a smooth outro'"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-magic"></i>
+                            Extend Track (5 Credits)
+                        </button>
+                    `;
+                    break;
+                    
+                case 'remix':
+                    form.innerHTML = `
+                        <div class="form-group">
+                            <label class="form-label">New Genre</label>
+                            <select class="form-select" id="remixGenre">
+                                <option value="Electronic">Electronic</option>
+                                <option value="Hip Hop">Hip Hop</option>
+                                <option value="Rock">Rock</option>
+                                <option value="Jazz">Jazz</option>
+                                <option value="Classical">Classical</option>
+                                <option value="Pop">Pop</option>
+                                <option value="Country">Country</option>
+                                <option value="R&B">R&B</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">New Mood</label>
+                            <select class="form-select" id="remixMood">
+                                <option value="Energetic">Energetic</option>
+                                <option value="Chill">Chill</option>
+                                <option value="Dark">Dark</option>
+                                <option value="Happy">Happy</option>
+                                <option value="Melancholic">Melancholic</option>
+                                <option value="Aggressive">Aggressive</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Remix Style</label>
+                            <textarea class="form-textarea" id="remixPrompt" placeholder="Describe how you want the remix to sound..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sync"></i>
+                            Create Remix (10 Credits)
+                        </button>
+                    `;
+                    break;
+                    
+                // Add more cases for other actions
+            }
+            
+            // Add submit handler
+            form.onsubmit = handleTransform;
+        }
+
+        async function handleTransform(e) {
+            e.preventDefault();
+            
+            if (!selectedTrack || !selectedAction) return;
+            
+            // Hide form, show progress
+            document.getElementById('transformSettings').style.display = 'none';
+            document.getElementById('generationProgress').classList.add('active');
+            
+            try {
+                let result;
+                
+                switch(selectedAction) {
+                    case 'extend':
+                        // Implement extend logic
+                        const extendDirection = document.getElementById('extendDirection').value;
+                        const extendDuration = parseInt(document.getElementById('extendDuration').value);
+                        const extendPrompt = document.getElementById('extendPrompt').value;
+                        
+                        // For now, generate a new track with extended parameters
+                        result = await piapi.createMusic({
+                            prompt: `Extend ${selectedTrack.title}: ${extendPrompt}`,
+                            make_instrumental: !selectedTrack.lyrics,
+                            song_style: selectedTrack.genre || 'Electronic',
+                            model: 'music-u'
+                        });
+                        break;
+                        
+                    case 'remix':
+                        const remixGenre = document.getElementById('remixGenre').value;
+                        const remixMood = document.getElementById('remixMood').value;
+                        const remixPrompt = document.getElementById('remixPrompt').value;
+                        
+                        result = await piapi.createMusic({
+                            prompt: `${remixGenre} ${remixMood} remix of ${selectedTrack.title}: ${remixPrompt}`,
+                            make_instrumental: !selectedTrack.lyrics,
+                            song_style: remixGenre,
+                            model: 'music-u'
+                        });
+                        break;
+                }
+                
+                if (result && result.success) {
+                    // Poll for completion
+                    const finalResult = await piapi.waitForCompletion(result.taskId);
+                    const audioUrl = piapi.extractAudioUrl(finalResult);
+                    
+                    // Show results
+                    showResults(selectedTrack, {
+                        audio_url: audioUrl,
+                        title: `${selectedAction === 'remix' ? 'Remix' : 'Extended'}: ${selectedTrack.title}`
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Transform error:', error);
+                alert('Transformation failed. Please try again.');
+                resetForm();
+            }
+        }
+
+        function showResults(original, transformed) {
+            document.getElementById('generationProgress').classList.remove('active');
+            document.getElementById('generationResult').classList.add('active');
+            
+            // Set audio sources
+            if (original.audio_url) {
+                document.getElementById('originalAudio').src = original.audio_url;
+            }
+            if (transformed.audio_url) {
+                document.getElementById('resultAudio').src = transformed.audio_url;
+            }
+            
+            // Store for download/save
+            window.transformedTrack = transformed;
+        }
+
+        function formatDuration(seconds) {
+            if (!seconds) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function showUploadDialog() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'audio/*';
+            input.onchange = handleFileUpload;
+            input.click();
+        }
+
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            // Create a temporary track object
+            const tempTrack = {
+                title: file.name.replace(/\.[^/.]+$/, ''),
+                audio_url: URL.createObjectURL(file),
+                duration: 0,
+                genre: 'Uploaded',
+                id: 'upload-' + Date.now()
+            };
+            
+            // Add to temporary selection
+            selectedTrack = tempTrack;
+            
+            // Show options
+            document.getElementById('remixOptions').style.display = 'block';
+            showPreview(tempTrack);
+        }
+
+        function downloadTransformed() {
+            if (window.transformedTrack && window.transformedTrack.audio_url) {
+                const link = document.createElement('a');
+                link.href = window.transformedTrack.audio_url;
+                link.download = `${window.transformedTrack.title}.mp3`;
+                link.click();
+            }
+        }
+
+        function saveToLibrary() {
+            if (window.transformedTrack) {
+                let library = JSON.parse(localStorage.getItem('musicLibrary') || '[]');
+                library.unshift({
+                    ...window.transformedTrack,
+                    id: Date.now().toString(),
+                    created_at: new Date().toISOString()
+                });
+                localStorage.setItem('musicLibrary', JSON.stringify(library));
+                alert('Track saved to library!');
+            }
+        }
+
+        function transformAnother() {
+            resetForm();
+        }
+
+        function resetForm() {
+            document.getElementById('generationResult').classList.remove('active');
+            document.getElementById('transformSettings').style.display = 'none';
+            document.getElementById('remixOptions').style.display = 'none';
+            document.getElementById('previewSection').style.display = 'none';
+            selectedTrack = null;
+            selectedAction = null;
+            loadTracks();
+        }
+
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', loadTracks);
+    </script>
+
+    <!-- Firebase Integration -->
+    <script type="module">
+        import { authManager } from '/js/firebase-config-safe.js';
+        
+        authManager.onAuthStateChange((user) => {
+            if (user) {
+                updateUserCredits(user);
+            }
+        });
+
+        function updateUserCredits(user) {
+            const subscriptionCredits = {
+                'free': 10,
+                'starter': 500,
+                'pro': 2000,
+                'unlimited': 10000
+            };
+            
+            const subscription = user.subscription || 'free';
+            const credits = subscriptionCredits[subscription];
+            document.getElementById('userCredits').textContent = credits;
+        }
+    </script>
+</body>
+</html>

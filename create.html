@@ -274,6 +274,21 @@
                     <h3 class="mode-title">Remix & Extend</h3>
                     <p class="mode-description">Upload a track to remix or extend</p>
                 </div>
+                <div class="mode-card" data-mode="tts">
+                    <div class="mode-icon">🎙️</div>
+                    <h3 class="mode-title">Text to Speech</h3>
+                    <p class="mode-description">Convert text to natural speech with AI voices</p>
+                </div>
+                <div class="mode-card" data-mode="artwork">
+                    <div class="mode-icon">🎨</div>
+                    <h3 class="mode-title">Music + Artwork</h3>
+                    <p class="mode-description">Generate music with custom album artwork</p>
+                </div>
+                <div class="mode-card" data-mode="video">
+                    <div class="mode-icon">🎬</div>
+                    <h3 class="mode-title">Video to Audio</h3>
+                    <p class="mode-description">Generate audio from video content</p>
+                </div>
             </div>
         </section>
 
@@ -330,6 +345,64 @@
                     </div>
                 </div>
 
+                <div class="form-group" id="modelGroup">
+                    <label class="form-label">AI Model</label>
+                    <select class="form-select" id="aiModel">
+                        <option value="music-u" selected>Udio (Fast & Versatile)</option>
+                        <option value="suno">Suno v3</option>
+                        <option value="suno-v3.5">Suno v3.5</option>
+                        <option value="suno-v4">Suno v4</option>
+                        <option value="suno-v4.5">Suno v4.5 (Latest)</option>
+                        <option value="Qubico/diffrhythm">DiffRhythm (High Quality)</option>
+                        <option value="ace-step">Ace Step (Advanced)</option>
+                        <option value="mmaudio">MMAudio (Video to Audio)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="extendGroup" style="display: none;">
+                    <label class="form-label">Extend Options</label>
+                    <select class="form-select" id="extendDirection">
+                        <option value="end">Extend End</option>
+                        <option value="beginning">Extend Beginning</option>
+                        <option value="both">Extend Both</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="ttsGroup" style="display: none;">
+                    <label class="form-label">Text for Speech</label>
+                    <textarea 
+                        class="form-textarea" 
+                        id="ttsText" 
+                        placeholder="Enter the text you want to convert to speech..."
+                        rows="4"
+                    ></textarea>
+                    <label class="form-label" style="margin-top: 1rem;">Voice Style</label>
+                    <select class="form-select" id="voiceStyle">
+                        <option value="default">Default</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="child">Child</option>
+                        <option value="narrator">Narrator</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="artworkGroup" style="display: none;">
+                    <label class="form-label">Music & Artwork Theme</label>
+                    <textarea 
+                        class="form-textarea" 
+                        id="artworkPrompt" 
+                        placeholder="Describe the music and visual theme (e.g., 'Futuristic synthwave with neon cityscape visuals')"
+                        rows="3"
+                    ></textarea>
+                    <p class="form-hint">PiAPI generates matching album artwork with every track!</p>
+                </div>
+
+                <div class="form-group" id="videoGroup" style="display: none;">
+                    <label class="form-label">Video URL</label>
+                    <input type="url" class="form-input" id="videoUrl" placeholder="https://example.com/video.mp4" />
+                    <p class="form-hint">Enter a video URL to generate matching audio</p>
+                </div>
+
                 <div class="form-group">
                     <label class="form-label">Style & Genre (Optional)</label>
                     <div class="style-pills">
@@ -366,6 +439,9 @@
             <h3 class="progress-text">Your song is ready!</h3>
             
             <div class="result-player">
+                <div id="resultArtwork" style="margin-bottom: 1.5rem; display: none;">
+                    <img src="" alt="Album Artwork" style="width: 300px; height: 300px; border-radius: 1rem; margin: 0 auto; display: block; box-shadow: 0 8px 32px rgba(0,0,0,0.3);" id="artworkImage">
+                </div>
                 <audio controls style="width: 100%;" id="resultAudio">
                     <source src="" type="audio/mpeg">
                 </audio>
@@ -487,6 +563,15 @@
             document.getElementById('descriptionGroup').style.display = 'none';
             document.getElementById('lyricsGroup').style.display = 'none';
             document.getElementById('uploadGroup').style.display = 'none';
+            document.getElementById('extendGroup').style.display = 'none';
+            document.getElementById('ttsGroup').style.display = 'none';
+            document.getElementById('artworkGroup').style.display = 'none';
+            document.getElementById('videoGroup').style.display = 'none';
+            document.getElementById('modelGroup').style.display = 'block';
+            
+            // Hide style pills for non-music modes
+            const stylePillsGroup = document.querySelector('.form-group:has(.style-pills)');
+            const durationGroup = document.querySelector('.form-row');
             
             // Show relevant fields based on mode
             switch(mode) {
@@ -500,6 +585,24 @@
                 case 'remix':
                     document.getElementById('uploadGroup').style.display = 'block';
                     document.getElementById('descriptionGroup').style.display = 'block';
+                    document.getElementById('extendGroup').style.display = 'block';
+                    break;
+                case 'tts':
+                    document.getElementById('ttsGroup').style.display = 'block';
+                    document.getElementById('modelGroup').style.display = 'none';
+                    if (stylePillsGroup) stylePillsGroup.style.display = 'none';
+                    if (durationGroup) durationGroup.style.display = 'none';
+                    break;
+                case 'artwork':
+                    document.getElementById('artworkGroup').style.display = 'block';
+                    document.getElementById('modelGroup').style.display = 'none';
+                    if (stylePillsGroup) stylePillsGroup.style.display = 'none';
+                    if (durationGroup) durationGroup.style.display = 'none';
+                    break;
+                case 'video':
+                    document.getElementById('videoGroup').style.display = 'block';
+                    document.getElementById('descriptionGroup').style.display = 'block';
+                    document.getElementById('modelGroup').style.display = 'none';
                     break;
             }
         }
@@ -511,8 +614,9 @@
 
         async function generateMusic(params) {
             try {
-                // Get selected mode
+                // Get selected mode and model
                 const mode = document.querySelector('.mode-card.active').dataset.mode;
+                const selectedModel = document.getElementById('aiModel')?.value || 'music-u';
                 
                 // Build style string from selected pills
                 const selectedStyles = params.styles || [];
@@ -520,36 +624,111 @@
                 
                 let result;
                 
-                if (mode === 'lyrics') {
-                    // Generate with custom lyrics
-                    const lyricsText = document.getElementById('customLyrics')?.value || '';
-                    result = await piapi.createMusic({
-                        prompt: params.prompt,
-                        make_instrumental: params.type === 'instrumental',
-                        song_style: stylePrompt,
-                        custom_lyrics: lyricsText,
-                        title: params.prompt.substring(0, 50),
-                        model: 'suno'
-                    });
-                } else if (mode === 'remix') {
-                    // For remix mode (would need file upload)
-                    alert('Remix mode requires file upload - coming soon!');
-                    return { success: false };
-                } else {
-                    // Simple creation mode
-                    result = await piapi.createMusic({
-                        prompt: params.prompt,
-                        make_instrumental: params.type === 'instrumental',
-                        song_style: stylePrompt,
-                        custom_lyrics: '',
-                        title: params.prompt.substring(0, 50),
-                        model: 'suno'
-                    });
+                switch(mode) {
+                    case 'lyrics':
+                        // Generate with custom lyrics
+                        const lyricsText = document.getElementById('customLyrics')?.value || '';
+                        result = await piapi.createMusic({
+                            prompt: params.prompt,
+                            make_instrumental: params.type === 'instrumental',
+                            song_style: stylePrompt,
+                            custom_lyrics: lyricsText,
+                            title: params.prompt.substring(0, 50),
+                            model: selectedModel
+                        });
+                        break;
+                        
+                    case 'remix':
+                        // Handle remix/extend mode
+                        const fileInput = document.getElementById('audioUpload');
+                        if (!fileInput.files || fileInput.files.length === 0) {
+                            alert('Please upload an audio file to remix/extend');
+                            return { success: false };
+                        }
+                        
+                        // Upload file and get URL (placeholder for now)
+                        const audioFile = fileInput.files[0];
+                        const audioUrl = URL.createObjectURL(audioFile);
+                        const extendDirection = document.getElementById('extendDirection').value;
+                        
+                        // For now, generate a remix by using the description
+                        result = await piapi.createMusic({
+                            prompt: `Remix/extend this track: ${params.prompt}`,
+                            make_instrumental: params.type === 'instrumental',
+                            song_style: stylePrompt,
+                            custom_lyrics: '',
+                            title: `Remix: ${params.prompt.substring(0, 40)}`,
+                            model: selectedModel
+                        });
+                        break;
+                        
+                    case 'tts':
+                        // Text to Speech
+                        const ttsText = document.getElementById('ttsText')?.value || '';
+                        const voiceStyle = document.getElementById('voiceStyle')?.value || 'default';
+                        
+                        if (!ttsText) {
+                            alert('Please enter text to convert to speech');
+                            return { success: false };
+                        }
+                        
+                        result = await piapi.textToSpeech({
+                            text: ttsText,
+                            voice: voiceStyle,
+                            speed: 1.0
+                        });
+                        break;
+                        
+                    case 'artwork':
+                        // PiAPI automatically generates artwork with music!
+                        const artworkPrompt = document.getElementById('artworkPrompt')?.value || '';
+                        
+                        if (!artworkPrompt) {
+                            alert('Please describe the music style for artwork generation');
+                            return { success: false };
+                        }
+                        
+                        // Generate music with specific prompt for artwork
+                        result = await piapi.createMusic({
+                            prompt: artworkPrompt,
+                            make_instrumental: true,
+                            song_style: 'Ambient', // Good for artwork showcase
+                            custom_lyrics: '',
+                            title: `Artwork: ${artworkPrompt.substring(0, 40)}`,
+                            model: selectedModel
+                        });
+                        break;
+                        
+                    case 'video':
+                        // Video to Audio
+                        const videoUrl = document.getElementById('videoUrl')?.value || '';
+                        
+                        if (!videoUrl) {
+                            alert('Please enter a video URL');
+                            return { success: false };
+                        }
+                        
+                        result = await piapi.videoToAudio({
+                            video_url: videoUrl,
+                            prompt: params.prompt || ''
+                        });
+                        break;
+                        
+                    default:
+                        // Simple creation mode
+                        result = await piapi.createMusic({
+                            prompt: params.prompt,
+                            make_instrumental: params.type === 'instrumental',
+                            song_style: stylePrompt,
+                            custom_lyrics: '',
+                            title: params.prompt.substring(0, 50),
+                            model: selectedModel
+                        });
                 }
                 
                 if (result.success) {
                     // Poll for completion
-                    updateProgress('Generating your music...', 25);
+                    updateProgress('Processing your request...', 25);
                     
                     const finalResult = await pollForResult(result.taskId);
                     return finalResult;
@@ -564,55 +743,45 @@
         }
         
         async function pollForResult(taskId) {
-            let attempts = 0;
-            const maxAttempts = 120; // 4 minutes max
-            
-            while (attempts < maxAttempts) {
-                const result = await piapi.getTask(taskId);
+            try {
+                updateProgress('Generating your music...', 25);
                 
-                if (result.status === 'completed' && result.output) {
-                    // Use PiAPI helper to extract audio URL
-                    const audioUrl = piapi.extractAudioUrl(result);
-                    
-                    if (!audioUrl) {
-                        console.error('No audio URL found in response:', result);
-                        throw new Error('No audio URL in response');
-                    }
-                    
-                    // Extract other metadata
-                    let title = 'Generated Song';
-                    let duration = 60;
-                    
-                    if (result.output.title) title = result.output.title;
-                    if (result.output.duration) duration = result.output.duration;
-                    
-                    // For multiple tracks
-                    if (result.output.tracks && result.output.tracks.length > 0) {
-                        title = result.output.tracks[0].title || title;
-                        duration = result.output.tracks[0].duration || duration;
-                    }
-                    
-                    return {
-                        success: true,
-                        audio_url: audioUrl,
-                        title: title,
-                        duration: duration,
-                        taskId: taskId,
-                        raw_output: result.output // Store full output for debugging
-                    };
-                } else if (result.status === 'failed' || result.status === 'error') {
-                    throw new Error(result.error || result.message || 'Generation failed');
+                // Use PiAPI's waitForCompletion method
+                const result = await piapi.waitForCompletion(taskId);
+                
+                // Extract audio URL using helper
+                const audioUrl = piapi.extractAudioUrl(result);
+                
+                if (!audioUrl) {
+                    console.error('No audio URL found in response:', result);
+                    throw new Error('No audio URL in response');
                 }
                 
-                // Update progress
-                const progress = Math.min(25 + (attempts / maxAttempts) * 70, 95);
-                updateProgress(`Processing... ${Math.round(progress)}%`, progress);
+                // Extract metadata from songs array (like Swift)
+                let title = 'Generated Song';
+                let duration = 60;
+                let imageUrl = null;
                 
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                attempts++;
+                if (result.output?.songs && result.output.songs.length > 0) {
+                    const firstSong = result.output.songs[0];
+                    title = firstSong.title || title;
+                    imageUrl = firstSong.image_url || firstSong.image_path;
+                    // Duration might not be in response, use requested duration
+                }
+                
+                return {
+                    success: true,
+                    audio_url: audioUrl,
+                    title: title,
+                    duration: duration,
+                    image_url: imageUrl,
+                    taskId: taskId,
+                    raw_output: result.output // Store full output for debugging
+                };
+            } catch (error) {
+                console.error('Polling failed:', error);
+                throw error;
             }
-            
-            throw new Error('Generation timeout');
         }
         
         function updateProgress(text, percent) {
@@ -632,6 +801,14 @@
                 document.getElementById('resultAudio').src = result.audio_url;
             }
             document.getElementById('resultTitle').textContent = result.title || 'Generated Song';
+            
+            // Show artwork if available (PiAPI includes this!)
+            if (result.image_url) {
+                document.getElementById('resultArtwork').style.display = 'block';
+                document.getElementById('artworkImage').src = result.image_url;
+            } else {
+                document.getElementById('resultArtwork').style.display = 'none';
+            }
             
             // Store result for download/library
             window.currentGeneratedTrack = result;
@@ -660,6 +837,7 @@
                     id: window.currentGeneratedTrack.taskId || Date.now().toString(),
                     title: window.currentGeneratedTrack.title || 'Generated Song',
                     audio_url: window.currentGeneratedTrack.audio_url,
+                    image_url: window.currentGeneratedTrack.image_url || null, // Save PiAPI artwork!
                     created_at: new Date().toISOString(),
                     duration: window.currentGeneratedTrack.duration,
                     genre: getSelectedStyles()[0] || 'Unknown'

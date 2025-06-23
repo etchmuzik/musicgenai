@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CORS Test</title>
+</head>
+<body>
+    <h1>Testing PiAPI Direct</h1>
+    <button onclick="testDirect()">Test Direct API Call</button>
+    <pre id="output"></pre>
+
+    <script>
+        async function testDirect() {
+            const output = document.getElementById('output');
+            output.textContent = 'Testing...';
+
+            try {
+                // Test with the exact payload format from Swift
+                const payload = {
+                    model: "music-u",
+                    task_type: "generate_music",
+                    input: {
+                        gpt_description_prompt: "Happy electronic music. Genre: Electronic, Mood: Energetic",
+                        negative_tags: "",
+                        lyrics_type: "instrumental",
+                        seed: -1
+                    },
+                    config: {
+                        service_mode: "public",
+                        webhook_config: {
+                            endpoint: "",
+                            secret: ""
+                        }
+                    }
+                };
+
+                const response = await fetch('https://api.piapi.ai/api/v1/task', {
+                    method: 'POST',
+                    headers: {
+                        'x-api-key': 'd3a513bec58ea7c7e60eebf377fbbfb806f2304f12e1ef208cd701139658c088',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const text = await response.text();
+                output.textContent = `Status: ${response.status}\n\nResponse:\n${text}`;
+
+                if (response.ok) {
+                    const data = JSON.parse(text);
+                    output.textContent += '\n\nParsed data:\n' + JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                output.textContent = `Error: ${error.message}\n\n${error.stack}`;
+            }
+        }
+    </script>
+</body>
+</html>

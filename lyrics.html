@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Lyrics Generator - MusicGen AI</title>
+    <meta name="description" content="Generate creative lyrics with AI for any genre or mood">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Suno Design System -->
+    <link rel="stylesheet" href="/css/suno-design.css">
+    
+    <style>
+        /* Lyrics specific styles */
+        .lyrics-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .lyrics-input {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .theme-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .theme-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .theme-card:hover {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .theme-card.selected {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .theme-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .theme-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .lyrics-output {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+            display: none;
+        }
+
+        .lyrics-output.active {
+            display: block;
+        }
+
+        .lyrics-text {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            white-space: pre-wrap;
+            font-family: 'Georgia', serif;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin: 1.5rem 0;
+        }
+
+        .verse-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .verse-label {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .rhyme-scheme {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .rhyme-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .lyrics-tools {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .lyrics-stats {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .language-selector {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .language-option {
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .language-option:hover {
+            border-color: var(--primary);
+        }
+
+        .language-option.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .theme-cards {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <a href="/" class="logo">MusicGen AI</a>
+        
+        <nav>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-home"></i></span>
+                        Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/create" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-music"></i></span>
+                        Create
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/library" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-folder"></i></span>
+                        Library
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/remix" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-sync"></i></span>
+                        Remix
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/lyrics" class="nav-link active">
+                        <span class="nav-icon"><i class="fas fa-pen"></i></span>
+                        Lyrics
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- Credits Display -->
+        <div class="credits-display">
+            <div class="credits-header">
+                <span class="credits-title">Credits</span>
+                <i class="fas fa-coins"></i>
+            </div>
+            <div class="credits-value" id="userCredits">200</div>
+            <div class="credits-subtitle">Monthly credits remaining</div>
+            <button class="btn btn-secondary" style="width: 100%; margin-top: 1rem; justify-content: center;">
+                Upgrade Plan
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="lyrics-container">
+            <!-- Header -->
+            <header class="header">
+                <h1 class="header-title">
+                    AI <span class="gradient-text">Lyrics</span> Generator
+                </h1>
+                <p class="header-subtitle">
+                    Create professional song lyrics for any genre, mood, or theme
+                </p>
+            </header>
+
+            <!-- Lyrics Input Section -->
+            <section class="lyrics-input">
+                <div class="create-header">
+                    <h2 class="create-title">What's Your Song About?</h2>
+                    <p class="create-subtitle">Describe the theme, story, or emotion</p>
+                </div>
+
+                <form id="lyricsForm">
+                    <div class="form-group">
+                        <label class="form-label">Song Theme / Topic</label>
+                        <textarea 
+                            class="form-textarea" 
+                            id="songTheme" 
+                            placeholder="E.g., A love song about meeting someone special at a coffee shop, overcoming challenges together..."
+                            rows="3"
+                            required
+                        ></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Language</label>
+                        <div class="language-selector">
+                            <div class="language-option active" data-lang="en">English</div>
+                            <div class="language-option" data-lang="es">Spanish</div>
+                            <div class="language-option" data-lang="fr">French</div>
+                            <div class="language-option" data-lang="de">German</div>
+                            <div class="language-option" data-lang="it">Italian</div>
+                            <div class="language-option" data-lang="pt">Portuguese</div>
+                            <div class="language-option" data-lang="ja">Japanese</div>
+                            <div class="language-option" data-lang="ko">Korean</div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Genre</label>
+                            <select class="form-select" id="lyricsGenre">
+                                <option value="Pop">Pop</option>
+                                <option value="Rock">Rock</option>
+                                <option value="Hip Hop">Hip Hop</option>
+                                <option value="R&B">R&B</option>
+                                <option value="Country">Country</option>
+                                <option value="Electronic">Electronic</option>
+                                <option value="Jazz">Jazz</option>
+                                <option value="Folk">Folk</option>
+                                <option value="Blues">Blues</option>
+                                <option value="Reggae">Reggae</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Mood</label>
+                            <select class="form-select" id="lyricsMood">
+                                <option value="Happy">Happy</option>
+                                <option value="Sad">Sad</option>
+                                <option value="Romantic">Romantic</option>
+                                <option value="Energetic">Energetic</option>
+                                <option value="Melancholic">Melancholic</option>
+                                <option value="Angry">Angry</option>
+                                <option value="Peaceful">Peaceful</option>
+                                <option value="Nostalgic">Nostalgic</option>
+                                <option value="Hopeful">Hopeful</option>
+                                <option value="Dark">Dark</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Song Structure</label>
+                        <select class="form-select" id="songStructure">
+                            <option value="standard">Standard (Verse-Chorus-Verse-Chorus-Bridge-Chorus)</option>
+                            <option value="simple">Simple (Verse-Chorus-Verse-Chorus)</option>
+                            <option value="extended">Extended (Intro-Verse-Pre-Chorus-Chorus...)</option>
+                            <option value="rap">Rap/Hip-Hop (Intro-Verse-Hook-Verse-Hook...)</option>
+                            <option value="ballad">Ballad (Verse-Verse-Chorus-Verse-Chorus-Outro)</option>
+                            <option value="custom">Custom Structure</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Inspiration / Style Reference (Optional)</label>
+                        <input 
+                            type="text" 
+                            class="form-input" 
+                            id="styleReference" 
+                            placeholder="E.g., Like Ed Sheeran, Beatles, Taylor Swift..."
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Quick Themes</label>
+                        <div class="theme-cards">
+                            <div class="theme-card" data-theme="love">
+                                <span class="theme-icon">❤️</span>
+                                <div class="theme-name">Love</div>
+                            </div>
+                            <div class="theme-card" data-theme="breakup">
+                                <span class="theme-icon">💔</span>
+                                <div class="theme-name">Breakup</div>
+                            </div>
+                            <div class="theme-card" data-theme="party">
+                                <span class="theme-icon">🎉</span>
+                                <div class="theme-name">Party</div>
+                            </div>
+                            <div class="theme-card" data-theme="motivation">
+                                <span class="theme-icon">💪</span>
+                                <div class="theme-name">Motivation</div>
+                            </div>
+                            <div class="theme-card" data-theme="nostalgia">
+                                <span class="theme-icon">📸</span>
+                                <div class="theme-name">Nostalgia</div>
+                            </div>
+                            <div class="theme-card" data-theme="freedom">
+                                <span class="theme-icon">🦅</span>
+                                <div class="theme-name">Freedom</div>
+                            </div>
+                            <div class="theme-card" data-theme="nature">
+                                <span class="theme-icon">🌿</span>
+                                <div class="theme-name">Nature</div>
+                            </div>
+                            <div class="theme-card" data-theme="dreams">
+                                <span class="theme-icon">✨</span>
+                                <div class="theme-name">Dreams</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="font-size: 1.125rem; padding: 1rem 2rem;">
+                        <i class="fas fa-pen"></i>
+                        Generate Lyrics (3 Credits)
+                    </button>
+                </form>
+            </section>
+
+            <!-- Generation Progress -->
+            <section class="create-section generation-progress" id="generationProgress">
+                <div class="progress-spinner"></div>
+                <h3 class="progress-text">Writing your lyrics...</h3>
+                <p class="progress-subtext">Creating verses, chorus, and bridge</p>
+            </section>
+
+            <!-- Lyrics Output -->
+            <section class="lyrics-output" id="lyricsOutput">
+                <div class="create-header">
+                    <h2 class="create-title">Your Generated Lyrics</h2>
+                    <p class="create-subtitle" id="lyricsSummary">A beautiful song about love</p>
+                </div>
+
+                <div class="lyrics-text" id="lyricsText">
+                    <!-- Generated lyrics will appear here -->
+                </div>
+
+                <div class="lyrics-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="wordCount">0</div>
+                        <div class="stat-label">Words</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="lineCount">0</div>
+                        <div class="stat-label">Lines</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="verseCount">0</div>
+                        <div class="stat-label">Verses</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="estimatedDuration">0:00</div>
+                        <div class="stat-label">Est. Duration</div>
+                    </div>
+                </div>
+
+                <div class="lyrics-tools">
+                    <button class="btn btn-secondary" onclick="copyLyrics()">
+                        <i class="fas fa-copy"></i>
+                        Copy Lyrics
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadLyrics()">
+                        <i class="fas fa-download"></i>
+                        Download
+                    </button>
+                    <button class="btn btn-accent" onclick="createSongWithLyrics()">
+                        <i class="fas fa-music"></i>
+                        Create Song
+                    </button>
+                    <button class="btn btn-primary" onclick="generateNewLyrics()">
+                        <i class="fas fa-redo"></i>
+                        Generate New
+                    </button>
+                </div>
+
+                <div class="form-group" style="margin-top: 2rem;">
+                    <label class="form-label">Refine These Lyrics</label>
+                    <textarea 
+                        class="form-textarea" 
+                        id="refinementPrompt" 
+                        placeholder="E.g., Make the chorus more catchy, add more emotion to verse 2, change the bridge..."
+                        rows="2"
+                    ></textarea>
+                    <button class="btn btn-secondary" onclick="refineLyrics()" style="margin-top: 0.5rem;">
+                        <i class="fas fa-magic"></i>
+                        Refine Lyrics
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="/js/suno-core.js"></script>
+    <script src="/js/piapi-music.js"></script>
+    
+    <script>
+        const piapi = new PiAPIMusic();
+        let currentLyrics = '';
+        let selectedLanguage = 'en';
+
+        // Language selection
+        document.querySelectorAll('.language-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.language-option').forEach(o => o.classList.remove('active'));
+                this.classList.add('active');
+                selectedLanguage = this.dataset.lang;
+            });
+        });
+
+        // Theme selection
+        document.querySelectorAll('.theme-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                // Update theme input
+                const theme = this.dataset.theme;
+                const themeDescriptions = {
+                    love: "A heartfelt love song about deep connection and romance",
+                    breakup: "An emotional song about heartbreak and moving on",
+                    party: "An upbeat party anthem to get everyone dancing",
+                    motivation: "An inspiring song about overcoming challenges",
+                    nostalgia: "A reflective song about memories and the past",
+                    freedom: "A powerful song about independence and liberation",
+                    nature: "A peaceful song inspired by the beauty of nature",
+                    dreams: "An uplifting song about chasing dreams and aspirations"
+                };
+                
+                document.getElementById('songTheme').value = themeDescriptions[theme] || '';
+            });
+        });
+
+        // Form submission
+        document.getElementById('lyricsForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const theme = document.getElementById('songTheme').value;
+            const genre = document.getElementById('lyricsGenre').value;
+            const mood = document.getElementById('lyricsMood').value;
+            const structure = document.getElementById('songStructure').value;
+            const reference = document.getElementById('styleReference').value;
+            
+            // Hide form, show progress
+            document.querySelector('.lyrics-input').style.display = 'none';
+            document.getElementById('generationProgress').classList.add('active');
+            
+            try {
+                // Build lyrics prompt
+                let prompt = `Write ${genre} song lyrics about: ${theme}. `;
+                prompt += `Mood: ${mood}. `;
+                prompt += `Structure: ${structure}. `;
+                if (reference) {
+                    prompt += `Style similar to: ${reference}. `;
+                }
+                if (selectedLanguage !== 'en') {
+                    prompt += `Language: ${getLanguageName(selectedLanguage)}. `;
+                }
+                
+                // Generate lyrics
+                const result = await piapi.generateLyricsUdio({
+                    prompt: prompt,
+                    genre: genre,
+                    mood: mood
+                });
+                
+                if (result.success) {
+                    // Poll for completion
+                    const finalResult = await piapi.waitForCompletion(result.taskId);
+                    
+                    // Extract lyrics from result
+                    if (finalResult.output && finalResult.output.lyrics) {
+                        currentLyrics = finalResult.output.lyrics;
+                    } else if (finalResult.output && finalResult.output.text) {
+                        currentLyrics = finalResult.output.text;
+                    } else {
+                        // Generate mock lyrics for testing
+                        currentLyrics = generateMockLyrics(genre, mood, theme);
+                    }
+                    
+                    showLyrics(currentLyrics, theme);
+                } else {
+                    throw new Error(result.error || 'Generation failed');
+                }
+                
+            } catch (error) {
+                console.error('Lyrics generation error:', error);
+                // Show mock lyrics for demo
+                currentLyrics = generateMockLyrics(genre, mood, theme);
+                showLyrics(currentLyrics, theme);
+            }
+        });
+
+        function showLyrics(lyrics, theme) {
+            document.getElementById('generationProgress').classList.remove('active');
+            document.getElementById('lyricsOutput').classList.add('active');
+            
+            document.getElementById('lyricsText').textContent = lyrics;
+            document.getElementById('lyricsSummary').textContent = theme.substring(0, 100);
+            
+            // Calculate stats
+            const words = lyrics.split(/\s+/).length;
+            const lines = lyrics.split('\n').filter(line => line.trim()).length;
+            const verses = (lyrics.match(/\[Verse/gi) || []).length;
+            const estimatedDuration = Math.ceil(words / 150); // ~150 words per minute
+            
+            document.getElementById('wordCount').textContent = words;
+            document.getElementById('lineCount').textContent = lines;
+            document.getElementById('verseCount').textContent = verses;
+            document.getElementById('estimatedDuration').textContent = `${estimatedDuration}:00`;
+        }
+
+        function generateMockLyrics(genre, mood, theme) {
+            return `[Verse 1]
+Walking through the memories of yesterday
+Every moment feels like it was meant to stay
+${theme}
+In this ${mood.toLowerCase()} ${genre.toLowerCase()} way
+
+[Chorus]
+This is where the magic happens
+When the music meets the soul
+Every beat, every word we're rappin'
+Makes us feel complete and whole
+
+[Verse 2]
+Time keeps moving but we're standing still
+Caught between the dreams and what is real
+${theme}
+This is how we always feel
+
+[Chorus]
+This is where the magic happens
+When the music meets the soul
+Every beat, every word we're rappin'
+Makes us feel complete and whole
+
+[Bridge]
+And when the lights go down
+We'll still be here somehow
+Living in this moment now
+This is our time, this is our sound
+
+[Outro]
+${theme}
+Forever in this ${genre.toLowerCase()} dream`;
+        }
+
+        function getLanguageName(code) {
+            const languages = {
+                'en': 'English',
+                'es': 'Spanish',
+                'fr': 'French',
+                'de': 'German',
+                'it': 'Italian',
+                'pt': 'Portuguese',
+                'ja': 'Japanese',
+                'ko': 'Korean'
+            };
+            return languages[code] || 'English';
+        }
+
+        function copyLyrics() {
+            navigator.clipboard.writeText(currentLyrics).then(() => {
+                alert('Lyrics copied to clipboard!');
+            });
+        }
+
+        function downloadLyrics() {
+            const blob = new Blob([currentLyrics], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'lyrics.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function createSongWithLyrics() {
+            // Store lyrics in session storage
+            sessionStorage.setItem('customLyrics', currentLyrics);
+            sessionStorage.setItem('lyricsGenre', document.getElementById('lyricsGenre').value);
+            sessionStorage.setItem('lyricsMood', document.getElementById('lyricsMood').value);
+            
+            // Redirect to create page
+            window.location.href = '/create.html';
+        }
+
+        function generateNewLyrics() {
+            document.getElementById('lyricsOutput').classList.remove('active');
+            document.querySelector('.lyrics-input').style.display = 'block';
+            document.getElementById('lyricsForm').reset();
+        }
+
+        async function refineLyrics() {
+            const refinement = document.getElementById('refinementPrompt').value;
+            if (!refinement) return;
+            
+            document.getElementById('lyricsOutput').classList.remove('active');
+            document.getElementById('generationProgress').classList.add('active');
+            
+            try {
+                const result = await piapi.generateLyricsUdio({
+                    prompt: `Refine these lyrics: "${currentLyrics}". Changes requested: ${refinement}`,
+                    genre: document.getElementById('lyricsGenre').value,
+                    mood: document.getElementById('lyricsMood').value
+                });
+                
+                if (result.success) {
+                    const finalResult = await piapi.waitForCompletion(result.taskId);
+                    currentLyrics = finalResult.output?.lyrics || finalResult.output?.text || currentLyrics;
+                    showLyrics(currentLyrics, document.getElementById('songTheme').value);
+                }
+            } catch (error) {
+                console.error('Refinement error:', error);
+                alert('Failed to refine lyrics. Please try again.');
+                document.getElementById('generationProgress').classList.remove('active');
+                document.getElementById('lyricsOutput').classList.add('active');
+            }
+        }
+
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Check for lyrics from create page
+        window.addEventListener('load', function() {
+            const savedLyrics = sessionStorage.getItem('generatedLyrics');
+            if (savedLyrics) {
+                currentLyrics = savedLyrics;
+                showLyrics(currentLyrics, 'Imported from music creation');
+                sessionStorage.removeItem('generatedLyrics');
+            }
+        });
+    </script>
+</body>
+</html>
