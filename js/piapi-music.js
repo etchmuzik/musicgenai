@@ -3,7 +3,7 @@
 
 class PiAPIMusic {
     constructor(apiKey) {
-        this.apiKey = apiKey || 'YOUR_PIAPI_KEY_HERE';
+        this.apiKey = apiKey || 'd3a513bec58ea7c7e60eebf377fbbfb806f2304f12e1ef208cd701139658c088';
         this.baseURL = 'https://api.piapi.ai';
         this.models = {
             suno: 'suno-v3.5',
