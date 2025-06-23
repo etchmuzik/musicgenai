@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Library - MusicGen AI</title>
+    <meta name="description" content="Manage your AI-generated music library">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Reuse Suno design system */
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #1f1f1f;
+            --text-primary: #ffffff;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --border: rgba(255, 255, 255, 0.1);
+            --primary: #8b5cf6;
+            --secondary: #ec4899;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --error: #ef4444;
+            --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            --gradient-accent: linear-gradient(135deg, #ec4899 0%, #f59e0b 100%);
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Sidebar (same as other pages) */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 2rem;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+            display: block;
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .nav-link.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Credits display */
+        .credits-display {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-top: auto;
+        }
+
+        .credits-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .credits-title {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .credits-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .credits-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            padding-bottom: 100px; /* Space for player bar */
+        }
+
+        /* Header */
+        .library-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .library-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            position: relative;
+        }
+
+        .search-input {
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            color: var(--text-primary);
+            width: 300px;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            width: 350px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        /* View Toggle */
+        .view-toggle {
+            display: flex;
+            background: var(--bg-card);
+            border-radius: 0.5rem;
+            padding: 0.25rem;
+        }
+
+        .view-button {
+            padding: 0.5rem 0.75rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 0.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .view-button.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Filter Tags */
+        .filter-section {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-icon {
+            color: var(--text-secondary);
+        }
+
+        .filter-tag {
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-tag:hover {
+            border-color: var(--primary);
+        }
+
+        .filter-tag.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Songs Grid */
+        .songs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* List View */
+        .songs-list {
+            display: none;
+        }
+
+        .songs-list.active {
+            display: block;
+        }
+
+        .songs-grid.list-view {
+            display: none;
+        }
+
+        .list-header {
+            display: grid;
+            grid-template-columns: 50px 1fr 150px 100px 80px 120px;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .list-item {
+            display: grid;
+            grid-template-columns: 50px 1fr 150px 100px 80px 120px;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .list-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .list-cover {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-accent);
+            border-radius: 0.25rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .list-play {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .list-item:hover .list-play {
+            opacity: 1;
+        }
+
+        .list-play i {
+            color: white;
+        }
+
+        .list-title {
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .list-tags {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .list-duration {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .list-date {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .list-actions {
+            display: flex;
+            gap: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .list-item:hover .list-actions {
+            opacity: 1;
+        }
+
+        .action-button {
+            padding: 0.5rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 0.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .action-button:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Song Card (Grid View) */
+        .song-card {
+            background: var(--bg-card);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .song-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .song-cover {
+            position: relative;
+            aspect-ratio: 1;
+            background: var(--gradient-accent);
+            overflow: hidden;
+        }
+
+        .song-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .play-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .song-card:hover .play-overlay {
+            opacity: 1;
+        }
+
+        .play-button {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+            background: white;
+        }
+
+        .play-button i {
+            color: var(--bg-primary);
+            font-size: 1.25rem;
+            margin-left: 0.125rem;
+        }
+
+        .song-info {
+            padding: 0.75rem;
+        }
+
+        .song-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .song-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+
+        .song-tag {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.125rem 0.375rem;
+            border-radius: 1rem;
+            font-size: 0.625rem;
+            font-weight: 500;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-message {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Player Bar */
+        .player-bar {
+            position: fixed;
+            bottom: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            z-index: 100;
+        }
+
+        .player-track {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 0 0 300px;
+        }
+
+        .player-cover {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 0.5rem;
+        }
+
+        .player-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .player-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-artist {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 0 auto;
+        }
+
+        .player-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 0.5rem;
+        }
+
+        .player-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .player-btn.play {
+            width: 40px;
+            height: 40px;
+            background: white;
+            color: var(--bg-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .player-bar {
+                left: 0;
+            }
+
+            .library-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .header-actions {
+                flex-direction: column;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            .search-input:focus {
+                width: 100%;
+            }
+
+            .songs-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <a href="/" class="logo">MusicGen AI</a>
+        
+        <nav>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/suno-home.html" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-home"></i></span>
+                        Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/suno-create.html" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-music"></i></span>
+                        Create
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/suno-library.html" class="nav-link active">
+                        <span class="nav-icon"><i class="fas fa-folder"></i></span>
+                        Library
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/explore" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-compass"></i></span>
+                        Explore
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/gamification.html" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-trophy"></i></span>
+                        Achievements
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- Credits Display -->
+        <div class="credits-display">
+            <div class="credits-header">
+                <span class="credits-title">Credits</span>
+                <i class="fas fa-coins"></i>
+            </div>
+            <div class="credits-value">200</div>
+            <div class="credits-subtitle">Monthly credits remaining</div>
+            <a href="/pricing.html" class="btn btn-secondary" style="width: 100%; margin-top: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.1); color: white; text-align: center; text-decoration: none; border-radius: 0.5rem; display: block;">
+                Upgrade Plan
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <div class="library-header">
+            <h1 class="library-title">My Library</h1>
+            <div class="header-actions">
+                <div class="search-bar">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search songs...">
+                </div>
+                <div class="view-toggle">
+                    <button class="view-button active" onclick="setView('grid')">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="view-button" onclick="setView('list')">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Tags -->
+        <div class="filter-section">
+            <i class="fas fa-filter filter-icon"></i>
+            <div class="filter-tag active" onclick="filterBy('all')">All</div>
+            <div class="filter-tag" onclick="filterBy('v3.5')">v3.5</div>
+            <div class="filter-tag" onclick="filterBy('v3')">v3</div>
+            <div class="filter-tag" onclick="filterBy('remix')">Remix</div>
+            <div class="filter-tag" onclick="filterBy('uploaded')">Uploaded</div>
+        </div>
+
+        <!-- Songs Grid View -->
+        <div class="songs-grid" id="gridView">
+            <!-- Example songs - replace with dynamic content -->
+            <div class="song-card">
+                <div class="song-cover">
+                    <img src="data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%238b5cf6'/%3E%3Cstop offset='100%25' style='stop-color:%23ec4899'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23g1)'/%3E%3C/svg%3E" alt="Song cover">
+                    <div class="play-overlay">
+                        <button class="play-button">
+                            <i class="fas fa-play"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="song-info">
+                    <h3 class="song-title">Summer Dreams</h3>
+                    <div class="song-meta">
+                        <span class="song-tag">v3.5</span>
+                        <span>3:24</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="song-card">
+                <div class="song-cover">
+                    <img src="data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='g2' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23ec4899'/%3E%3Cstop offset='100%25' style='stop-color:%23f59e0b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23g2)'/%3E%3C/svg%3E" alt="Song cover">
+                    <div class="play-overlay">
+                        <button class="play-button">
+                            <i class="fas fa-play"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="song-info">
+                    <h3 class="song-title">Electric Nights</h3>
+                    <div class="song-meta">
+                        <span class="song-tag">v3.5</span>
+                        <span>4:12</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Songs List View -->
+        <div class="songs-list" id="listView">
+            <div class="list-header">
+                <div></div>
+                <div>Title</div>
+                <div>Tags</div>
+                <div>Duration</div>
+                <div>Date</div>
+                <div>Actions</div>
+            </div>
+            
+            <div class="list-item">
+                <div class="list-cover">
+                    <div class="list-play">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </div>
+                <div class="list-title">Summer Dreams</div>
+                <div class="list-tags">Pop, Upbeat</div>
+                <div class="list-duration">3:24</div>
+                <div class="list-date">2 hours ago</div>
+                <div class="list-actions">
+                    <button class="action-button" title="Download">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="action-button" title="Share">
+                        <i class="fas fa-share"></i>
+                    </button>
+                    <button class="action-button" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State (shown when no songs) -->
+        <!--
+        <div class="empty-state">
+            <div class="empty-icon">🎵</div>
+            <h2 class="empty-title">No songs yet</h2>
+            <p class="empty-message">Start creating amazing music with AI</p>
+            <a href="/suno-create.html" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                Create Your First Song
+            </a>
+        </div>
+        -->
+    </main>
+
+    <!-- Player Bar -->
+    <div class="player-bar">
+        <div class="player-track">
+            <div class="player-cover"></div>
+            <div class="player-info">
+                <div class="player-title">No track playing</div>
+                <div class="player-artist">Select a track to play</div>
+            </div>
+        </div>
+        
+        <div class="player-controls">
+            <button class="player-btn">
+                <i class="fas fa-backward"></i>
+            </button>
+            <button class="player-btn play">
+                <i class="fas fa-play"></i>
+            </button>
+            <button class="player-btn">
+                <i class="fas fa-forward"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentView = 'grid';
+
+        function setView(view) {
+            currentView = view;
+            document.querySelectorAll('.view-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (view === 'grid') {
+                document.querySelector('.view-button:first-child').classList.add('active');
+                document.getElementById('gridView').style.display = 'grid';
+                document.getElementById('listView').style.display = 'none';
+            } else {
+                document.querySelector('.view-button:last-child').classList.add('active');
+                document.getElementById('gridView').style.display = 'none';
+                document.getElementById('listView').style.display = 'block';
+            }
+        }
+
+        function filterBy(tag) {
+            document.querySelectorAll('.filter-tag').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Add filtering logic here
+            console.log('Filtering by:', tag);
+        }
+
+        // Play button functionality
+        document.querySelectorAll('.play-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const icon = this.querySelector('i');
+                const isPlaying = icon.classList.contains('fa-pause');
+                
+                // Reset all buttons
+                document.querySelectorAll('.play-button i').forEach(i => {
+                    i.classList.remove('fa-pause');
+                    i.classList.add('fa-play');
+                });
+                
+                // Toggle current button
+                if (!isPlaying) {
+                    icon.classList.remove('fa-play');
+                    icon.classList.add('fa-pause');
+                    
+                    // Update player bar
+                    const card = this.closest('.song-card');
+                    const title = card.querySelector('.song-title').textContent;
+                    
+                    document.querySelector('.player-title').textContent = title;
+                    document.querySelector('.player-artist').textContent = 'Your Creation';
+                    document.querySelector('.player-btn.play i').classList.remove('fa-play');
+                    document.querySelector('.player-btn.play i').classList.add('fa-pause');
+                }
+            });
+        });
+
+        // List view play functionality
+        document.querySelectorAll('.list-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const title = this.querySelector('.list-title').textContent;
+                document.querySelector('.player-title').textContent = title;
+                document.querySelector('.player-artist').textContent = 'Your Creation';
+                document.querySelector('.player-btn.play i').classList.remove('fa-play');
+                document.querySelector('.player-btn.play i').classList.add('fa-pause');
+            });
+        });
+
+        // Search functionality
+        document.querySelector('.search-input').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            // Add search logic here
+            console.log('Searching for:', searchTerm);
+        });
+    </script>
+</body>
+</html>

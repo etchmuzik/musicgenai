@@ -15,13 +15,17 @@
     
     <style>
         :root {
-            /* Modern Color Palette */
-            --primary: #00d4ff;
-            --secondary: #7c3aed;
+            /* Suno Color Palette */
+            --primary: #8b5cf6;
+            --secondary: #ec4899;
             --accent: #f59e0b;
             --success: #10b981;
             --error: #ef4444;
             --warning: #f59e0b;
+            --suno-pink: #f857a6;
+            --suno-purple: #ff5858;
+            --suno-orange: #ff7b00;
+            --suno-green: #44ff00;
             
             /* Dark Theme */
             --bg-primary: #0a0a0a;
@@ -37,10 +41,11 @@
             --glass-border: rgba(255, 255, 255, 0.2);
             --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.3);
             
-            /* Gradients */
-            --gradient-primary: linear-gradient(135deg, var(--primary), var(--secondary));
-            --gradient-accent: linear-gradient(135deg, var(--accent), #d97706);
-            --gradient-success: linear-gradient(135deg, var(--success), #059669);
+            /* Suno Gradients */
+            --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            --gradient-accent: linear-gradient(135deg, #ec4899 0%, #f59e0b 100%);
+            --gradient-success: linear-gradient(135deg, #f59e0b 0%, #10b981 100%);
+            --gradient-suno: linear-gradient(135deg, #f857a6 0%, #ff5858 50%, #ff7b00 100%);
             
             /* Spacing */
             --space-xs: 0.25rem;
@@ -1030,8 +1035,9 @@
         <div class="nav-container">
             <a href="/" class="logo">MusicGen AI</a>
             <div class="nav-links">
+                <a href="/suno-home" class="nav-link featured">Suno UI</a>
                 <a href="/music-studio" class="nav-link">Music Studio</a>
-                <a href="/ai-studio" class="nav-link featured">AI Studio</a>
+                <a href="/ai-studio" class="nav-link">AI Studio</a>
                 <a href="/audio-editor" class="nav-link">Audio Editor</a>
                 <a href="/gamification" class="nav-link">Gamification</a>
                 <a href="/pricing" class="nav-link">Pricing</a>

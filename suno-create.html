@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Music - MusicGen AI</title>
+    <meta name="description" content="Create amazing AI-generated music with simple prompts or custom lyrics">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Reuse Suno design system */
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #1f1f1f;
+            --text-primary: #ffffff;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --border: rgba(255, 255, 255, 0.1);
+            --primary: #8b5cf6;
+            --secondary: #ec4899;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --error: #ef4444;
+            --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            --gradient-accent: linear-gradient(135deg, #ec4899 0%, #f59e0b 100%);
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Sidebar (same as home) */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 2rem;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+            display: block;
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .nav-link.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Credits display */
+        .credits-display {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-top: auto;
+        }
+
+        .credits-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .credits-title {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .credits-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .credits-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            max-width: 1000px;
+        }
+
+        /* Header */
+        .create-header {
+            margin-bottom: 3rem;
+        }
+
+        .create-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .create-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+        }
+
+        /* Mode Toggle */
+        .mode-toggle {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .mode-button {
+            flex: 1;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 2px solid transparent;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .mode-button:hover {
+            border-color: var(--border);
+        }
+
+        .mode-button.active {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .mode-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .mode-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .mode-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Form Sections */
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            transform: translateX(24px);
+            background: white;
+        }
+
+        .toggle-switch input:checked ~ .toggle-switch {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Style Tags */
+        .style-input {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        /* Generate Button */
+        .generate-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .generate-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .generate-button {
+            width: 100%;
+            padding: 1.25rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .generate-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .generate-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Model Selection */
+        .model-select {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .model-option {
+            flex: 1;
+            padding: 1rem;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .model-option:hover {
+            border-color: var(--primary);
+        }
+
+        .model-option.selected {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .model-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .model-description {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Progress Section */
+        .progress-section {
+            display: none;
+            margin-top: 3rem;
+            padding: 2rem;
+            background: var(--bg-card);
+            border-radius: 1rem;
+            text-align: center;
+        }
+
+        .progress-section.active {
+            display: block;
+        }
+
+        .progress-spinner {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1.5rem;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .progress-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-message {
+            color: var(--text-secondary);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mode-toggle {
+                flex-direction: column;
+            }
+
+            .create-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <a href="/" class="logo">MusicGen AI</a>
+        
+        <nav>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/suno-home.html" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-home"></i></span>
+                        Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/suno-create.html" class="nav-link active">
+                        <span class="nav-icon"><i class="fas fa-music"></i></span>
+                        Create
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/library.html" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-folder"></i></span>
+                        Library
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/explore" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-compass"></i></span>
+                        Explore
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/gamification.html" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-trophy"></i></span>
+                        Achievements
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- Credits Display -->
+        <div class="credits-display">
+            <div class="credits-header">
+                <span class="credits-title">Credits</span>
+                <i class="fas fa-coins"></i>
+            </div>
+            <div class="credits-value">200</div>
+            <div class="credits-subtitle">Monthly credits remaining</div>
+            <a href="/pricing.html" class="btn btn-secondary" style="width: 100%; margin-top: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.1); color: white; text-align: center; text-decoration: none; border-radius: 0.5rem; display: block;">
+                Upgrade Plan
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="create-header">
+            <h1 class="create-title">Create Music</h1>
+            <p class="create-subtitle">Turn your ideas into amazing songs with AI</p>
+        </header>
+
+        <!-- Mode Toggle -->
+        <div class="mode-toggle">
+            <button class="mode-button active" onclick="setMode('simple')">
+                <span class="mode-icon">✨</span>
+                <div class="mode-title">Simple Mode</div>
+                <div class="mode-description">Describe your song idea</div>
+            </button>
+            <button class="mode-button" onclick="setMode('custom')">
+                <span class="mode-icon">🎵</span>
+                <div class="mode-title">Custom Mode</div>
+                <div class="mode-description">Add your own lyrics</div>
+            </button>
+        </div>
+
+        <!-- Simple Mode Form -->
+        <div id="simpleMode" class="mode-content">
+            <div class="form-section">
+                <label class="form-label">Song Description</label>
+                <textarea 
+                    id="description"
+                    class="form-textarea" 
+                    placeholder="An upbeat pop song about summer adventures with friends, featuring catchy melodies and feel-good vibes..."
+                ></textarea>
+            </div>
+        </div>
+
+        <!-- Custom Mode Form -->
+        <div id="customMode" class="mode-content" style="display: none;">
+            <div class="form-section">
+                <label class="form-label">Song Title</label>
+                <input 
+                    type="text" 
+                    id="title"
+                    class="form-input" 
+                    placeholder="Enter your song title"
+                >
+            </div>
+
+            <div class="form-section">
+                <div class="toggle-container">
+                    <label class="toggle-label">
+                        <i class="fas fa-microphone"></i>
+                        Lyrics
+                    </label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="instrumentalToggle" onchange="toggleInstrumental()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <textarea 
+                    id="lyrics"
+                    class="form-textarea" 
+                    placeholder="[Verse 1]&#10;Your lyrics here...&#10;&#10;[Chorus]&#10;Your chorus here..."
+                ></textarea>
+            </div>
+
+            <div class="form-section">
+                <label class="form-label">Style of Music</label>
+                <input 
+                    type="text" 
+                    id="style"
+                    class="style-input" 
+                    placeholder="e.g., pop rock, electronic, acoustic, hip hop..."
+                >
+            </div>
+        </div>
+
+        <!-- Model Selection -->
+        <div class="form-section">
+            <label class="form-label">Model Version</label>
+            <div class="model-select">
+                <div class="model-option selected" onclick="selectModel('v3-5')">
+                    <div class="model-name">v3.5</div>
+                    <div class="model-description">Latest model</div>
+                </div>
+                <div class="model-option" onclick="selectModel('v3')">
+                    <div class="model-name">v3</div>
+                    <div class="model-description">Stable model</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Generate Section -->
+        <div class="generate-section">
+            <div class="generate-info">
+                <i class="fas fa-info-circle"></i>
+                <span>Each generation uses 10 credits and creates 2 song variations</span>
+            </div>
+            <button class="generate-button" onclick="generateMusic()">
+                <i class="fas fa-wand-magic-sparkles"></i>
+                Create Music
+            </button>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="progress-section" id="progressSection">
+            <div class="progress-spinner"></div>
+            <h2 class="progress-title">Creating your music...</h2>
+            <p class="progress-message">This usually takes 30-60 seconds</p>
+        </div>
+    </main>
+
+    <script>
+        let currentMode = 'simple';
+        let selectedModel = 'v3-5';
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.mode-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            if (mode === 'simple') {
+                document.querySelector('.mode-button:first-child').classList.add('active');
+                document.getElementById('simpleMode').style.display = 'block';
+            } else {
+                document.querySelector('.mode-button:last-child').classList.add('active');
+                document.getElementById('customMode').style.display = 'block';
+            }
+        }
+
+        function selectModel(model) {
+            selectedModel = model;
+            document.querySelectorAll('.model-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.target.closest('.model-option').classList.add('selected');
+        }
+
+        function toggleInstrumental() {
+            const isInstrumental = document.getElementById('instrumentalToggle').checked;
+            const lyricsTextarea = document.getElementById('lyrics');
+            
+            if (isInstrumental) {
+                lyricsTextarea.placeholder = "Describe the instrumental style...";
+                lyricsTextarea.value = "";
+            } else {
+                lyricsTextarea.placeholder = "[Verse 1]\nYour lyrics here...\n\n[Chorus]\nYour chorus here...";
+            }
+        }
+
+        async function generateMusic() {
+            // Get form values
+            let params = {};
+            
+            if (currentMode === 'simple') {
+                const description = document.getElementById('description').value;
+                if (!description.trim()) {
+                    alert('Please enter a song description');
+                    return;
+                }
+                params = {
+                    prompt: description,
+                    customMode: false,
+                    model: selectedModel === 'v3-5' ? 'chirp-v3-5' : 'chirp-v3'
+                };
+            } else {
+                const title = document.getElementById('title').value;
+                const lyrics = document.getElementById('lyrics').value;
+                const style = document.getElementById('style').value;
+                const isInstrumental = document.getElementById('instrumentalToggle').checked;
+                
+                if (!title.trim() || (!lyrics.trim() && !isInstrumental) || !style.trim()) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+                
+                params = {
+                    prompt: isInstrumental ? style : lyrics,
+                    customMode: true,
+                    title: title,
+                    tags: style,
+                    lyrics: isInstrumental ? undefined : lyrics,
+                    model: selectedModel === 'v3-5' ? 'chirp-v3-5' : 'chirp-v3'
+                };
+            }
+
+            // Show progress
+            document.getElementById('progressSection').classList.add('active');
+            document.querySelector('.generate-button').disabled = true;
+
+            try {
+                // Use existing PiAPI integration
+                const endpoint = '/webhook/generate-music-ai';
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(params)
+                });
+
+                if (!response.ok) {
+                    // Try direct API if webhook fails
+                    const directResponse = await fetch('/music-gen-fix.html', {
+                        method: 'GET'
+                    });
+                    if (directResponse.ok) {
+                        window.location.href = '/music-gen-fix.html';
+                        return;
+                    }
+                    throw new Error('Generation failed');
+                }
+
+                const result = await response.json();
+                
+                // Save to localStorage for library
+                if (result.audio_url) {
+                    const song = {
+                        id: Date.now().toString(),
+                        title: params.title || 'Generated Song',
+                        tags: params.tags || 'AI Generated',
+                        audioUrl: result.audio_url,
+                        createdAt: new Date().toISOString(),
+                        model: params.model
+                    };
+                    
+                    const songs = JSON.parse(localStorage.getItem('userSongs') || '[]');
+                    songs.unshift(song);
+                    localStorage.setItem('userSongs', JSON.stringify(songs));
+                }
+                
+                // Redirect to library
+                window.location.href = '/suno-library.html';
+                
+            } catch (error) {
+                console.error('Generation error:', error);
+                // Fallback to existing music generation page
+                window.location.href = '/music-studio.html';
+            } finally {
+                document.getElementById('progressSection').classList.remove('active');
+                document.querySelector('.generate-button').disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
