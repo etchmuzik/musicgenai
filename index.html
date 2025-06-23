@@ -15,6 +15,349 @@
     
     <!-- Suno Design System -->
     <link rel="stylesheet" href="/css/suno-design.css">
+    
+    <style>
+        /* Hero Section Styles */
+        .hero-section {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 6rem;
+        }
+
+        .hero-background {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 50%, rgba(236, 72, 153, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 100%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+            animation: backgroundPulse 20s ease-in-out infinite;
+        }
+
+        @keyframes backgroundPulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            padding: 0 2rem;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, #a78bfa 50%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 8s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero-cta .btn {
+            font-size: 1.125rem;
+            padding: 1rem 2rem;
+        }
+
+        .hero-stats {
+            margin-top: 4rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            max-width: 600px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Features Section */
+        .features-section {
+            margin-bottom: 6rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+        }
+
+        .features-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 6rem;
+        }
+
+        .feature-showcase-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .feature-showcase-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.2);
+        }
+
+        .feature-icon-wrapper {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-gradient);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-icon-wrapper i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .feature-showcase-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-showcase-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* AI Models Section */
+        .models-section {
+            background: var(--bg-card);
+            border-radius: 1.5rem;
+            padding: 3rem;
+            margin-bottom: 6rem;
+            border: 1px solid var(--border);
+        }
+
+        .models-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .model-badge {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .model-badge:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .model-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .model-version {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* How It Works */
+        .how-it-works {
+            margin-bottom: 6rem;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .step-card {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .step-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .step-description {
+            color: var(--text-secondary);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: var(--primary-gradient);
+            border-radius: 1.5rem;
+            padding: 4rem 3rem;
+            text-align: center;
+            margin-bottom: 6rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff10" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,133.3C960,128,1056,96,1152,90.7C1248,85,1344,107,1392,117.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+            background-size: cover;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .cta-subtitle {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .cta-button {
+            background: white;
+            color: var(--primary);
+            font-size: 1.125rem;
+            padding: 1rem 2.5rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.125rem;
+            }
+
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .models-section {
+                padding: 2rem 1.5rem;
+            }
+
+            .cta-section {
+                padding: 3rem 2rem;
+            }
+
+            .cta-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Floating animation for elements */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
 </head>
 <body>
     <!-- Mobile Menu Toggle -->
@@ -95,68 +438,241 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <!-- Header -->
-        <header class="header">
-            <h1 class="header-title">
-                Create Amazing Music with <span class="gradient-text">AI</span>
-            </h1>
-            <p class="header-subtitle">
-                Transform your ideas into professional songs in seconds
-            </p>
-            <div class="header-actions">
-                <a href="/create" class="btn btn-primary">
-                    <i class="fas fa-plus"></i>
-                    Start Creating
-                </a>
-            </div>
-        </header>
-
-        <!-- New Features -->
-        <section class="new-features">
-            <div class="new-features-header">
-                <i class="fas fa-star" style="color: var(--accent);"></i>
-                <h2 class="new-features-title">New in v3.5</h2>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <h3 class="feature-title">Extended Duration</h3>
-                    <p class="feature-description">Create songs up to 4 minutes long</p>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-background"></div>
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    The Future of Music Creation is Here
+                </h1>
+                <p class="hero-subtitle">
+                    Transform your ideas into professional tracks using cutting-edge AI models. 
+                    No musical experience required.
+                </p>
+                <div class="hero-cta">
+                    <a href="/create" class="btn btn-primary">
+                        <i class="fas fa-magic"></i>
+                        Start Creating Free
+                    </a>
+                    <a href="/explore" class="btn btn-secondary">
+                        <i class="fas fa-play"></i>
+                        Listen to Examples
+                    </a>
                 </div>
-                <div class="feature-card">
-                    <h3 class="feature-title">Better Lyrics</h3>
-                    <p class="feature-description">Improved lyrical generation and timing</p>
-                </div>
-                <div class="feature-card">
-                    <h3 class="feature-title">Stem Separation</h3>
-                    <p class="feature-description">Extract vocals, drums, bass, and more</p>
-                </div>
-                <div class="feature-card">
-                    <h3 class="feature-title">Style Transfer</h3>
-                    <p class="feature-description">Transform any song into a new genre</p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">2M+</div>
+                        <div class="stat-label">Songs Created</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">500K+</div>
+                        <div class="stat-label">Artists</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">4.9</div>
+                        <div class="stat-label">User Rating</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">10+</div>
+                        <div class="stat-label">AI Models</div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Tabs -->
-        <div class="tabs">
-            <a href="#" class="tab active" data-tab="trending">
-                <i class="fas fa-fire tab-icon"></i>
-                Trending
-            </a>
-            <a href="#" class="tab" data-tab="recent">
-                <i class="fas fa-clock tab-icon"></i>
-                Recent
-            </a>
-            <a href="#" class="tab" data-tab="following">
-                <i class="fas fa-heart tab-icon"></i>
-                Following
-            </a>
-        </div>
+        <!-- Features Section -->
+        <section class="features-section">
+            <div class="section-header">
+                <h2 class="section-title">Powerful Features for Every Creator</h2>
+                <p class="section-subtitle">Everything you need to bring your musical ideas to life</p>
+            </div>
 
-        <!-- Songs Grid -->
-        <div class="songs-grid" id="songsGrid">
-            <!-- Songs will be loaded dynamically -->
-        </div>
+            <div class="features-showcase">
+                <div class="feature-showcase-card">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-wand-magic-sparkles"></i>
+                    </div>
+                    <h3 class="feature-showcase-title">Text to Music</h3>
+                    <p class="feature-showcase-description">
+                        Simply describe your song idea in words and watch as AI transforms it into a complete track with vocals, instruments, and professional production.
+                    </p>
+                </div>
+
+                <div class="feature-showcase-card">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-microphone-lines"></i>
+                    </div>
+                    <h3 class="feature-showcase-title">Custom Lyrics</h3>
+                    <p class="feature-showcase-description">
+                        Write your own lyrics or let AI generate them. Support for multiple languages and styles, from pop to rap to classical compositions.
+                    </p>
+                </div>
+
+                <div class="feature-showcase-card">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-shuffle"></i>
+                    </div>
+                    <h3 class="feature-showcase-title">Remix & Extend</h3>
+                    <p class="feature-showcase-description">
+                        Upload any track and transform it into something new. Extend songs, change genres, or create mashups with our advanced remix capabilities.
+                    </p>
+                </div>
+
+                <div class="feature-showcase-card">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-sliders"></i>
+                    </div>
+                    <h3 class="feature-showcase-title">Stem Separation</h3>
+                    <p class="feature-showcase-description">
+                        Extract individual elements like vocals, drums, bass, and instruments from any song for remixing or sampling.
+                    </p>
+                </div>
+
+                <div class="feature-showcase-card">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3 class="feature-showcase-title">Style Transfer</h3>
+                    <p class="feature-showcase-description">
+                        Transform any song into a different genre while preserving its essence. Turn rock into jazz, pop into classical, or create unique genre fusions.
+                    </p>
+                </div>
+
+                <div class="feature-showcase-card">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <h3 class="feature-showcase-title">High Quality Export</h3>
+                    <p class="feature-showcase-description">
+                        Download your creations in studio-quality formats. Full commercial rights included with Pro plans for monetization and distribution.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Models Section -->
+        <section class="models-section">
+            <h2 class="section-title" style="text-align: center; margin-bottom: 1rem;">Powered by Advanced AI Models</h2>
+            <p class="section-subtitle" style="text-align: center; color: var(--text-secondary);">
+                Access the latest and most powerful music generation models
+            </p>
+            
+            <div class="models-grid">
+                <div class="model-badge float-animation">
+                    <div class="model-name">Suno</div>
+                    <div class="model-version">v3.0 - v4.5</div>
+                </div>
+                <div class="model-badge float-animation" style="animation-delay: 0.2s;">
+                    <div class="model-name">Udio</div>
+                    <div class="model-version">Latest</div>
+                </div>
+                <div class="model-badge float-animation" style="animation-delay: 0.4s;">
+                    <div class="model-name">DiffRhythm</div>
+                    <div class="model-version">Premium</div>
+                </div>
+                <div class="model-badge float-animation" style="animation-delay: 0.6s;">
+                    <div class="model-name">Ace Step</div>
+                    <div class="model-version">Advanced</div>
+                </div>
+                <div class="model-badge float-animation" style="animation-delay: 0.8s;">
+                    <div class="model-name">MMAudio</div>
+                    <div class="model-version">Video2Audio</div>
+                </div>
+                <div class="model-badge float-animation" style="animation-delay: 1s;">
+                    <div class="model-name">F5-TTS</div>
+                    <div class="model-version">Voice AI</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section class="how-it-works">
+            <div class="section-header">
+                <h2 class="section-title">Create Your First Song in Minutes</h2>
+                <p class="section-subtitle">Simple steps to transform your ideas into music</p>
+            </div>
+
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Describe Your Vision</h3>
+                    <p class="step-description">
+                        Tell us what kind of music you want - genre, mood, instruments, or just a feeling
+                    </p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Choose Your Style</h3>
+                    <p class="step-description">
+                        Select from multiple AI models and customize duration, vocals, and production style
+                    </p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Generate & Refine</h3>
+                    <p class="step-description">
+                        AI creates your track in seconds. Remix, extend, or regenerate until it's perfect
+                    </p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title">Download & Share</h3>
+                    <p class="step-description">
+                        Export in high quality, share with the community, or use commercially with Pro plans
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to Create Your Masterpiece?</h2>
+                <p class="cta-subtitle">
+                    Join thousands of creators making amazing music with AI
+                </p>
+                <a href="/create" class="cta-button">
+                    Get Started Free
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- Community Showcase -->
+        <section class="community-section">
+            <div class="section-header">
+                <h2 class="section-title">Fresh from the Community</h2>
+                <p class="section-subtitle">Listen to what others are creating</p>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <a href="#" class="tab active" data-tab="trending">
+                    <i class="fas fa-fire tab-icon"></i>
+                    Trending
+                </a>
+                <a href="#" class="tab" data-tab="recent">
+                    <i class="fas fa-clock tab-icon"></i>
+                    Recent
+                </a>
+                <a href="#" class="tab" data-tab="following">
+                    <i class="fas fa-heart tab-icon"></i>
+                    Top Rated
+                </a>
+            </div>
+
+            <!-- Songs Grid -->
+            <div class="songs-grid" id="songsGrid">
+                <!-- Songs will be loaded dynamically -->
+            </div>
+
+            <div style="text-align: center; margin-top: 3rem;">
+                <a href="/explore" class="btn btn-secondary">
+                    <i class="fas fa-compass"></i>
+                    Explore More Music
+                </a>
+            </div>
+        </section>
     </main>
 
     <!-- Player Bar -->
