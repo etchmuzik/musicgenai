@@ -6,11 +6,14 @@ class PiAPIMusic {
         this.apiKey = apiKey || 'd3a513bec58ea7c7e60eebf377fbbfb806f2304f12e1ef208cd701139658c088';
         this.baseURL = 'https://api.piapi.ai';
         
-        // All PiAPI Music Models
+        // All PiAPI Music Models - Using exact names from PiAPI
         this.models = {
-            // Suno Models
-            suno35: 'suno-v3.5',
-            suno45: 'suno-v4.5', // If available
+            // Suno Models - Check PiAPI docs for exact model names
+            suno: 'suno',  // Try without version
+            suno3: 'suno-v3',
+            suno35: 'suno-3.5',
+            suno4: 'suno-v4',
+            suno45: 'suno-4.5',
             
             // Udio Model
             udio: 'udio',
@@ -43,7 +46,7 @@ class PiAPIMusic {
             song_style = '',
             custom_lyrics = '',
             title = '',
-            model = 'suno-v3.5'
+            model = 'suno'
         } = params;
 
         const payload = {
@@ -389,7 +392,7 @@ class PiAPIMusic {
     // Get available models
     getAvailableModels() {
         return {
-            suno: ['suno-v3.5', 'suno-v4.5'],
+            suno: ['suno', 'suno-v3', 'suno-3.5', 'suno-v4', 'suno-4.5'],
             udio: ['udio'],
             diffrhythm: ['Qubico/diffrhythm'],
             aceStep: ['ace-step'],
