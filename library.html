@@ -124,53 +124,103 @@
     <script>
         // Library functionality
         function loadLibrarySongs() {
-            const mockSongs = [
+            // Load from localStorage
+            const savedSongs = JSON.parse(localStorage.getItem('musicLibrary') || '[]');
+            
+            // If no saved songs, show mock data
+            const songs = savedSongs.length > 0 ? savedSongs.map((song, index) => ({
+                ...song,
+                gradient: getGradientForIndex(index),
+                tag: 'Mine',
+                duration: formatDuration(song.duration)
+            })) : [
                 {
                     id: '1',
-                    title: 'My Electric Dreams',
-                    genre: 'Electronic',
-                    duration: '3:24',
+                    title: 'Create your first song!',
+                    genre: 'Get Started',
+                    duration: '0:00',
                     gradient: 'linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)',
-                    tag: 'Mine'
-                },
-                {
-                    id: '2',
-                    title: 'Jazz Cafe Nights',
-                    genre: 'Jazz',
-                    duration: '4:12',
-                    gradient: 'linear-gradient(135deg, #ec4899 0%, #f59e0b 100%)',
-                    tag: 'Mine'
-                },
-                {
-                    id: '3',
-                    title: 'Summer Road Trip',
-                    genre: 'Pop',
-                    duration: '2:58',
-                    gradient: 'linear-gradient(135deg, #f59e0b 0%, #10b981 100%)',
-                    tag: 'Mine'
+                    tag: 'Demo'
                 }
             ];
 
             const songsGrid = document.getElementById('songsGrid');
-            songsGrid.innerHTML = mockSongs.map(song => `
-                <div class="song-card" data-song-id="${song.id}">
-                    <div class="song-cover" style="background: ${song.gradient};">
-                        <div class="play-overlay">
-                            <button class="play-button" onclick="SunoCore.playSong('${song.id}')">
-                                <i class="fas fa-play"></i>
-                            </button>
+            
+            if (songs.length === 0 || (songs.length === 1 && songs[0].tag === 'Demo')) {
+                songsGrid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem;">
+                        <i class="fas fa-music" style="font-size: 4rem; color: var(--primary); margin-bottom: 1rem; display: block;"></i>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Your library is empty</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 2rem;">Start creating amazing music to fill your library!</p>
+                        <a href="/create" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Create Your First Song
+                        </a>
+                    </div>
+                `;
+            } else {
+                songsGrid.innerHTML = songs.map(song => `
+                    <div class="song-card" data-song-id="${song.id}" data-audio-url="${song.audio_url || ''}">
+                        <div class="song-cover" style="background: ${song.gradient};">
+                            <div class="play-overlay">
+                                <button class="play-button" onclick="playLibrarySong('${song.id}')">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="song-info">
+                            <h3 class="song-title">${song.title}</h3>
+                            <div class="song-meta">
+                                <span class="song-tag">${song.tag}</span>
+                                <span>${song.genre}</span>
+                                <span class="song-duration">${song.duration}</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="song-info">
-                        <h3 class="song-title">${song.title}</h3>
-                        <div class="song-meta">
-                            <span class="song-tag">${song.tag}</span>
-                            <span>${song.genre}</span>
-                            <span class="song-duration">${song.duration}</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
+                `).join('');
+            }
+        }
+        
+        function getGradientForIndex(index) {
+            const gradients = [
+                'linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)',
+                'linear-gradient(135deg, #ec4899 0%, #f59e0b 100%)',
+                'linear-gradient(135deg, #f59e0b 0%, #10b981 100%)',
+                'linear-gradient(135deg, #10b981 0%, #3b82f6 100%)',
+                'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+                'linear-gradient(135deg, #ef4444 0%, #ec4899 100%)'
+            ];
+            return gradients[index % gradients.length];
+        }
+        
+        function formatDuration(seconds) {
+            if (!seconds) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        function playLibrarySong(songId) {
+            const library = JSON.parse(localStorage.getItem('musicLibrary') || '[]');
+            const song = library.find(s => s.id === songId);
+            
+            if (song && song.audio_url) {
+                // Update player UI
+                document.getElementById('playerTitle').textContent = song.title;
+                document.getElementById('playerArtist').textContent = song.genre;
+                document.getElementById('totalTime').textContent = formatDuration(song.duration);
+                
+                // Play audio
+                const audio = new Audio(song.audio_url);
+                audio.play();
+                
+                // Update play button
+                const playBtn = document.querySelector('#playBtn i');
+                if (playBtn) {
+                    playBtn.classList.remove('fa-play');
+                    playBtn.classList.add('fa-pause');
+                }
+            }
         }
 
         // Mobile sidebar toggle

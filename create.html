@@ -285,7 +285,7 @@
             </div>
 
             <form class="generation-form" id="generationForm">
-                <div class="form-group">
+                <div class="form-group" id="descriptionGroup">
                     <label class="form-label">Song Description</label>
                     <textarea 
                         class="form-textarea" 
@@ -293,6 +293,22 @@
                         placeholder="A happy pop song about summer vacation with upbeat melody and catchy chorus..."
                         rows="4"
                     ></textarea>
+                </div>
+                
+                <div class="form-group" id="lyricsGroup" style="display: none;">
+                    <label class="form-label">Custom Lyrics</label>
+                    <textarea 
+                        class="form-textarea" 
+                        id="customLyrics" 
+                        placeholder="Verse 1:&#10;Walking down the beach at sunset...&#10;&#10;Chorus:&#10;Summer dreams come alive..."
+                        rows="8"
+                    ></textarea>
+                </div>
+                
+                <div class="form-group" id="uploadGroup" style="display: none;">
+                    <label class="form-label">Upload Track to Remix/Extend</label>
+                    <input type="file" accept="audio/*" id="audioUpload" class="form-input" />
+                    <p class="form-hint">Upload an MP3 or WAV file to remix or extend</p>
                 </div>
 
                 <div class="form-row">
@@ -406,8 +422,11 @@
 
     <!-- JavaScript -->
     <script src="/js/suno-core.js"></script>
+    <script src="/js/piapi-music.js"></script>
     
     <script>
+        // Initialize PiAPI
+        const piapi = new PiAPIMusic('YOUR_PIAPI_KEY_HERE'); // Replace with actual key
         // Creation mode selection
         document.querySelectorAll('.mode-card').forEach(card => {
             card.addEventListener('click', function() {
@@ -462,8 +481,25 @@
         });
 
         function updateFormForMode(mode) {
-            // Update form based on selected mode
-            console.log('Mode selected:', mode);
+            // Hide all mode-specific fields
+            document.getElementById('descriptionGroup').style.display = 'none';
+            document.getElementById('lyricsGroup').style.display = 'none';
+            document.getElementById('uploadGroup').style.display = 'none';
+            
+            // Show relevant fields based on mode
+            switch(mode) {
+                case 'simple':
+                    document.getElementById('descriptionGroup').style.display = 'block';
+                    break;
+                case 'lyrics':
+                    document.getElementById('descriptionGroup').style.display = 'block';
+                    document.getElementById('lyricsGroup').style.display = 'block';
+                    break;
+                case 'remix':
+                    document.getElementById('uploadGroup').style.display = 'block';
+                    document.getElementById('descriptionGroup').style.display = 'block';
+                    break;
+            }
         }
 
         function getSelectedStyles() {
@@ -472,21 +508,94 @@
         }
 
         async function generateMusic(params) {
-            // Mock music generation for demo
-            // In production, this would call your actual API endpoint
-            console.log('Generating music with params:', params);
+            try {
+                // Get selected mode
+                const mode = document.querySelector('.mode-card.active').dataset.mode;
+                
+                // Build style prompt from selected pills
+                const stylePrompt = piapi.buildStylePrompt({
+                    genre: params.styles[0],
+                    mood: params.styles[1],
+                    tempo: params.duration > 120 ? 'slow' : 'medium'
+                });
+                
+                let result;
+                
+                if (mode === 'lyrics') {
+                    // Generate with custom lyrics
+                    const lyricsText = document.getElementById('customLyrics')?.value || params.prompt;
+                    result = await piapi.createFromLyrics({
+                        lyrics: lyricsText,
+                        style: stylePrompt,
+                        voice_type: params.type === 'vocal' ? 'auto' : 'instrumental'
+                    });
+                } else if (mode === 'remix') {
+                    // For remix mode (would need file upload)
+                    alert('Remix mode requires file upload - coming soon!');
+                    return { success: false };
+                } else {
+                    // Simple creation mode
+                    result = await piapi.createMusic({
+                        prompt: params.prompt,
+                        style: stylePrompt,
+                        duration: parseInt(params.duration),
+                        instrumental: params.type === 'instrumental',
+                        model: 'suno-v3.5'
+                    });
+                }
+                
+                if (result.success) {
+                    // Poll for completion
+                    updateProgress('Generating your music...', 25);
+                    
+                    const finalResult = await pollForResult(result.taskId);
+                    return finalResult;
+                } else {
+                    throw new Error(result.error || 'Generation failed');
+                }
+                
+            } catch (error) {
+                console.error('Generation error:', error);
+                throw error;
+            }
+        }
+        
+        async function pollForResult(taskId) {
+            let attempts = 0;
+            const maxAttempts = 60;
             
-            // Simulate API call delay
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            while (attempts < maxAttempts) {
+                const result = await piapi.getTask(taskId);
+                
+                if (result.status === 'completed' && result.output) {
+                    return {
+                        success: true,
+                        audio_url: result.output.audio_url || result.output.url,
+                        title: result.output.title || 'Generated Song',
+                        duration: result.output.duration,
+                        taskId: taskId
+                    };
+                } else if (result.status === 'failed') {
+                    throw new Error(result.error || 'Generation failed');
+                }
+                
+                // Update progress
+                const progress = Math.min(25 + (attempts / maxAttempts) * 70, 95);
+                updateProgress(`Processing... ${Math.round(progress)}%`, progress);
+                
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                attempts++;
+            }
             
-            // Return mock response
-            return {
-                success: true,
-                audio_url: '#',
-                title: 'Generated Song',
-                duration: params.duration,
-                styles: params.styles
-            };
+            throw new Error('Generation timeout');
+        }
+        
+        function updateProgress(text, percent) {
+            const progressText = document.querySelector('.progress-text');
+            const progressSubtext = document.querySelector('.progress-subtext');
+            
+            if (progressText) progressText.textContent = text;
+            if (progressSubtext) progressSubtext.textContent = `${Math.round(percent)}% complete`;
         }
 
         function showResult(result) {
@@ -494,16 +603,52 @@
             document.getElementById('generationResult').classList.add('active');
             
             // Update result display
-            // document.getElementById('resultAudio').src = result.audio_url;
-            document.getElementById('resultTitle').textContent = 'Generated Song';
+            if (result.audio_url && result.audio_url !== '#') {
+                document.getElementById('resultAudio').src = result.audio_url;
+            }
+            document.getElementById('resultTitle').textContent = result.title || 'Generated Song';
+            
+            // Store result for download/library
+            window.currentGeneratedTrack = result;
         }
 
         function downloadSong() {
-            alert('Download feature coming soon!');
+            if (window.currentGeneratedTrack && window.currentGeneratedTrack.audio_url) {
+                const link = document.createElement('a');
+                link.href = window.currentGeneratedTrack.audio_url;
+                link.download = `${window.currentGeneratedTrack.title || 'generated-song'}.mp3`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                alert('No track available to download');
+            }
         }
 
         function addToLibrary() {
-            alert('Added to your library!');
+            if (window.currentGeneratedTrack) {
+                // Get existing library or create new
+                let library = JSON.parse(localStorage.getItem('musicLibrary') || '[]');
+                
+                // Add new track
+                const track = {
+                    id: window.currentGeneratedTrack.taskId || Date.now().toString(),
+                    title: window.currentGeneratedTrack.title || 'Generated Song',
+                    audio_url: window.currentGeneratedTrack.audio_url,
+                    created_at: new Date().toISOString(),
+                    duration: window.currentGeneratedTrack.duration,
+                    genre: getSelectedStyles()[0] || 'Unknown'
+                };
+                
+                library.unshift(track); // Add to beginning
+                
+                // Save to localStorage
+                localStorage.setItem('musicLibrary', JSON.stringify(library));
+                
+                alert('Track added to your library!');
+            } else {
+                alert('No track to add to library');
+            }
         }
 
         function createAnother() {
