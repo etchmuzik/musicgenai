@@ -814,6 +814,8 @@
     <!-- Scripts -->
     <script src="/js/suno-core.js"></script>
     <script src="/js/piapi-music.js"></script>
+    <script src="/js/audio-player.js"></script>
+    <script src="/js/player-ui.js"></script>
     
     <script>
         // Initialize
@@ -963,15 +965,13 @@
 
         // Play Track
         function playTrack(audioUrl, title) {
-            document.getElementById('playerTitle').textContent = title;
-            document.getElementById('playerArtist').textContent = 'Generated';
-            
-            const audio = new Audio(audioUrl);
-            audio.play();
-            
-            const playBtn = document.querySelector('#playBtn i');
-            playBtn.classList.remove('fa-play');
-            playBtn.classList.add('fa-pause');
+            const track = {
+                audio_url: audioUrl,
+                title: title,
+                artist: 'AI Generated',
+                genre: currentMode === 'instrumental' ? 'Instrumental' : 'Song'
+            };
+            window.audioPlayer.play(track);
         }
 
         // Load Recent Creations
@@ -1013,11 +1013,7 @@
         }
 
         function playRecentTrack(trackId) {
-            const library = JSON.parse(localStorage.getItem('musicLibrary') || '[]');
-            const track = library.find(t => t.id === trackId);
-            if (track && track.audio_url) {
-                playTrack(track.audio_url, track.title);
-            }
+            window.audioPlayer.playTrackById(trackId);
         }
 
         function clearForm() {

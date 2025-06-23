@@ -400,6 +400,8 @@
 
     <!-- JavaScript -->
     <script src="/js/suno-core.js"></script>
+    <script src="/js/audio-player.js"></script>
+    <script src="/js/player-ui.js"></script>
     
     <script>
         // Community tracks data (in production, this would come from Firebase)
@@ -583,12 +585,26 @@
             const track = communityTracks.find(t => t.id === trackId);
             if (!track) return;
             
-            // Update player UI
-            document.getElementById('playerTitle').textContent = track.title;
-            document.getElementById('playerArtist').textContent = track.artist;
+            // Create track object for audio player
+            const trackData = {
+                id: track.id,
+                title: track.title,
+                artist: track.artist,
+                genre: track.genre,
+                audio_url: track.audioUrl || '#', // Demo tracks don't have real audio
+                image_url: track.imageUrl
+            };
             
-            // In production, this would play the actual audio
-            console.log('Playing track:', track);
+            // Play with current filtered tracks as playlist
+            const trackIndex = communityTracks.indexOf(track);
+            window.audioPlayer.setPlaylist(communityTracks.map(t => ({
+                id: t.id,
+                title: t.title,
+                artist: t.artist,
+                genre: t.genre,
+                audio_url: t.audioUrl || '#',
+                image_url: t.imageUrl
+            })), trackIndex);
         }
 
         // Load more tracks

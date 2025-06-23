@@ -138,6 +138,8 @@
 
     <!-- JavaScript -->
     <script src="/js/suno-core.js"></script>
+    <script src="/js/audio-player.js"></script>
+    <script src="/js/player-ui.js"></script>
     
     <script>
         // Library functionality
@@ -220,24 +222,11 @@
         
         function playLibrarySong(songId) {
             const library = JSON.parse(localStorage.getItem('musicLibrary') || '[]');
-            const song = library.find(s => s.id === songId);
+            const songIndex = library.findIndex(s => s.id === songId);
             
-            if (song && song.audio_url) {
-                // Update player UI
-                document.getElementById('playerTitle').textContent = song.title;
-                document.getElementById('playerArtist').textContent = song.genre;
-                document.getElementById('totalTime').textContent = formatDuration(song.duration);
-                
-                // Play audio
-                const audio = new Audio(song.audio_url);
-                audio.play();
-                
-                // Update play button
-                const playBtn = document.querySelector('#playBtn i');
-                if (playBtn) {
-                    playBtn.classList.remove('fa-play');
-                    playBtn.classList.add('fa-pause');
-                }
+            if (songIndex !== -1) {
+                // Play with entire library as playlist
+                window.audioPlayer.setPlaylist(library, songIndex);
             }
         }
 
