@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Generation - MusicGen AI</title>
+    <style>
+        body {
+            background: #0a0a0a;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            padding: 2rem;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            background: linear-gradient(135deg, #00d4ff, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .api-warning {
+            background: rgba(245,158,11,0.2);
+            border: 1px solid #f59e0b;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+            display: none;
+        }
+        .api-warning.show {
+            display: block;
+        }
+        .form-section {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #00d4ff;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 1rem;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        button {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #00d4ff, #7c3aed);
+            border: none;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,212,255,0.3);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .progress-section {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: none;
+        }
+        .progress-section.active {
+            display: block;
+        }
+        .progress-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #00d4ff, #7c3aed);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        .result-section {
+            background: rgba(16,185,129,0.1);
+            border: 1px solid #10b981;
+            border-radius: 1rem;
+            padding: 2rem;
+            display: none;
+        }
+        .result-section.active {
+            display: block;
+        }
+        audio {
+            width: 100%;
+            margin: 1rem 0;
+        }
+        .error {
+            background: rgba(239,68,68,0.1);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+        .nav-links {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .nav-links a {
+            color: #00d4ff;
+            text-decoration: none;
+            margin: 0 1rem;
+        }
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Music Generation Studio</h1>
+        
+        <div id="apiWarning" class="api-warning">
+            <strong>⚠️ API Key Required:</strong> 
+            You need to configure your PiAPI key first. 
+            <a href="/api-config" style="color: #00d4ff;">Configure API Key →</a>
+        </div>
+
+        <div class="form-section">
+            <h2>Generate Your Music</h2>
+            <form id="generationForm">
+                <div class="form-group">
+                    <label for="prompt">Description (What kind of music do you want?):</label>
+                    <textarea id="prompt" placeholder="E.g., Uplifting electronic dance music with heavy bass and energetic beats" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="genre">Genre:</label>
+                    <select id="genre">
+                        <option value="">Select a genre (optional)</option>
+                        <option value="electronic">Electronic</option>
+                        <option value="rock">Rock</option>
+                        <option value="pop">Pop</option>
+                        <option value="hip-hop">Hip Hop</option>
+                        <option value="jazz">Jazz</option>
+                        <option value="classical">Classical</option>
+                        <option value="ambient">Ambient</option>
+                        <option value="metal">Metal</option>
+                        <option value="folk">Folk</option>
+                        <option value="rnb">R&B</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="mood">Mood:</label>
+                    <select id="mood">
+                        <option value="">Select a mood (optional)</option>
+                        <option value="happy">Happy</option>
+                        <option value="sad">Sad</option>
+                        <option value="energetic">Energetic</option>
+                        <option value="calm">Calm</option>
+                        <option value="dramatic">Dramatic</option>
+                        <option value="mysterious">Mysterious</option>
+                        <option value="uplifting">Uplifting</option>
+                        <option value="dark">Dark</option>
+                        <option value="peaceful">Peaceful</option>
+                        <option value="aggressive">Aggressive</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="duration">Duration (seconds):</label>
+                    <input type="number" id="duration" min="15" max="60" value="30">
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="instrumental" checked>
+                        Instrumental (no vocals)
+                    </label>
+                </div>
+
+                <button type="submit" id="generateBtn">Generate Music</button>
+            </form>
+        </div>
+
+        <div id="progressSection" class="progress-section">
+            <h3>Generating Your Music...</h3>
+            <p id="progressText">Starting generation...</p>
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+        </div>
+
+        <div id="resultSection" class="result-section">
+            <h3>Your Music is Ready!</h3>
+            <audio id="audioPlayer" controls></audio>
+            <p><strong>Title:</strong> <span id="trackTitle"></span></p>
+            <button onclick="downloadTrack()">Download</button>
+            <button onclick="generateAnother()">Generate Another</button>
+        </div>
+
+        <div id="errorSection"></div>
+
+        <div class="nav-links">
+            <a href="/">← Home</a>
+            <a href="/api-config">API Settings</a>
+            <a href="/library">My Library</a>
+        </div>
+    </div>
+
+    <script>
+        // PiAPI Direct Integration
+        class DirectPiAPI {
+            constructor() {
+                this.apiBaseUrl = 'https://api.piapi.ai/api/v1';
+                this.apiKey = localStorage.getItem('piapi_key') || '';
+                this.checkApiKey();
+            }
+
+            checkApiKey() {
+                if (!this.apiKey || this.apiKey === 'YOUR_PIAPI_KEY_HERE') {
+                    document.getElementById('apiWarning').classList.add('show');
+                    document.getElementById('generateBtn').disabled = true;
+                    return false;
+                }
+                return true;
+            }
+
+            async generateMusic(params, onProgress) {
+                const taskData = {
+                    model: 'music-u',
+                    task_type: 'music_generation',
+                    input: {
+                        prompt: this.buildPrompt(params),
+                        duration: parseInt(params.duration) || 30,
+                        instrumental: params.instrumental !== false
+                    }
+                };
+
+                // Create task
+                const response = await fetch(`${this.apiBaseUrl}/task`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.apiKey}`,
+                        'X-API-Key': this.apiKey
+                    },
+                    body: JSON.stringify(taskData)
+                });
+
+                if (!response.ok) {
+                    const error = await response.json().catch(() => ({}));
+                    throw new Error(error.message || `API Error: ${response.status}`);
+                }
+
+                const { task_id } = await response.json();
+                
+                // Poll for completion
+                return await this.pollTask(task_id, onProgress);
+            }
+
+            buildPrompt(params) {
+                let parts = [];
+                if (params.genre) parts.push(`${params.genre} music`);
+                if (params.prompt) parts.push(params.prompt);
+                if (params.mood) parts.push(`${params.mood} mood`);
+                return parts.join(', ') || 'Create an amazing piece of music';
+            }
+
+            async pollTask(taskId, onProgress) {
+                const maxAttempts = 60;
+                let attempts = 0;
+
+                while (attempts < maxAttempts) {
+                    const response = await fetch(`${this.apiBaseUrl}/task/${taskId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.apiKey}`,
+                            'X-API-Key': this.apiKey
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to check task status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (data.status === 'completed' && data.output && data.output.audio_url) {
+                        return data.output.audio_url;
+                    } else if (data.status === 'failed') {
+                        throw new Error(data.error || 'Generation failed');
+                    }
+
+                    // Update progress
+                    const progress = Math.min(95, (attempts / maxAttempts) * 100);
+                    onProgress(progress, `Processing... ${Math.round(progress)}%`);
+
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    attempts++;
+                }
+
+                throw new Error('Generation timed out');
+            }
+        }
+
+        // Initialize
+        const api = new DirectPiAPI();
+
+        // Form submission
+        document.getElementById('generationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!api.checkApiKey()) return;
+
+            const params = {
+                prompt: document.getElementById('prompt').value,
+                genre: document.getElementById('genre').value,
+                mood: document.getElementById('mood').value,
+                duration: document.getElementById('duration').value,
+                instrumental: document.getElementById('instrumental').checked
+            };
+
+            // Hide form, show progress
+            document.querySelector('.form-section').style.display = 'none';
+            document.getElementById('progressSection').classList.add('active');
+            document.getElementById('errorSection').innerHTML = '';
+            document.getElementById('resultSection').classList.remove('active');
+
+            try {
+                const audioUrl = await api.generateMusic(params, (progress, message) => {
+                    document.getElementById('progressFill').style.width = `${progress}%`;
+                    document.getElementById('progressText').textContent = message;
+                });
+
+                // Show result
+                document.getElementById('progressSection').classList.remove('active');
+                document.getElementById('resultSection').classList.add('active');
+                document.getElementById('audioPlayer').src = audioUrl;
+                document.getElementById('trackTitle').textContent = params.prompt || 'Generated Music';
+                
+                // Store the URL for download
+                window.currentTrackUrl = audioUrl;
+
+            } catch (error) {
+                document.getElementById('progressSection').classList.remove('active');
+                document.querySelector('.form-section').style.display = 'block';
+                document.getElementById('errorSection').innerHTML = 
+                    `<div class="error">Error: ${error.message}</div>`;
+            }
+        });
+
+        function downloadTrack() {
+            if (window.currentTrackUrl) {
+                const a = document.createElement('a');
+                a.href = window.currentTrackUrl;
+                a.download = 'generated-music.mp3';
+                a.click();
+            }
+        }
+
+        function generateAnother() {
+            document.querySelector('.form-section').style.display = 'block';
+            document.getElementById('resultSection').classList.remove('active');
+            document.getElementById('generationForm').reset();
+        }
+    </script>
+</body>
+</html>

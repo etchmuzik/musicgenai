@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MusicGen AI - Create Amazing Music with AI</title>
+    <meta name="description" content="Create professional music in seconds with AI. Transform your ideas into songs.">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Suno-inspired Design System */
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #1f1f1f;
+            --text-primary: #ffffff;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --border: rgba(255, 255, 255, 0.1);
+            --primary: #8b5cf6;
+            --secondary: #ec4899;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            --gradient-accent: linear-gradient(135deg, #ec4899 0%, #f59e0b 100%);
+            --gradient-success: linear-gradient(135deg, #f59e0b 0%, #10b981 100%);
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 2rem;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+            display: block;
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .nav-link.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Credits display */
+        .credits-display {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-top: auto;
+        }
+
+        .credits-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .credits-title {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .credits-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .credits-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            margin-bottom: 3rem;
+        }
+
+        .header-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .gradient-text {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* New Features Section */
+        .new-features {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .new-features-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .new-features-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            padding: 1rem 0;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            color: var(--primary);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        .tab-icon {
+            margin-right: 0.5rem;
+        }
+
+        /* Songs Grid */
+        .songs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .song-card {
+            background: var(--bg-card);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .song-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .song-cover {
+            position: relative;
+            aspect-ratio: 1;
+            background: var(--gradient-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .song-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .play-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .song-card:hover .play-overlay {
+            opacity: 1;
+        }
+
+        .play-button {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+            background: white;
+        }
+
+        .play-button i {
+            color: var(--bg-primary);
+            font-size: 1.5rem;
+            margin-left: 0.25rem;
+        }
+
+        .song-info {
+            padding: 1rem;
+        }
+
+        .song-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .song-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .song-tag {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.125rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .song-duration {
+            margin-left: auto;
+        }
+
+        /* Player Bar */
+        .player-bar {
+            position: fixed;
+            bottom: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            z-index: 100;
+        }
+
+        .player-track {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 0 0 300px;
+        }
+
+        .player-cover {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 0.5rem;
+        }
+
+        .player-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .player-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-artist {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 0 auto;
+        }
+
+        .player-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 0.5rem;
+        }
+
+        .player-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .player-btn.play {
+            width: 40px;
+            height: 40px;
+            background: white;
+            color: var(--bg-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .player-progress {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .progress-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: var(--primary);
+            border-radius: 2px;
+            width: 30%;
+        }
+
+        .player-time {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .player-bar {
+                left: 0;
+            }
+
+            .header-title {
+                font-size: 2rem;
+            }
+
+            .songs-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 101;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <a href="/" class="logo">MusicGen AI</a>
+        
+        <nav>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/suno-home" class="nav-link active">
+                        <span class="nav-icon"><i class="fas fa-home"></i></span>
+                        Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/music-studio" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-music"></i></span>
+                        Create
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/library" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-folder"></i></span>
+                        Library
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/explore" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-compass"></i></span>
+                        Explore
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/gamification" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-trophy"></i></span>
+                        Achievements
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- Credits Display -->
+        <div class="credits-display">
+            <div class="credits-header">
+                <span class="credits-title">Credits</span>
+                <i class="fas fa-coins"></i>
+            </div>
+            <div class="credits-value">200</div>
+            <div class="credits-subtitle">Monthly credits remaining</div>
+            <a href="/pricing" class="btn btn-secondary" style="width: 100%; margin-top: 1rem; justify-content: center;">
+                Upgrade Plan
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="header-title">
+                Create Amazing Music with <span class="gradient-text">AI</span>
+            </h1>
+            <p class="header-subtitle">
+                Transform your ideas into professional songs in seconds
+            </p>
+            <div class="header-actions">
+                <a href="/music-studio" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Start Creating
+                </a>
+                <a href="/ai-studio" class="btn btn-secondary">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                    Explore AI Features
+                </a>
+            </div>
+        </header>
+
+        <!-- New Features -->
+        <section class="new-features">
+            <div class="new-features-header">
+                <i class="fas fa-star" style="color: var(--accent);"></i>
+                <h2 class="new-features-title">New in v3.5</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3 class="feature-title">Extended Duration</h3>
+                    <p class="feature-description">Create songs up to 4 minutes long</p>
+                </div>
+                <div class="feature-card">
+                    <h3 class="feature-title">Better Lyrics</h3>
+                    <p class="feature-description">Improved lyrical generation and timing</p>
+                </div>
+                <div class="feature-card">
+                    <h3 class="feature-title">Stem Separation</h3>
+                    <p class="feature-description">Extract vocals, drums, bass, and more</p>
+                </div>
+                <div class="feature-card">
+                    <h3 class="feature-title">Style Transfer</h3>
+                    <p class="feature-description">Transform any song into a new genre</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <a href="#" class="tab active">
+                <i class="fas fa-fire tab-icon"></i>
+                Trending
+            </a>
+            <a href="#" class="tab">
+                <i class="fas fa-clock tab-icon"></i>
+                Recent
+            </a>
+            <a href="#" class="tab">
+                <i class="fas fa-heart tab-icon"></i>
+                Following
+            </a>
+        </div>
+
+        <!-- Songs Grid -->
+        <div class="songs-grid">
+            <!-- Song Card 1 -->
+            <div class="song-card">
+                <div class="song-cover">
+                    <img src="data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%238b5cf6'/%3E%3Cstop offset='100%25' style='stop-color:%23ec4899'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23g1)'/%3E%3C/svg%3E" alt="Song cover">
+                    <div class="play-overlay">
+                        <div class="play-button">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="song-info">
+                    <h3 class="song-title">Neon Dreams</h3>
+                    <div class="song-meta">
+                        <span class="song-tag">v3.5</span>
+                        <span>Electronic</span>
+                        <span class="song-duration">3:24</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Song Card 2 -->
+            <div class="song-card">
+                <div class="song-cover">
+                    <img src="data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='g2' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23ec4899'/%3E%3Cstop offset='100%25' style='stop-color:%23f59e0b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23g2)'/%3E%3C/svg%3E" alt="Song cover">
+                    <div class="play-overlay">
+                        <div class="play-button">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="song-info">
+                    <h3 class="song-title">Midnight Jazz</h3>
+                    <div class="song-meta">
+                        <span class="song-tag">v3.5</span>
+                        <span>Jazz</span>
+                        <span class="song-duration">4:12</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Song Card 3 -->
+            <div class="song-card">
+                <div class="song-cover">
+                    <img src="data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='g3' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23f59e0b'/%3E%3Cstop offset='100%25' style='stop-color:%2310b981'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23g3)'/%3E%3C/svg%3E" alt="Song cover">
+                    <div class="play-overlay">
+                        <div class="play-button">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="song-info">
+                    <h3 class="song-title">Summer Vibes</h3>
+                    <div class="song-meta">
+                        <span class="song-tag">Remix</span>
+                        <span>Pop</span>
+                        <span class="song-duration">2:58</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Song Card 4 -->
+            <div class="song-card">
+                <div class="song-cover">
+                    <img src="data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='g4' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2310b981'/%3E%3Cstop offset='100%25' style='stop-color:%233b82f6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23g4)'/%3E%3C/svg%3E" alt="Song cover">
+                    <div class="play-overlay">
+                        <div class="play-button">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="song-info">
+                    <h3 class="song-title">Epic Orchestra</h3>
+                    <div class="song-meta">
+                        <span class="song-tag">v3</span>
+                        <span>Classical</span>
+                        <span class="song-duration">5:45</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Song Card 5 -->
+            <div class="song-card">
+                <div class="song-cover">
+                    <img src="data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='g5' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%233b82f6'/%3E%3Cstop offset='100%25' style='stop-color:%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23g5)'/%3E%3C/svg%3E" alt="Song cover">
+                    <div class="play-overlay">
+                        <div class="play-button">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="song-info">
+                    <h3 class="song-title">Lofi Study Session</h3>
+                    <div class="song-meta">
+                        <span class="song-tag">v3.5</span>
+                        <span>Hip Hop</span>
+                        <span class="song-duration">3:33</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Song Card 6 -->
+            <div class="song-card">
+                <div class="song-cover">
+                    <img src="data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='g6' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23ef4444'/%3E%3Cstop offset='100%25' style='stop-color:%23ec4899'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23g6)'/%3E%3C/svg%3E" alt="Song cover">
+                    <div class="play-overlay">
+                        <div class="play-button">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="song-info">
+                    <h3 class="song-title">Rock Anthem</h3>
+                    <div class="song-meta">
+                        <span class="song-tag">Uploaded</span>
+                        <span>Rock</span>
+                        <span class="song-duration">4:20</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Player Bar -->
+    <div class="player-bar">
+        <div class="player-track">
+            <div class="player-cover"></div>
+            <div class="player-info">
+                <div class="player-title">No track playing</div>
+                <div class="player-artist">Select a track to play</div>
+            </div>
+        </div>
+        
+        <div class="player-controls">
+            <button class="player-btn">
+                <i class="fas fa-backward"></i>
+            </button>
+            <button class="player-btn play">
+                <i class="fas fa-play"></i>
+            </button>
+            <button class="player-btn">
+                <i class="fas fa-forward"></i>
+            </button>
+        </div>
+        
+        <div class="player-progress">
+            <span class="player-time">0:00</span>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <span class="player-time">0:00</span>
+        </div>
+    </div>
+
+    <script>
+        // Toggle sidebar for mobile
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Play button functionality
+        document.querySelectorAll('.play-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const icon = this.querySelector('i');
+                const isPlaying = icon.classList.contains('fa-pause');
+                
+                // Reset all buttons
+                document.querySelectorAll('.play-button i').forEach(i => {
+                    i.classList.remove('fa-pause');
+                    i.classList.add('fa-play');
+                });
+                
+                // Toggle current button
+                if (!isPlaying) {
+                    icon.classList.remove('fa-play');
+                    icon.classList.add('fa-pause');
+                    
+                    // Update player bar
+                    const card = this.closest('.song-card');
+                    const title = card.querySelector('.song-title').textContent;
+                    const genre = card.querySelector('.song-meta span:nth-child(2)').textContent;
+                    
+                    document.querySelector('.player-title').textContent = title;
+                    document.querySelector('.player-artist').textContent = genre;
+                    document.querySelector('.player-btn.play i').classList.remove('fa-play');
+                    document.querySelector('.player-btn.play i').classList.add('fa-pause');
+                }
+            });
+        });
+
+        // Player bar play button
+        document.querySelector('.player-btn.play').addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            if (icon.classList.contains('fa-play')) {
+                icon.classList.remove('fa-play');
+                icon.classList.add('fa-pause');
+            } else {
+                icon.classList.remove('fa-pause');
+                icon.classList.add('fa-play');
+            }
+        });
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+
+    <!-- Firebase Integration -->
+    <script type="module">
+        import { authManager } from './js/firebase-config-safe.js';
+        
+        // Check authentication state
+        authManager.onAuthStateChange((user) => {
+            if (user) {
+                // Update UI for authenticated user
+                console.log('User is signed in:', user.email);
+                // Update credits based on user subscription
+                updateUserCredits(user);
+            } else {
+                // User is not signed in
+                console.log('User is not signed in');
+            }
+        });
+
+        // Update user credits display
+        function updateUserCredits(user) {
+            // This would fetch actual credits from Firebase
+            // For now, using mock data
+            const subscriptionCredits = {
+                'free': 10,
+                'starter': 500,
+                'pro': 2000,
+                'unlimited': 10000
+            };
+            
+            const subscription = user.subscription || 'free';
+            const credits = subscriptionCredits[subscription];
+            document.querySelector('.credits-value').textContent = credits;
+        }
+    </script>
+</body>
+</html>

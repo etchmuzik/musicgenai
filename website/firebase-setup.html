@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Setup - MusicGen AI</title>
+    <style>
+        body {
+            background: #0a0a0a;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            padding: 2rem;
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            background: linear-gradient(135deg, #00d4ff, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .setup-box {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin: 1rem 0;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #00d4ff;
+        }
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 0.9rem;
+            font-family: monospace;
+        }
+        input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 2px rgba(0,212,255,0.2);
+        }
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #00d4ff, #7c3aed);
+            border: none;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,212,255,0.3);
+        }
+        .info {
+            background: rgba(245,158,11,0.1);
+            border: 1px solid rgba(245,158,11,0.3);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        .info h3 {
+            color: #f59e0b;
+            margin-bottom: 1rem;
+        }
+        .info ol {
+            margin-left: 1.5rem;
+            line-height: 2;
+        }
+        .info a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+        .info a:hover {
+            text-decoration: underline;
+        }
+        .status {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            display: none;
+        }
+        .status.success {
+            background: rgba(16,185,129,0.2);
+            border: 1px solid #10b981;
+            color: #10b981;
+            display: block;
+        }
+        .status.error {
+            background: rgba(239,68,68,0.2);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            display: block;
+        }
+        .warning {
+            background: rgba(239,68,68,0.1);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        code {
+            background: rgba(255,255,255,0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 2rem;
+            color: #00d4ff;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Firebase Setup Guide</h1>
+        
+        <div class="warning">
+            <strong>⚠️ Important:</strong> Firebase authentication is currently not working due to missing configuration. 
+            You can still use the music generation features with your PiAPI key.
+        </div>
+
+        <div class="info">
+            <h3>Why is Firebase needed?</h3>
+            <p>Firebase provides:</p>
+            <ul>
+                <li>User authentication (Sign In/Sign Up)</li>
+                <li>Cloud storage for your generated music</li>
+                <li>User profiles and preferences</li>
+                <li>Real-time data synchronization</li>
+            </ul>
+        </div>
+
+        <div class="info">
+            <h3>How to set up Firebase:</h3>
+            <ol>
+                <li>Go to <a href="https://console.firebase.google.com/" target="_blank">Firebase Console</a></li>
+                <li>Create a new project or select an existing one</li>
+                <li>Go to Project Settings → General</li>
+                <li>Scroll down to "Your apps" and click "Add app" → Web</li>
+                <li>Register your app with a nickname</li>
+                <li>Copy the Firebase configuration object</li>
+                <li>Enable Authentication in Firebase Console:
+                    <ul>
+                        <li>Go to Authentication → Sign-in method</li>
+                        <li>Enable Email/Password</li>
+                        <li>Enable Google (optional)</li>
+                    </ul>
+                </li>
+                <li>Enable Firestore Database:
+                    <ul>
+                        <li>Go to Firestore Database</li>
+                        <li>Create database in production mode</li>
+                        <li>Choose your region</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <div class="setup-box">
+            <h2>Firebase Configuration</h2>
+            <p>To enable authentication, you need to update the Firebase configuration in the code.</p>
+            
+            <div class="form-group">
+                <label>Current Status:</label>
+                <code id="configStatus">Using placeholder values - Authentication disabled</code>
+            </div>
+
+            <div class="form-group">
+                <label>Configuration File Location:</label>
+                <code>/js/firebase-config.js</code>
+            </div>
+
+            <p style="margin-top: 2rem;">
+                <strong>Note:</strong> For security reasons, Firebase configuration must be updated in the source code and deployed. 
+                This cannot be done through the web interface.
+            </p>
+        </div>
+
+        <div class="setup-box">
+            <h2>Alternative: Use Without Authentication</h2>
+            <p>You can still use MusicGen AI without Firebase:</p>
+            <ul>
+                <li>✅ Music generation with PiAPI (configure at <a href="/api-config">/api-config</a>)</li>
+                <li>✅ All music creation features</li>
+                <li>✅ Download generated tracks</li>
+                <li>❌ User accounts and cloud storage</li>
+                <li>❌ Save music to library</li>
+                <li>❌ User profiles and preferences</li>
+            </ul>
+            
+            <a href="/music-gen-fix" style="display: block; margin-top: 1rem;">
+                <button type="button">Go to Music Generator →</button>
+            </a>
+        </div>
+
+        <div class="info">
+            <h3>For Developers:</h3>
+            <p>To properly configure Firebase:</p>
+            <ol>
+                <li>Clone the repository from GitHub</li>
+                <li>Update <code>/website/js/firebase-config.js</code> with your Firebase config</li>
+                <li>Deploy the updated code</li>
+                <li>Make sure to add your domain to Firebase's authorized domains</li>
+            </ol>
+        </div>
+
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="/" class="back-link">← Back to Home</a>
+            <span style="margin: 0 1rem;">|</span>
+            <a href="/api-config" class="back-link">Configure PiAPI</a>
+            <span style="margin: 0 1rem;">|</span>
+            <a href="/music-gen-fix" class="back-link">Music Generator</a>
+        </div>
+    </div>
+
+    <script>
+        // Check current Firebase configuration
+        const checkConfig = () => {
+            try {
+                // Check if firebase-config.js has been loaded
+                if (window.firebaseConfig && window.firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY") {
+                    document.getElementById('configStatus').textContent = 'Firebase is configured';
+                    document.getElementById('configStatus').style.color = '#10b981';
+                } else {
+                    document.getElementById('configStatus').textContent = 'Using placeholder values - Authentication disabled';
+                }
+            } catch (e) {
+                console.log('Firebase config not loaded');
+            }
+        };
+
+        // Check on load
+        setTimeout(checkConfig, 1000);
+    </script>
+</body>
+</html>

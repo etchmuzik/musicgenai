@@ -1,0 +1,67 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/suno-home",
+      "destination": "/suno-home.html"
+    },
+    {
+      "source": "/suno-create", 
+      "destination": "/suno-create.html"
+    },
+    {
+      "source": "/suno-library",
+      "destination": "/suno-library.html"
+    },
+    {
+      "source": "/music-studio",
+      "destination": "/music-studio.html"
+    },
+    {
+      "source": "/ai-studio",
+      "destination": "/ai-studio.html"
+    },
+    {
+      "source": "/library",
+      "destination": "/library.html"
+    },
+    {
+      "source": "/user-dashboard",
+      "destination": "/user-dashboard.html"
+    },
+    {
+      "source": "/auth",
+      "destination": "/auth.html"
+    },
+    {
+      "source": "/gamification",
+      "destination": "/gamification.html"
+    },
+    {
+      "source": "/audio-editor",
+      "destination": "/audio-editor.html"
+    },
+    {
+      "source": "/pricing",
+      "destination": "/pricing.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/about.html"
+    },
+    {
+      "source": "/music-gen-fix",
+      "destination": "/music-gen-fix.html"
+    },
+    {
+      "source": "/create",
+      "destination": "/create-simple.html"
+    },
+    {
+      "source": "/simple",
+      "destination": "/index-simple.html"
+    }
+  ]
+}
