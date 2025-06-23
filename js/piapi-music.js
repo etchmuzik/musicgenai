@@ -14,7 +14,7 @@ class PiAPIMusic {
         };
     }
 
-    // Create music generation task
+    // Create music generation task (Suno API)
     async createMusic(params) {
         const {
             prompt,
@@ -25,17 +25,21 @@ class PiAPIMusic {
             model = 'suno-v3.5'
         } = params;
 
+        // Build the full prompt
+        let fullPrompt = prompt || '';
+        if (style) {
+            fullPrompt = `${fullPrompt} ${style}`.trim();
+        }
+
         const payload = {
             model: model,
-            task_type: 'text_to_music',
+            task_type: 'generate_music',
             input: {
-                prompt: prompt,
-                lyrics: lyrics,
-                style: style,
-                duration: duration,
-                instrumental: instrumental,
-                quality: 'high',
-                format: 'mp3'
+                gpt_description_prompt: fullPrompt,
+                make_instrumental: instrumental,
+                song_style: style || '',
+                custom_lyrics: lyrics || '',
+                title: prompt ? prompt.substring(0, 50) : 'Generated Song'
             }
         };
 
@@ -262,6 +266,8 @@ class PiAPIMusic {
 
     // Core task creation method (PiAPI unified API)
     async createTask(payload) {
+        console.log('PiAPI Request:', JSON.stringify(payload, null, 2));
+        
         try {
             const response = await fetch(`${this.baseURL}/api/v1/task`, {
                 method: 'POST',
@@ -273,16 +279,35 @@ class PiAPIMusic {
                 body: JSON.stringify(payload)
             });
 
+            const responseText = await response.text();
+            console.log('PiAPI Response:', responseText);
+
             if (!response.ok) {
-                throw new Error(`API Error: ${response.status}`);
+                let errorMessage = `API Error: ${response.status}`;
+                try {
+                    const errorData = JSON.parse(responseText);
+                    errorMessage = errorData.message || errorData.error || errorMessage;
+                } catch (e) {
+                    // If response is not JSON, use the text
+                    errorMessage = responseText || errorMessage;
+                }
+                throw new Error(errorMessage);
             }
 
-            const result = await response.json();
+            const result = JSON.parse(responseText);
+            
+            // Handle different response formats
+            const taskId = result.task_id || result.id || result.taskId;
+            
+            if (!taskId) {
+                throw new Error('No task ID received from API');
+            }
+            
             return {
                 success: true,
-                taskId: result.task_id,
-                status: 'processing',
-                estimatedTime: result.estimated_time || 60
+                taskId: taskId,
+                status: result.status || 'processing',
+                estimatedTime: result.estimated_time || result.eta || 60
             };
         } catch (error) {
             console.error('PiAPI Error:', error);
@@ -304,22 +329,28 @@ class PiAPIMusic {
                 }
             });
 
+            const responseText = await response.text();
+            console.log(`PiAPI Task ${taskId} Status:`, responseText);
+
             if (!response.ok) {
-                throw new Error(`API Error: ${response.status}`);
+                throw new Error(`API Error: ${response.status} - ${responseText}`);
             }
 
-            const result = await response.json();
+            const result = JSON.parse(responseText);
+            
+            // Map the actual API response format
             return {
                 success: true,
-                status: result.status,
-                progress: result.progress || 0,
-                output: result.output || null,
-                error: result.error || null
+                status: result.status || 'processing',
+                progress: result.progress || result.percentage || 0,
+                output: result.output || result.result || result.data || null,
+                error: result.error || result.message || null
             };
         } catch (error) {
-            console.error('PiAPI Error:', error);
+            console.error('PiAPI Get Task Error:', error);
             return {
                 success: false,
+                status: 'failed',
                 error: error.message
             };
         }
